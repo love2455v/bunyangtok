@@ -75,10 +75,10 @@
   <form id="loginForm">
     <div class="error-msg" id="errorMsg"></div>
     <div class="form-group">
-      <label class="form-label">이메일</label>
+      <label class="form-label">아이디</label>
       <div class="input-wrap">
-        <span class="input-icon">✉️</span>
-        <input type="email" id="email" class="form-input" placeholder="이메일 주소를 입력하세요" required />
+        <span class="input-icon">👤</span>
+        <input type="text" id="userId" class="form-input" placeholder="아이디를 입력하세요" required autocomplete="username" />
       </div>
     </div>
     <div class="form-group">
@@ -102,5 +102,31 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const userId = document.getElementById('userId').value.trim();
+  const password = document.getElementById('password').value;
+  const errEl = document.getElementById('errorMsg');
+  const btn = document.getElementById('submitBtn');
+
+  if (!userId) { errEl.textContent = '아이디를 입력해주세요.'; errEl.classList.add('show'); return; }
+
+  errEl.classList.remove('show');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    const db = getSupabase();
+    const email = userId + '@bunyangtok.com';
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    window.location.href = 'index.html';
+  } catch (err) {
+    errEl.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+    errEl.classList.add('show');
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>

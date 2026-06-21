@@ -98,8 +98,8 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">이메일 <span class="required">*</span></label>
-      <div class="input-wrap"><span class="input-icon">✉️</span><input type="email" id="email" class="form-input" placeholder="이메일 주소를 입력하세요" required /></div>
+      <label class="form-label">아이디 <span class="required">*</span></label>
+      <div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" pattern="[a-zA-Z0-9_]+" autocomplete="username" /></div>
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호 <span class="required">*</span></label>
@@ -149,6 +149,53 @@ function checkPwStrength(pw) {
   bars.forEach((id, i) => { document.getElementById(id).className = 'pw-bar ' + (levels[score][i] || ''); });
   hint.textContent = hints[score] || hints[0];
 }
+
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const userId = document.getElementById('userId').value.trim();
+  const password = document.getElementById('password').value;
+  const passwordConfirm = document.getElementById('passwordConfirm').value;
+  const name = document.getElementById('name').value.trim();
+  const errEl = document.getElementById('errorMsg');
+  const btn = document.getElementById('submitBtn');
+
+  errEl.classList.remove('show');
+
+  if (!/^[a-zA-Z0-9_]{4,20}$/.test(userId)) {
+    errEl.textContent = '아이디는 영문·숫자·밑줄(_)만 사용 가능하며 4~20자여야 합니다.';
+    errEl.classList.add('show'); return;
+  }
+  if (password !== passwordConfirm) {
+    errEl.textContent = '비밀번호가 일치하지 않습니다.';
+    errEl.classList.add('show'); return;
+  }
+  if (!document.getElementById('agreeTerms').checked || !document.getElementById('agreePrivacy').checked) {
+    errEl.textContent = '필수 약관에 동의해주세요.';
+    errEl.classList.add('show'); return;
+  }
+
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    const db = getSupabase();
+    const email = userId + '@bunyangtok.com';
+    const { data, error } = await db.auth.signUp({
+      email, password,
+      options: { data: { name, username: userId, job_type: document.getElementById('jobType').value } }
+    });
+    if (error) throw error;
+    window.location.href = 'index.html';
+  } catch (err) {
+    const msg = err.message || '';
+    if (msg.includes('already registered') || msg.includes('already exists')) {
+      errEl.textContent = '이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.';
+    } else {
+      errEl.textContent = '가입 중 오류가 발생했습니다: ' + msg;
+    }
+    errEl.classList.add('show');
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
