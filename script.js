@@ -366,8 +366,56 @@ async function logout() {
   window.location.href = 'index.html';
 }
 
+// ===== 현장등록 (로그인 필요) =====
+function goRegister() {
+  var db = getSupabase();
+  if (!db) { window.location.href = 'login.html?next=register.html'; return; }
+  db.auth.getSession().then(function(sess) {
+    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+    if (!user) {
+      alert('현장 등록은 로그인 후 이용 가능합니다.');
+      window.location.href = 'login.html?next=register.html';
+    } else {
+      window.location.href = 'register.html';
+    }
+  });
+}
+
+// ===== 헤더 로그인 상태 UI 업데이트 =====
+function updateAuthUI(user) {
+  var topbarLinks = document.querySelector('.topbar-links');
+  if (!topbarLinks) return;
+  if (user) {
+    var email = user.email || '';
+    var shortEmail = email.length > 14 ? email.substring(0, 14) + '...' : email;
+    topbarLinks.innerHTML =
+      '<span style="color:rgba(255,255,255,0.6);font-size:12px;margin-right:4px;">👤 ' + shortEmail + '</span>' +
+      '<a href="#" onclick="logout();return false;" class="btn-join" style="background:#555;border-color:#555;">로그아웃</a>';
+  }
+}
+
 // ===== 초기화 =====
 document.addEventListener('DOMContentLoaded', async function() {
+  // 로그인 상태 확인
+  var db = getSupabase();
+  var currentUser = null;
+  if (db) {
+    try {
+      var sess = await db.auth.getSession();
+      currentUser = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+    } catch(e) {}
+  }
+
+  // register.html은 로그인 필수
+  if (window.location.pathname.includes('register.html') && !currentUser) {
+    alert('현장 등록은 로그인 후 이용 가능합니다.');
+    window.location.href = 'login.html?next=register.html';
+    return;
+  }
+
+  // 헤더 UI 업데이트
+  updateAuthUI(currentUser);
+
   var urlRegion = getUrlParam('region');
   var urlKeyword = getUrlParam('q');
   if (urlRegion) currentRegion = urlRegion;
