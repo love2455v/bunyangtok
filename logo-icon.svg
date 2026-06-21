@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- 배경: 오렌지 둥근 사각형 (카카오톡 스타일) -->
+  <rect x="0" y="0" width="200" height="200" rx="44" fill="#FF6B2B"/>
+  <!-- 흰색 말풍선 타원 -->
+  <ellipse cx="100" cy="85" rx="74" ry="54" fill="white"/>
+  <!-- 말풍선 꼬리 -->
+  <path d="M64 134 L46 168 L96 140 Z" fill="white"/>
+  <!-- 좌측 작은 아파트 -->
+  <rect x="48" y="77" width="22" height="32" rx="2" fill="#FF6B2B"/>
+  <rect x="52" y="82" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="61" y="82" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="52" y="91" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="61" y="91" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="52" y="100" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="61" y="100" width="5" height="4" rx="0.5" fill="white"/>
+  <!-- 중앙 큰 아파트 -->
+  <rect x="77" y="57" width="46" height="52" rx="2" fill="#FF6B2B"/>
+  <rect x="83" y="63" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="95" y="63" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="108" y="63" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="83" y="74" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="95" y="74" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="108" y="74" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="83" y="85" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="95" y="85" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="108" y="85" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="83" y="96" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="95" y="96" width="7" height="6" rx="0.5" fill="white"/>
+  <rect x="108" y="96" width="7" height="6" rx="0.5" fill="white"/>
+  <!-- 우측 중간 아파트 -->
+  <rect x="130" y="70" width="22" height="39" rx="2" fill="#FF6B2B"/>
+  <rect x="134" y="75" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="143" y="75" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="134" y="84" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="143" y="84" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="134" y="93" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="143" y="93" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="134" y="102" width="5" height="4" rx="0.5" fill="white"/>
+  <rect x="143" y="102" width="5" height="4" rx="0.5" fill="white"/>
+  <!-- 지면선 -->
+  <rect x="42" y="109" width="116" height="4" rx="2" fill="#FF6B2B"/>
+</svg>
