@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>현장 등록 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
+    </div>
+    <div class="topbar-links">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register active">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<div class="register-page">
+  <div class="container">
+    <div class="register-form">
+      <div class="form-title">📋 현장 구인 등록</div>
+      <div class="form-sub">모든 항목을 정확히 입력하면 더 많은 상담사가 지원합니다. <span style="color:#EF4444">*</span> 필수항목</div>
+
+      <form id="registerForm" onsubmit="submitForm(event)">
+
+        <!-- 기본정보 -->
+        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📌 기본 정보</div>
+
+          <div class="form-group">
+            <label class="form-label">현장명 <span class="required">*</span></label>
+            <input type="text" class="form-input" placeholder="예: 힐스테이트 구월 아트파크" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">지역 <span class="required">*</span></label>
+              <select class="form-select" required>
+                <option value="">지역 선택</option>
+                <option>서울</option><option>경기남부</option><option>경기북부</option>
+                <option>인천</option><option>부산</option><option>울산</option>
+                <option>대구</option><option>경상도</option><option>대전</option>
+                <option>세종</option><option>충청도</option><option>광주</option>
+                <option>전라도</option><option>강원도</option><option>제주도</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">업종 <span class="required">*</span></label>
+              <select class="form-select" required>
+                <option value="">업종 선택</option>
+                <option>아파트</option><option>오피스텔</option><option>상가</option>
+                <option>도시형생활주택</option><option>타운하우스</option><option>기타</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">현장 주소 <span class="required">*</span></label>
+            <input type="text" class="form-input" placeholder="예: 인천광역시 남동구 구월동 000번지" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">회사명 (대행사/시행사) <span class="required">*</span></label>
+            <input type="text" class="form-input" placeholder="예: (주)크리사온" required />
+          </div>
+        </div>
+
+        <!-- 모집 조건 -->
+        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">💼 모집 조건</div>
+
+          <div class="form-group">
+            <label class="form-label">모집 직종 <span class="required">*</span></label>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" value="본부장" /> 본부장</label>
+              <label class="checkbox-item"><input type="checkbox" value="팀장" /> 팀장</label>
+              <label class="checkbox-item"><input type="checkbox" value="팀원" /> 팀원</label>
+              <label class="checkbox-item"><input type="checkbox" value="사이드" /> 사이드</label>
+              <label class="checkbox-item"><input type="checkbox" value="각개" /> 각개</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">급여 형태 <span class="required">*</span></label>
+              <select class="form-select" required>
+                <option value="">선택</option>
+                <option>계약수수료</option>
+                <option>기본급+인센티브</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">팀 수수료</label>
+              <input type="text" class="form-input" placeholder="예: 1,200만원, 협의" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">경력 조건</label>
+              <select class="form-select">
+                <option>경력무관</option>
+                <option>3개월이상</option>
+                <option>6개월이상</option>
+                <option>12개월이상</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">일비</label>
+              <input type="text" class="form-input" placeholder="예: 5만원, 없음" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">복리후생 (해당 항목 선택)</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" /> 숙소제공</label>
+              <label class="checkbox-item"><input type="checkbox" /> 숙소비지원</label>
+              <label class="checkbox-item"><input type="checkbox" /> 광고비지원</label>
+              <label class="checkbox-item"><input type="checkbox" /> 팀정착금</label>
+              <label class="checkbox-item"><input type="checkbox" /> 잔금유예</label>
+              <label class="checkbox-item"><input type="checkbox" /> 선납할인</label>
+              <label class="checkbox-item"><input type="checkbox" /> 페이백</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상세 내용 -->
+        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📝 상세 내용</div>
+
+          <div class="form-group">
+            <label class="form-label">현장 소개 제목 <span class="required">*</span></label>
+            <input type="text" class="form-input" placeholder="예: 팀수수료 1800만원! 광고비 50% 지원, 신규현장" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">상세 내용 <span class="required">*</span></label>
+            <textarea class="form-textarea" style="height:180px" placeholder="현장 특징, 분양가, 세대수, 수수료 상세, 지원 혜택, 현장 분위기 등을 자세히 작성해주세요." required></textarea>
+          </div>
+        </div>
+
+        <!-- 연락처 -->
+        <div style="margin-bottom:32px;">
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📞 연락처</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">담당자명 <span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="담당자 이름" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">연락처 <span class="required">*</span></label>
+              <input type="tel" class="form-input" placeholder="010-0000-0000" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">카카오톡 오픈채팅 또는 링크</label>
+            <input type="text" class="form-input" placeholder="https://open.kakao.com/..." />
+          </div>
+        </div>
+
+        <!-- 광고 상품 선택 -->
+        <div style="margin-bottom:32px; padding:24px; background:#F0F9FF; border-radius:10px; border:1px solid #BAE6FD;">
+          <div style="font-size:16px; font-weight:700; color:#0369A1; margin-bottom:16px;">⚡ 광고 상품 선택 (선택사항)</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:12px;">
+            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#fff; border-radius:8px; border:1.5px solid #E2E8F0; cursor:pointer;">
+              <input type="radio" name="adPlan" value="free" checked />
+              <div><div style="font-weight:700; margin-bottom:4px;">무료 등록</div><div style="font-size:12px; color:#64748B;">기본 노출</div></div>
+            </label>
+            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#fff; border-radius:8px; border:1.5px solid #E2E8F0; cursor:pointer;">
+              <input type="radio" name="adPlan" value="premium" />
+              <div><div style="font-weight:700; margin-bottom:4px;">프리미엄 <span style="color:#D97706">★</span></div><div style="font-size:12px; color:#64748B;">상위 노출 + 강조 표시</div></div>
+            </label>
+            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#FEF3C7; border-radius:8px; border:1.5px solid #FDE68A; cursor:pointer;">
+              <input type="radio" name="adPlan" value="ad" />
+              <div><div style="font-weight:700; margin-bottom:4px;">AD 배너 <span style="color:#D97706">🔥</span></div><div style="font-size:12px; color:#92400E;">메인 광고 배너 노출</div></div>
+            </label>
+            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#EDE9FE; border-radius:8px; border:1.5px solid #DDD6FE; cursor:pointer;">
+              <input type="radio" name="adPlan" value="unique" />
+              <div><div style="font-weight:700; margin-bottom:4px;">유니크 <span style="color:#7C3AED">👑</span></div><div style="font-size:12px; color:#5B21B6;">최상단 고정 노출</div></div>
+            </label>
+          </div>
+        </div>
+
+        <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:16px; margin-bottom:24px; font-size:13px; color:#DC2626; line-height:1.6;">
+          ⚠️ 허위 정보 기재 시 계정 정지 및 법적 조치가 취해질 수 있습니다.<br/>
+          등록된 현장 정보는 검토 후 게시됩니다 (영업일 기준 24시간 이내).
+        </div>
+
+        <button type="submit" class="form-submit">✅ 현장 등록 신청하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">🏗️ 분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+    </div>
+    <div class="footer-col">
+      <h4>서비스</h4>
+      <a href="listings.html">지역현장</a>
+      <a href="supporters.html">서포터즈</a>
+      <a href="register.html">현장등록</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객지원</h4>
+      <a href="#">공지사항</a>
+      <a href="#">고객센터</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객센터</h4>
+      <div class="footer-tel">📞 1800-XXXX</div>
+      <div class="footer-hours">월~금 09:00~18:00</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
+      <span class="footer-copy">© 2026 분양톡</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+function submitForm(e) {
+  e.preventDefault();
+  alert('✅ 현장 등록 신청이 완료되었습니다!\n\n검토 후 영업일 24시간 이내에 게시됩니다.\n문의: 1800-XXXX');
+  location.href = 'index.html';
+}
+</script>
+</body>
+</html>

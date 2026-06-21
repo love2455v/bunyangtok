@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서포터즈 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
+    </div>
+    <div class="topbar-links">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link active">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:28px 0;">
+  <div class="container">
+    <div style="font-size:22px; font-weight:700; margin-bottom:6px;">💼 서포터즈</div>
+    <div style="color:#64748B; font-size:14px;">분양현장을 서포트하는 전문 업체들을 찾아보세요</div>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:12px 0;">
+  <div class="container">
+    <div class="region-tabs" id="catTabs">
+      <button class="region-tab active" onclick="filterCat(this,'전체')">전체</button>
+      <button class="region-tab" onclick="filterCat(this,'광고·홍보')">광고·홍보</button>
+      <button class="region-tab" onclick="filterCat(this,'대출·금융')">대출·금융</button>
+      <button class="region-tab" onclick="filterCat(this,'렌탈·비품')">렌탈·비품</button>
+      <button class="region-tab" onclick="filterCat(this,'시행·대행')">시행·대행</button>
+      <button class="region-tab" onclick="filterCat(this,'인쇄·제작')">인쇄·제작</button>
+      <button class="region-tab" onclick="filterCat(this,'IT·소프트웨어')">IT·소프트웨어</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORTERS GRID -->
+<div style="padding:40px 0;">
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+      <div style="font-size:14px; color:#64748B;">총 <strong style="color:#1E293B" id="supporterCount">8</strong>개 업체</div>
+      <a href="supporters-register.html" class="btn-primary" style="font-size:13px; padding:10px 20px;">+ 업체 무료 등록</a>
+    </div>
+    <div class="supporters-grid" id="supportersGrid"></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div style="background:linear-gradient(135deg,#0F172A,#1E3A8A); color:#fff; padding:40px 0; margin-top:20px;">
+  <div class="container" style="text-align:center;">
+    <h3 style="font-size:22px; font-weight:700; margin-bottom:10px;">🎯 내 업체를 분양 종사자 30만 명에게 알리세요</h3>
+    <p style="color:#BFDBFE; font-size:14px; margin-bottom:24px;">무료로 등록하고 분양 현장 종사자들에게 내 서비스를 소개하세요</p>
+    <a href="supporters-register.html" class="btn-primary">무료로 업체 등록하기</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">🏗️ 분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+    </div>
+    <div class="footer-col">
+      <h4>서비스</h4>
+      <a href="listings.html">지역현장</a>
+      <a href="supporters.html">서포터즈</a>
+      <a href="register.html">현장등록</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객지원</h4>
+      <a href="#">공지사항</a>
+      <a href="#">고객센터</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객센터</h4>
+      <div class="footer-tel">📞 1800-XXXX</div>
+      <div class="footer-hours">월~금 09:00~18:00</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
+      <span class="footer-copy">© 2026 분양톡</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+const SUPPORTERS = [
+  { cat: "대출·금융", name: "헬퍼론", desc: "분양인, 분양고객, 개발사 모든 대출을 최고의 상품으로 선별 안내. 집단대출·PF대출·담보대출 전문", region: "전국", tel: "02-1234-5678" },
+  { cat: "대출·금융", name: "하이홈론", desc: "주택담보대출 고민 해결. 부동산 담보대출, 최고한도 최저금리 보장", region: "전국", tel: "1800-0000" },
+  { cat: "광고·홍보", name: "프리미엄 애드", desc: "분양현장 현수막, 현장 사인물, 모델하우스 배너, 옥외광고 전문. 빠른 납기 보장", region: "수도권", tel: "031-000-0000" },
+  { cat: "인쇄·제작", name: "퀵프린팅", desc: "명함·전단지·현수막 빠른 당일 제작. 분양현장 특화 인쇄 솔루션", region: "전국", tel: "02-0000-0000" },
+  { cat: "렌탈·비품", name: "사무렌탈플러스", desc: "프린터·정수기·사무용품·노트북 렌탈. 분양사무소 오픈 패키지 전문", region: "전국", tel: "1588-0000" },
+  { cat: "시행·대행", name: "메가디앤씨", desc: "아파트·오피스텔 분양 대행 전문. 10년 경력의 신뢰할 수 있는 파트너", region: "전국", tel: "02-0000-0000" },
+  { cat: "IT·소프트웨어", name: "분양CRM", desc: "분양현장 고객 DB 관리·문자발송·콜센터 솔루션. 계약률을 높이는 스마트 CRM", region: "전국", tel: "02-0000-0000" },
+  { cat: "광고·홍보", name: "SNS마케팅Pro", desc: "유튜브·인스타그램·카카오 분양 광고 대행. 타깃 마케팅으로 실계약 고객 유입", region: "전국", tel: "010-0000-0000" },
+];
+
+let currentCat = '전체';
+
+function renderSupporters(data) {
+  const grid = document.getElementById('supportersGrid');
+  document.getElementById('supporterCount').textContent = data.length;
+  grid.innerHTML = data.map(s => `
+    <div class="supporter-card">
+      <span class="supporter-cat">${s.cat}</span>
+      <div class="supporter-name">${s.name}</div>
+      <div class="supporter-desc">${s.desc}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+        <div class="supporter-region">📍 ${s.region}</div>
+        <a href="tel:${s.tel}" style="font-size:13px; font-weight:600; color:#2563EB;">📞 ${s.tel}</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentCat = cat;
+  const data = cat === '전체' ? SUPPORTERS : SUPPORTERS.filter(s => s.cat === cat);
+  renderSupporters(data);
+}
+
+document.addEventListener('DOMContentLoaded', () => renderSupporters(SUPPORTERS));
+</script>
+</body>
+</html>

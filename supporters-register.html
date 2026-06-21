@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서포터즈 등록 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
+      <span>🏢 전체회원 <strong>312,441</strong>명</span>
+    </div>
+    <div class="topbar-links">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="document.getElementById('mobileMenu').classList.toggle('open')">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html">현장등록</a>
+    <a href="login.html">로그인</a>
+    <a href="signup.html">회원가입</a>
+  </div>
+</header>
+
+<section style="padding:60px 0;">
+  <div class="container">
+    <div class="register-form">
+      <div class="form-title">서포터즈 업체 등록</div>
+      <div class="form-sub">전국 30만 분양 종사자에게 내 업체를 알리세요. 현수막·명함·렌탈·대출기관·시행사·대행사 모두 등록 가능합니다.</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">업체명 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="업체명 입력" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">업종 <span class="required">*</span></label>
+          <select class="form-select">
+            <option value="">선택해주세요</option>
+            <option>현수막/인쇄</option>
+            <option>명함/홍보물</option>
+            <option>렌탈업체</option>
+            <option>대출기관</option>
+            <option>시행사</option>
+            <option>대행사</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">담당자명 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="담당자 이름" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">연락처 <span class="required">*</span></label>
+          <input type="tel" class="form-input" placeholder="010-0000-0000" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">이메일</label>
+        <input type="email" class="form-input" placeholder="이메일 주소" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">서비스 지역</label>
+        <select class="form-select">
+          <option value="">전국</option>
+          <option>서울/경기</option>
+          <option>부산/경남</option>
+          <option>대구/경북</option>
+          <option>광주/전라</option>
+          <option>대전/충청</option>
+          <option>강원</option>
+          <option>제주</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">업체 소개</label>
+        <textarea class="form-textarea" placeholder="업체 소개, 주요 서비스, 특장점 등을 입력해주세요"></textarea>
+      </div>
+      <button class="form-submit" onclick="alert('서포터즈 등록 신청이 완료되었습니다!
+검토 후 24시간 이내 연락드리겠습니다.'); location.href='supporters.html';">서포터즈 등록 신청</button>
+    </div>
+  </div>
+</section>
+<footer class="footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="terms.html">이용약관</a>
+      <a href="posting-rules.html">게시물 운영규칙</a>
+      <span class="footer-copy">© 2026 분양톡. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>지역현장 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
+      <span>🏢 전체회원 <strong>312,441</strong>명</span>
+    </div>
+    <div class="topbar-links">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <div class="search-bar">
+      <select class="region-select" id="regionSelect">
+        <option value="">전체 지역</option>
+        <option value="서울">서울</option>
+        <option value="경기남부">경기남부</option>
+        <option value="경기북부">경기북부</option>
+        <option value="인천">인천</option>
+        <option value="부산">부산</option>
+        <option value="울산">울산</option>
+        <option value="대구">대구</option>
+        <option value="경상도">경상도</option>
+        <option value="대전">대전</option>
+        <option value="세종">세종</option>
+        <option value="충청도">충청도</option>
+        <option value="광주">광주</option>
+        <option value="전라도">전라도</option>
+        <option value="강원도">강원도</option>
+        <option value="제주도">제주도</option>
+      </select>
+      <input type="text" class="search-input" id="searchInput" placeholder="현장명, 업체명, 지역 검색..." />
+      <button class="search-btn" onclick="doSearch()">🔍 검색</button>
+    </div>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link active">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<!-- REGION TABS -->
+<div class="region-section">
+  <div class="container">
+    <div class="region-tabs" id="regionTabs">
+      <button class="region-tab active" onclick="filterRegion(this,'전체')">전체</button>
+      <button class="region-tab" onclick="filterRegion(this,'서울')">서울</button>
+      <button class="region-tab" onclick="filterRegion(this,'경기남부')">경기남부</button>
+      <button class="region-tab" onclick="filterRegion(this,'경기북부')">경기북부</button>
+      <button class="region-tab" onclick="filterRegion(this,'인천')">인천</button>
+      <button class="region-tab" onclick="filterRegion(this,'부산')">부산</button>
+      <button class="region-tab" onclick="filterRegion(this,'울산')">울산</button>
+      <button class="region-tab" onclick="filterRegion(this,'대구')">대구</button>
+      <button class="region-tab" onclick="filterRegion(this,'경상도')">경상도</button>
+      <button class="region-tab" onclick="filterRegion(this,'대전')">대전</button>
+      <button class="region-tab" onclick="filterRegion(this,'세종')">세종</button>
+      <button class="region-tab" onclick="filterRegion(this,'충청도')">충청도</button>
+      <button class="region-tab" onclick="filterRegion(this,'광주')">광주</button>
+      <button class="region-tab" onclick="filterRegion(this,'전라도')">전라도</button>
+      <button class="region-tab" onclick="filterRegion(this,'강원도')">강원도</button>
+      <button class="region-tab" onclick="filterRegion(this,'제주도')">제주도</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+        <option value="">업종 전체</option>
+        <option value="아파트">아파트</option>
+        <option value="오피스텔">오피스텔</option>
+        <option value="상가">상가</option>
+        <option value="도시형생활주택">도시형생활주택</option>
+        <option value="타운하우스">타운하우스</option>
+      </select>
+      <select class="filter-select" id="roleFilter" onchange="applyFilters()">
+        <option value="">직종 전체</option>
+        <option value="본부장">본부장</option>
+        <option value="팀장">팀장</option>
+        <option value="팀원">팀원</option>
+        <option value="사이드">사이드</option>
+        <option value="각개">각개</option>
+      </select>
+      <select class="filter-select" id="payFilter" onchange="applyFilters()">
+        <option value="">급여 전체</option>
+        <option value="계약수수료">계약수수료</option>
+        <option value="기본급+인센">기본급+인센</option>
+      </select>
+      <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+        <option value="latest">최신순</option>
+        <option value="best">인기순</option>
+        <option value="fee">수수료순</option>
+      </select>
+      <button class="filter-reset" onclick="resetFilters()">✕ 초기화</button>
+      <span class="filter-count" id="filterCount">전체 12개 현장</span>
+    </div>
+  </div>
+</div>
+
+<!-- LISTINGS -->
+<div class="listings-full">
+  <div class="container">
+    <div class="listings-grid" id="listingsGrid"></div>
+    <div style="text-align:center; padding:40px 0; color:#94A3B8;" id="emptyMsg" style="display:none">
+      검색 결과가 없습니다.
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">🏗️ 분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼<br/>전국 모든 현장 정보를 한눈에</p>
+    </div>
+    <div class="footer-col">
+      <h4>서비스</h4>
+      <a href="listings.html">지역현장</a>
+      <a href="map.html">지도현장</a>
+      <a href="supporters.html">서포터즈</a>
+      <a href="register.html">현장등록</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객지원</h4>
+      <a href="#">공지사항</a>
+      <a href="#">고객센터</a>
+      <a href="#">광고&제휴문의</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객센터</h4>
+      <div class="footer-tel">📞 1800-XXXX</div>
+      <div class="footer-hours">월~금 09:00~18:00</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
+      <span class="footer-copy">© 2026 분양톡</span>
+    </div>
+  </div>
+</footer>
+
+<div class="float-btns">
+  <a href="register.html" class="float-btn float-register">✏️ 등록</a>
+  <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+  let currentRegion = '전체';
+  let allData = [...LISTINGS];
+
+  function filterRegion(el, region) {
+    document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    currentRegion = region;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const type = document.getElementById('typeFilter').value;
+    const role = document.getElementById('roleFilter').value;
+    const pay  = document.getElementById('payFilter').value;
+    let data = currentRegion === '전체' ? [...LISTINGS] : LISTINGS.filter(l => l.region === currentRegion);
+    if (type) data = data.filter(l => l.type === type);
+    if (role) data = data.filter(l => l.role.includes(role));
+    if (pay)  data = data.filter(l => l.pay === pay);
+    document.getElementById('filterCount').textContent = `전체 ${data.length}개 현장`;
+    renderListings(data);
+  }
+
+  function resetFilters() {
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('roleFilter').value = '';
+    document.getElementById('payFilter').value  = '';
+    currentRegion = '전체';
+    document.querySelectorAll('.region-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+    applyFilters();
+  }
+
+  // URL 파라미터 처리
+  const params = new URLSearchParams(location.search);
+  const q = params.get('q');
+  const r = params.get('region');
+  if (q) document.getElementById('searchInput').value = q;
+  if (r) document.getElementById('regionSelect').value = r;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    let data = [...LISTINGS];
+    if (q) data = data.filter(l => l.title.toLowerCase().includes(q.toLowerCase()) || l.desc.toLowerCase().includes(q.toLowerCase()));
+    if (r) { data = data.filter(l => l.region === r); currentRegion = r; }
+    document.getElementById('filterCount').textContent = `전체 ${data.length}개 현장`;
+    renderListings(data);
+  });
+</script>
+</body>
+</html>

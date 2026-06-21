@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>현장 상세 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
+    </div>
+    <div class="topbar-links">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link active">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<!-- BREADCRUMB -->
+<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:12px 0;">
+  <div class="container" style="font-size:13px; color:#64748B;">
+    <a href="index.html" style="color:#2563EB;">홈</a> &gt;
+    <a href="listings.html" style="color:#2563EB;">지역현장</a> &gt;
+    <span id="breadTitle">현장 상세</span>
+  </div>
+</div>
+
+<div style="padding:32px 0 60px;">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 340px; gap:28px;" id="detailLayout">
+
+      <!-- 메인 콘텐츠 -->
+      <div>
+        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:32px;" id="detailMain">
+          <!-- JS로 채워짐 -->
+        </div>
+
+        <!-- 관련 현장 -->
+        <div style="margin-top:24px;">
+          <div class="section-header">
+            <div class="section-title">📋 비슷한 현장</div>
+            <a href="listings.html" class="view-all">전체보기 →</a>
+          </div>
+          <div class="listings-grid" id="relatedGrid"></div>
+        </div>
+      </div>
+
+      <!-- 사이드바 -->
+      <div>
+        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:24px; position:sticky; top:80px;" id="contactCard">
+          <!-- JS로 채워짐 -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo">🏗️ 분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+    </div>
+    <div class="footer-col">
+      <h4>서비스</h4>
+      <a href="listings.html">지역현장</a>
+      <a href="supporters.html">서포터즈</a>
+      <a href="register.html">현장등록</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객지원</h4>
+      <a href="#">공지사항</a>
+      <a href="#">고객센터</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객센터</h4>
+      <div class="footer-tel">📞 1800-XXXX</div>
+      <div class="footer-hours">월~금 09:00~18:00</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
+      <span class="footer-copy">© 2026 분양톡</span>
+    </div>
+  </div>
+</footer>
+
+<div class="float-btns">
+  <a href="register.html" class="float-btn float-register">✏️ 등록</a>
+  <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const id = parseInt(params.get('id')) || 1;
+const item = LISTINGS.find(l => l.id === id) || LISTINGS[0];
+
+document.title = item.title + ' - 분양톡';
+document.getElementById('breadTitle').textContent = item.title;
+
+document.getElementById('detailMain').innerHTML = `
+  <div class="card-badges" style="margin-bottom:16px;">
+    ${item.badges.map(b => `<span class="badge badge-${b==='HOT'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best'}">${b}</span>`).join('')}
+    <span class="badge badge-type">${item.type}</span>
+  </div>
+  <h1 style="font-size:22px; font-weight:800; margin-bottom:14px; line-height:1.4;">${item.title}</h1>
+  <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #E2E8F0;">
+    <span class="info-tag">📍 ${item.region}</span>
+    <span class="info-tag">${item.type}</span>
+    <span class="info-tag">🏢 ${item.company}</span>
+    <span class="info-tag">📅 등록일: 2026.06.21</span>
+  </div>
+
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">💼 모집 조건</h3>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:14px;">
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">직종</div><div style="font-weight:600;">${item.role.join(' / ')}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">급여형태</div><div style="font-weight:600;">${item.pay}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">팀 수수료</div><div style="font-weight:700; color:#2563EB; font-size:16px;">${item.fee}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">경력조건</div><div style="font-weight:600;">${item.career}</div></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">🎁 복리후생</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      ${item.welfare.map(w => `<span style="background:#F0F9FF; color:#0369A1; border:1px solid #BAE6FD; border-radius:20px; padding:6px 14px; font-size:13px; font-weight:500;">✓ ${w}</span>`).join('')}
+    </div>
+  </div>
+
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">📋 현장 소개</h3>
+    <div style="font-size:15px; line-height:1.8; color:#334155;">${item.desc}</div>
+  </div>
+
+  <div style="background:#FEF3C7; border-radius:8px; padding:16px; font-size:13px; color:#92400E;">
+    ⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 확인하세요.
+  </div>
+`;
+
+document.getElementById('contactCard').innerHTML = `
+  <h3 style="font-size:16px; font-weight:700; margin-bottom:16px;">📞 지원 / 문의</h3>
+  <div style="background:#F0F9FF; border-radius:8px; padding:14px; margin-bottom:16px; font-size:13px; color:#0369A1;">
+    <strong>${item.company}</strong><br/>팀 수수료 <strong style="font-size:16px;">${item.fee}</strong>
+  </div>
+  <a href="tel:010-0000-0000" class="contact-btn contact-call" style="display:block; background:#2563EB; color:#fff; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">📞 전화 문의</a>
+  <a href="#" onclick="alert('카카오톡 오픈채팅으로 연결됩니다.')" class="contact-btn contact-msg" style="display:block; background:#FEE500; color:#000; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">💬 카카오 문의</a>
+  <button onclick="alert('관심현장에 추가되었습니다!')" style="width:100%; padding:11px; border:1.5px solid #E2E8F0; border-radius:8px; font-size:14px; font-weight:600; color:#64748B; cursor:pointer; background:#fff;">🔖 관심현장 저장</button>
+
+  <div style="margin-top:20px; padding-top:20px; border-top:1px solid #E2E8F0; font-size:12px; color:#94A3B8; line-height:1.7;">
+    <div>📅 등록일: 2026.06.21</div>
+    <div>👁️ 조회수: 1,234회</div>
+    <div>🏢 업체: ${item.company}</div>
+  </div>
+`;
+
+// 관련 현장
+const related = LISTINGS.filter(l => l.id !== item.id && (l.region === item.region || l.type === item.type)).slice(0, 3);
+renderListings(related.length ? related : LISTINGS.slice(0,3));
+
+// 모바일에서 레이아웃 조정
+if (window.innerWidth < 900) {
+  document.getElementById('detailLayout').style.gridTemplateColumns = '1fr';
+}
+</script>
+</body>
+</html>
