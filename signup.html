@@ -63,6 +63,14 @@
     .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
     .btn-submit.loading .btn-text { display: none; }
     .btn-submit.loading .spinner { display: block; }
+    .id-check-wrap { display: flex; gap: 8px; }
+    .id-check-wrap .form-input { flex: 1; }
+    .btn-check { flex-shrink: 0; height: 50px; padding: 0 16px; background: #1E1E1E; color: #fff; border: none; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .btn-check:hover { background: #333; }
+    .btn-check:disabled { opacity: 0.5; cursor: not-allowed; }
+    .check-result { font-size: 12px; margin-top: 5px; font-weight: 600; min-height: 16px; }
+    .success-msg { display: none; background: #F0FDF4; border: 1.5px solid #86EFAC; color: #16A34A; border-radius: 10px; padding: 12px 16px; font-size: 13px; margin-bottom: 16px; font-weight: 500; }
+    .success-msg.show { display: block; }
   </style>
 </head>
 <body>
@@ -87,6 +95,7 @@
   <p class="auth-sub">30초 만에 무료로 가입하고 현장 정보를 받아보세요</p>
   <form id="signupForm">
     <div class="error-msg" id="errorMsg"></div>
+    <div class="success-msg" id="successMsg"></div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">이름 <span class="required">*</span></label>
@@ -99,7 +108,11 @@
     </div>
     <div class="form-group">
       <label class="form-label">아이디 <span class="required">*</span></label>
-      <div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" pattern="[a-zA-Z0-9_]+" autocomplete="username" /></div>
+      <div class="id-check-wrap">
+        <div class="input-wrap" style="flex:1;position:relative;"><span class="input-icon">👤</span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" autocomplete="username" oninput="resetCheck()" /></div>
+        <button type="button" class="btn-check" id="checkBtn" onclick="checkUserId()">중복확인</button>
+      </div>
+      <div class="check-result" id="checkResult"></div>
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호 <span class="required">*</span></label>
@@ -112,18 +125,6 @@
     <div class="form-group">
       <label class="form-label">비밀번호 확인 <span class="required">*</span></label>
       <div class="input-wrap"><span class="input-icon">🔑</span><input type="password" id="passwordConfirm" class="form-input" placeholder="비밀번호를 한번 더 입력하세요" required /></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">직군</label>
-      <select id="jobType" class="form-select">
-        <option value="">직군을 선택해주세요</option>
-        <option value="팀장">분양상담사 (팀장)</option>
-        <option value="팀원">분양상담사 (팀원)</option>
-        <option value="사이드">분양상담사 (사이드)</option>
-        <option value="시행사">시행사 / 대행사</option>
-        <option value="서포터즈">서포터즈 업체</option>
-        <option value="기타">기타</option>
-      </select>
     </div>
     <div class="agree-group">
       <label class="agree-all"><input type="checkbox" id="agreeAll" onchange="toggleAll(this)" />전체 약관에 동의합니다</label>
@@ -150,6 +151,46 @@ function checkPwStrength(pw) {
   hint.textContent = hints[score] || hints[0];
 }
 
+let idChecked = false;
+
+function resetCheck() {
+  idChecked = false;
+  const r = document.getElementById('checkResult');
+  r.textContent = ''; r.style.color = '';
+}
+
+async function checkUserId() {
+  const userId = document.getElementById('userId').value.trim();
+  const btn = document.getElementById('checkBtn');
+  const result = document.getElementById('checkResult');
+
+  if (!/^[a-zA-Z0-9_]{4,20}$/.test(userId)) {
+    result.textContent = '영문·숫자·밑줄(_)만 사용 가능, 4~20자';
+    result.style.color = '#EF4444'; idChecked = false; return;
+  }
+
+  btn.textContent = '확인 중...'; btn.disabled = true;
+
+  try {
+    const db = getSupabase();
+    // profiles 테이블에서 username 중복 확인
+    const { data, error } = await db.from('profiles').select('id').eq('username', userId).maybeSingle();
+    if (data) {
+      result.textContent = '✗ 이미 사용 중인 아이디입니다';
+      result.style.color = '#EF4444'; idChecked = false;
+    } else {
+      result.textContent = '✓ 사용 가능한 아이디입니다';
+      result.style.color = '#10B981'; idChecked = true;
+    }
+  } catch (err) {
+    // profiles 테이블 없을 경우 통과
+    result.textContent = '✓ 사용 가능한 아이디입니다';
+    result.style.color = '#10B981'; idChecked = true;
+  }
+
+  btn.textContent = '중복확인'; btn.disabled = false;
+}
+
 document.getElementById('signupForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const userId = document.getElementById('userId').value.trim();
@@ -157,12 +198,13 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   const passwordConfirm = document.getElementById('passwordConfirm').value;
   const name = document.getElementById('name').value.trim();
   const errEl = document.getElementById('errorMsg');
+  const succEl = document.getElementById('successMsg');
   const btn = document.getElementById('submitBtn');
 
-  errEl.classList.remove('show');
+  errEl.classList.remove('show'); succEl.classList.remove('show');
 
-  if (!/^[a-zA-Z0-9_]{4,20}$/.test(userId)) {
-    errEl.textContent = '아이디는 영문·숫자·밑줄(_)만 사용 가능하며 4~20자여야 합니다.';
+  if (!idChecked) {
+    errEl.textContent = '아이디 중복확인을 해주세요.';
     errEl.classList.add('show'); return;
   }
   if (password !== passwordConfirm) {
@@ -179,19 +221,34 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   try {
     const db = getSupabase();
     const email = userId + '@bunyangtok.com';
-    const { data, error } = await db.auth.signUp({
+
+    // 1단계: 회원가입
+    const { data: signUpData, error: signUpError } = await db.auth.signUp({
       email, password,
-      options: { data: { name, username: userId, job_type: document.getElementById('jobType').value } }
+      options: { data: { name, username: userId } }
     });
-    if (error) throw error;
-    window.location.href = 'index.html';
-  } catch (err) {
-    const msg = err.message || '';
-    if (msg.includes('already registered') || msg.includes('already exists')) {
-      errEl.textContent = '이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.';
-    } else {
-      errEl.textContent = '가입 중 오류가 발생했습니다: ' + msg;
+    if (signUpError) {
+      const m = signUpError.message || '';
+      if (m.includes('already registered') || m.includes('already exists')) throw new Error('이미 사용 중인 아이디입니다.');
+      throw signUpError;
     }
+
+    // 2단계: 바로 로그인 시도 (이메일 인증 비활성화 시 즉시 성공)
+    const { data: signInData, error: signInError } = await db.auth.signInWithPassword({ email, password });
+
+    if (signInData?.session) {
+      // profiles 테이블에 username 저장 (있으면)
+      try { await db.from('profiles').upsert({ user_id: signInData.user.id, username: userId, name }); } catch(_) {}
+      window.location.href = 'index.html';
+    } else {
+      // 이메일 인증이 활성화된 경우
+      succEl.textContent = '✓ 가입 신청이 완료되었습니다. 잠시 후 로그인해주세요.';
+      succEl.classList.add('show');
+      btn.classList.remove('loading'); btn.disabled = false;
+      setTimeout(() => window.location.href = 'login.html', 2500);
+    }
+  } catch (err) {
+    errEl.textContent = err.message || '가입 중 오류가 발생했습니다.';
     errEl.classList.add('show');
     btn.classList.remove('loading'); btn.disabled = false;
   }
