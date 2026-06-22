@@ -362,6 +362,7 @@
           <a id="heroKakaoBtn" href="#" target="_blank" class="btn-kakao">💬 카카오 문의</a>
           <button onclick="saveFavorite()" class="btn-save">🔖</button>
         </div>
+        <div id="heroPhoneNum" style="display:none;margin-top:10px;font-size:15px;font-weight:700;color:#334155;letter-spacing:0.5px;">📞 <span id="heroPhoneText"></span></div>
       </div>
     </div>
   </div>
@@ -444,6 +445,7 @@
           <div class="sidebar-info-row"><span class="label">직종</span><span class="value" id="sideRole"></span></div>
           <div class="sidebar-info-row"><span class="label">경력</span><span class="value" id="sideCareer"></span></div>
           <div class="sidebar-divider"></div>
+          <div id="sidePhoneNum" style="display:none;text-align:center;font-size:17px;font-weight:800;color:#1E293B;letter-spacing:1px;padding:10px 0 6px;"><span id="sidePhoneText"></span></div>
           <div class="sidebar-btns">
             <a id="sideCallBtn" href="#" class="sidebar-btn-call">📞 전화 문의하기</a>
             <a id="sideKakaoBtn" href="#" target="_blank" class="sidebar-btn-kakao">💬 카카오 문의</a>
@@ -581,6 +583,13 @@ function renderDetail(item) {
   if (item.phone) {
     document.getElementById('heroCallBtn').href = 'tel:' + item.phone;
     document.getElementById('sideCallBtn').href = 'tel:' + item.phone;
+    // 전화번호 텍스트 표시
+    const heroPhone = document.getElementById('heroPhoneNum');
+    const sidePhone = document.getElementById('sidePhoneNum');
+    const heroPhoneText = document.getElementById('heroPhoneText');
+    const sidePhoneText = document.getElementById('sidePhoneText');
+    if (heroPhone) { heroPhoneText.textContent = item.phone; heroPhone.style.display = 'block'; }
+    if (sidePhone) { sidePhoneText.textContent = item.phone; sidePhone.style.display = 'block'; }
   } else {
     document.getElementById('heroCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
     document.getElementById('sideCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
