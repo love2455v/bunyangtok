@@ -684,11 +684,12 @@ async function initDetailPage() {
   }
 
   // 로그인 상태 체크
+  let currentUser = null;
   if (db) {
     try {
-      const sess = await db.auth.getSession();
-      const user = sess?.data?.session?.user;
-      updateAuthUI(user);
+      const { data: userData } = await db.auth.getUser();
+      currentUser = userData?.user || null;
+      updateAuthUI(currentUser);
     } catch(e) {}
   }
 
@@ -704,6 +705,19 @@ async function initDetailPage() {
       if (error || !data) throw new Error('not found');
 
       renderDetail(data);
+
+      // 수정 버튼 (작성자 또는 관리자)
+      if (currentUser && (currentUser.id === data.user_id || currentUser.email === 'love2455v@bunyangtok.com')) {
+        const sidebtns = document.querySelector('.sidebar-btns');
+        if (sidebtns) {
+          const editLink = document.createElement('a');
+          editLink.href = 'edit.html?id=' + LISTING_ID;
+          editLink.className = 'sidebar-btn-save';
+          editLink.style.cssText = 'background:#eff6ff;border-color:#3b82f6;color:#2563eb;display:block;text-align:center;text-decoration:none;font-weight:700;';
+          editLink.textContent = '✏️ 이 현장 수정하기';
+          sidebtns.appendChild(editLink);
+        }
+      }
 
       document.getElementById('pageLoading').style.display = 'none';
       document.getElementById('pageContent').style.display = 'block';
