@@ -376,8 +376,8 @@ async function logout() {
 function goRegister() {
   var db = getSupabase();
   if (!db) { window.location.href = 'login.html?next=register.html'; return; }
-  db.auth.getSession().then(function(sess) {
-    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+  db.auth.getUser().then(function(result) {
+    var user = result && result.data && result.data.user ? result.data.user : null;
     if (!user) {
       alert('현장 등록은 로그인 후 이용 가능합니다.');
       window.location.href = 'login.html?next=register.html';
