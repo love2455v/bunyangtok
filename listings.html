@@ -3,30 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>지역현장 - 분양톡</title>
+  <title>ì§ì­íì¥ - ë¶ìí¡</title>
   <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
-<div class="topbar"><div class="container topbar-inner"><div class="topbar-stats"><span>👥 오늘 방문 <strong>2,847</strong>명</span><span>📋 신규현장 <strong>93</strong>건</span><span>🏢 전체회원 <strong>312,441</strong>명</span></div><div class="topbar-links"><a href="login.html">로그인</a><a href="signup.html" class="btn-join">회원가입</a></div></div></div>
-<header class="header"><div class="container header-inner"><a href="index.html" class="logo"><img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;"><span class="logo-text">분양<span class="logo-accent">톡</span></span></a><div class="search-bar"><select class="region-select" id="regionSelect"><option value="">전체 지역</option><option value="서울">서울</option><option value="경기남부">경기남부</option><option value="경기북부">경기북부</option><option value="인천">인천</option><option value="부산">부산</option><option value="울산">울산</option><option value="대구">대구</option><option value="경상도">경상도</option><option value="대전">대전</option><option value="세종">세종</option><option value="충청도">충청도</option><option value="광주">광주</option><option value="전라도">전라도</option><option value="강원도">강원도</option><option value="제주도">제주도</option></select><input type="text" class="search-input" id="searchInput" placeholder="현장명, 업체명, 지역 검색..." /><button class="search-btn" onclick="doSearch()">🔍 검색</button></div><nav class="nav-desktop"><a href="index.html" class="nav-link">HOME</a><a href="listings.html" class="nav-link active">지역현장</a><a href="map.html" class="nav-link">지도현장</a><a href="supporters.html" class="nav-link">서포터즈</a><a href="register.html" class="nav-link btn-register">+ 현장등록</a></nav><button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button></div><div class="mobile-menu" id="mobileMenu"><a href="index.html">HOME</a><a href="listings.html">지역현장</a><a href="map.html">지도현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a></div></header>
-<div class="region-section"><div class="container"><div class="region-tabs" id="regionTabs"><button class="region-tab active" onclick="filterRegion(this,'전체')">전체</button><button class="region-tab" onclick="filterRegion(this,'서울')">서울</button><button class="region-tab" onclick="filterRegion(this,'경기남부')">경기남부</button><button class="region-tab" onclick="filterRegion(this,'경기북부')">경기북부</button><button class="region-tab" onclick="filterRegion(this,'인천')">인천</button><button class="region-tab" onclick="filterRegion(this,'부산')">부산</button><button class="region-tab" onclick="filterRegion(this,'울산')">울산</button><button class="region-tab" onclick="filterRegion(this,'대구')">대구</button><button class="region-tab" onclick="filterRegion(this,'경상도')">경상도</button><button class="region-tab" onclick="filterRegion(this,'대전')">대전</button><button class="region-tab" onclick="filterRegion(this,'세종')">세종</button><button class="region-tab" onclick="filterRegion(this,'충청도')">충청도</button><button class="region-tab" onclick="filterRegion(this,'광주')">광주</button><button class="region-tab" onclick="filterRegion(this,'전라도')">전라도</button><button class="region-tab" onclick="filterRegion(this,'강원도')">강원도</button><button class="region-tab" onclick="filterRegion(this,'제주도')">제주도</button></div></div></div>
-<div class="filter-bar"><div class="container"><div class="filter-inner"><select class="filter-select" id="typeFilter" onchange="applyFilters()"><option value="">업종 전체</option><option value="아파트">아파트</option><option value="오피스텔">오피스텔</option><option value="상가">상가</option><option value="도시형생활주택">도시형생활주택</option><option value="타운하우스">타운하우스</option></select><select class="filter-select" id="roleFilter" onchange="applyFilters()"><option value="">직종 전체</option><option value="본부장">본부장</option><option value="팀장">팀장</option><option value="팀원">팀원</option><option value="사이드">사이드</option><option value="각개">각개</option></select><select class="filter-select" id="payFilter" onchange="applyFilters()"><option value="">급여 전체</option><option value="계약수수료">계약수수료</option><option value="기본급+인센">기본급+인센</option></select><select class="filter-select" id="sortFilter" onchange="applyFilters()"><option value="latest">최신순</option><option value="best">인기순</option><option value="fee">수수료순</option></select><button class="filter-reset" onclick="resetFilters()">✕ 초기화</button><span class="filter-count" id="filterCount">전체 현장 로딩 중...</span></div></div></div>
+<div class="topbar"><div class="container topbar-inner"><div class="topbar-stats"><span>ð¥ ì¤ë ë°©ë¬¸ <strong>2,847</strong>ëª</span><span>ð ì ê·íì¥ <strong>93</strong>ê±´</span><span>ð¢ ì ì²´íì <strong>312,441</strong>ëª</span></div><div class="topbar-links"><a href="login.html">ë¡ê·¸ì¸</a><a href="signup.html" class="btn-join">íìê°ì</a></div></div></div>
+<header class="header"><div class="container header-inner"><a href="index.html" class="logo"><img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;"><span class="logo-text">ë¶ì<span class="logo-accent">í¡</span></span></a><div class="search-bar"><select class="region-select" id="regionSelect"><option value="">ì ì²´ ì§ì­</option><option value="ìì¸">ìì¸</option><option value="ê²½ê¸°ë¨ë¶">ê²½ê¸°ë¨ë¶</option><option value="ê²½ê¸°ë¶ë¶">ê²½ê¸°ë¶ë¶</option><option value="ì¸ì²">ì¸ì²</option><option value="ë¶ì°">ë¶ì°</option><option value="ì¸ì°">ì¸ì°</option><option value="ëêµ¬">ëêµ¬</option><option value="ê²½ìë">ê²½ìë</option><option value="ëì ">ëì </option><option value="ì¸ì¢">ì¸ì¢</option><option value="ì¶©ì²­ë">ì¶©ì²­ë</option><option value="ê´ì£¼">ê´ì£¼</option><option value="ì ë¼ë">ì ë¼ë</option><option value="ê°ìë">ê°ìë</option><option value="ì ì£¼ë">ì ì£¼ë</option></select><input type="text" class="search-input" id="searchInput" placeholder="íì¥ëª, ìì²´ëª, ì§ì­ ê²ì..." /><button class="search-btn" onclick="doSearch()">ð ê²ì</button></div><nav class="nav-desktop"><a href="index.html" class="nav-link">HOME</a><a href="listings.html" class="nav-link active">ì§ì­íì¥</a><a href="map.html" class="nav-link">ì§ëíì¥</a><a href="supporters.html" class="nav-link">ìí¬í°ì¦</a><a href="register.html" class="nav-link btn-register">+ íì¥ë±ë¡</a></nav><button class="mobile-menu-btn" onclick="toggleMobileMenu()">â°</button></div><div class="mobile-menu" id="mobileMenu"><a href="index.html">HOME</a><a href="listings.html">ì§ì­íì¥</a><a href="map.html">ì§ëíì¥</a><a href="supporters.html">ìí¬í°ì¦</a><a href="register.html">íì¥ë±ë¡</a></div></header>
+<div class="region-section"><div class="container"><div class="region-tabs" id="regionTabs"><button class="region-tab active" onclick="filterRegion(this,'ì ì²´')">ì ì²´</button><button class="region-tab" onclick="filterRegion(this,'ìì¸')">ìì¸</button><button class="region-tab" onclick="filterRegion(this,'ê²½ê¸°ë¨ë¶')">ê²½ê¸°ë¨ë¶</button><button class="region-tab" onclick="filterRegion(this,'ê²½ê¸°ë¶ë¶')">ê²½ê¸°ë¶ë¶</button><button class="region-tab" onclick="filterRegion(this,'ì¸ì²')">ì¸ì²</button><button class="region-tab" onclick="filterRegion(this,'ë¶ì°')">ë¶ì°</button><button class="region-tab" onclick="filterRegion(this,'ì¸ì°')">ì¸ì°</button><button class="region-tab" onclick="filterRegion(this,'ëêµ¬')">ëêµ¬</button><button class="region-tab" onclick="filterRegion(this,'ê²½ìë')">ê²½ìë</button><button class="region-tab" onclick="filterRegion(this,'ëì ')">ëì </button><button class="region-tab" onclick="filterRegion(this,'ì¸ì¢')">ì¸ì¢</button><button class="region-tab" onclick="filterRegion(this,'ì¶©ì²­ë')">ì¶©ì²­ë</button><button class="region-tab" onclick="filterRegion(this,'ê´ì£¼')">ê´ì£¼</button><button class="region-tab" onclick="filterRegion(this,'ì ë¼ë')">ì ë¼ë</button><button class="region-tab" onclick="filterRegion(this,'ê°ìë')">ê°ìë</button><button class="region-tab" onclick="filterRegion(this,'ì ì£¼ë')">ì ì£¼ë</button></div></div></div>
+<div class="filter-bar"><div class="container"><div class="filter-inner"><select class="filter-select" id="typeFilter" onchange="applyFilters()"><option value="">ìì¢ ì ì²´</option><option value="ìíí¸">ìíí¸</option><option value="ì¤í¼ì¤í">ì¤í¼ì¤í</option><option value="ìê°">ìê°</option><option value="ëìíìíì£¼í">ëìíìíì£¼í</option><option value="íì´íì°ì¤">íì´íì°ì¤</option></select><select class="filter-select" id="roleFilter" onchange="applyFilters()"><option value="">ì§ì¢ ì ì²´</option><option value="ë³¸ë¶ì¥">ë³¸ë¶ì¥</option><option value="íì¥">íì¥</option><option value="íì">íì</option><option value="ì¬ì´ë">ì¬ì´ë</option><option value="ê°ê°">ê°ê°</option></select><select class="filter-select" id="payFilter" onchange="applyFilters()"><option value="">ê¸ì¬ ì ì²´</option><option value="ê³ì½ììë£">ê³ì½ììë£</option><option value="ê¸°ë³¸ê¸+ì¸ì¼">ê¸°ë³¸ê¸+ì¸ì¼</option></select><select class="filter-select" id="sortFilter" onchange="applyFilters()"><option value="latest">ìµì ì</option><option value="best">ì¸ê¸°ì</option><option value="fee">ììë£ì</option></select><button class="filter-reset" onclick="resetFilters()">â ì´ê¸°í</button><span class="filter-count" id="filterCount">ì ì²´ íì¥ ë¡ë© ì¤...</span></div></div></div>
 <div class="listings-full"><div class="container"><div class="listings-grid" id="listingsGrid"></div></div></div>
-<footer class="footer"><div class="container footer-inner"><div class="footer-col"><div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div><p class="footer-desc">분양현장 구인구직 No.1 플랫폼<br/>전국 모든 현장 정보를 한눈에</p></div><div class="footer-col"><h4>서비스</h4><a href="listings.html">지역현장</a><a href="map.html">지도현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a></div><div class="footer-col"><h4>고객지원</h4><a href="#">공지사항</a><a href="#">고객센터</a><a href="#">광고&amp;제휴문의</a></div><div class="footer-col"><h4>고객센터</h4><div class="footer-tel">📞 1800-XXXX</div><div class="footer-hours">월~금 09:00~18:00</div></div></div><div class="footer-bottom"><div class="container"><a href="#">개인정보 처리방침</a><a href="#">이용약관</a><span class="footer-copy">© 2026 분양톡</span></div></div></footer>
-<div class="float-btns"><a href="register.html" class="float-btn float-register">✏️ 등록</a><button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button></div>
+<footer class="footer"><div class="container footer-inner"><div class="footer-col"><div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">ë¶ì<span>í¡</span></div><p class="footer-desc">ë¶ìíì¥ êµ¬ì¸êµ¬ì§ No.1 íë«í¼<br/>ì êµ­ ëª¨ë  íì¥ ì ë³´ë¥¼ íëì</p></div><div class="footer-col"><h4>ìë¹ì¤</h4><a href="listings.html">ì§ì­íì¥</a><a href="map.html">ì§ëíì¥</a><a href="supporters.html">ìí¬í°ì¦</a><a href="register.html">íì¥ë±ë¡</a></div><div class="footer-col"><h4>ê³ ê°ì§ì</h4><a href="#">ê³µì§ì¬í­</a><a href="#">ê³ ê°ì¼í°</a><a href="#">ê´ê³ &amp;ì í´ë¬¸ì</a></div><div class="footer-col"><h4>ê³ ê°ì¼í°</h4><div class="footer-tel">ð 1800-XXXX</div><div class="footer-hours">ì~ê¸ 09:00~18:00</div></div></div><div class="footer-bottom"><div class="container"><a href="#">ê°ì¸ì ë³´ ì²ë¦¬ë°©ì¹¨</a><a href="#">ì´ì©ì½ê´</a><span class="footer-copy">Â© 2026 ë¶ìí¡</span></div></div></footer>
+<div class="float-btns"><a href="register.html" class="float-btn float-register">âï¸ ë±ë¡</a><button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">â²</button></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-  var _params = new URLSearchParams(location.search);
-  var _q = _params.get('q');
-  var _r = _params.get('region');
-  if (_q && document.getElementById('searchInput')) document.getElementById('searchInput').value = _q;
-  if (_r && document.getElementById('regionSelect')) document.getElementById('regionSelect').value = _r;
-  if (_r) { currentRegion = _r; }
-  if (_q) { currentKeyword = _q; }
+  // URL 파라미터 처리
+  (function() {
+    var p = new URLSearchParams(location.search);
+    var q = p.get('q'), r = p.get('region');
+    if (q) { currentKeyword = q; var ei = document.getElementById('searchInput'); if (ei) ei.value = q; }
+    if (r) { currentRegion = r; var ei2 = document.getElementById('regionSelect'); if (ei2) ei2.value = r; }
+  })();
 
-  var _cachedData = [];
-
+  // ===== 클라이언트 필터 함수 =====
   function filterRegion(el, region) {
     document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
@@ -35,10 +34,10 @@
   }
 
   function applyFilters() {
-    var type = document.getElementById('typeFilter') ? document.getElementById('typeFilter').value : '';
-    var role = document.getElementById('roleFilter') ? document.getElementById('roleFilter').value : '';
-    var pay  = document.getElementById('payFilter')  ? document.getElementById('payFilter').value  : '';
-    var data = _cachedData.filter(function(l) {
+    var type = (document.getElementById('typeFilter') || {}).value || '';
+    var role = (document.getElementById('roleFilter') || {}).value || '';
+    var pay  = (document.getElementById('payFilter')  || {}).value || '';
+    var data = (window._cachedData || []).filter(function(l) {
       if (currentRegion && currentRegion !== '전체' && l.region !== currentRegion) return false;
       if (type && l.type !== type) return false;
       var lRole = Array.isArray(l.role) ? l.role : [];
@@ -46,46 +45,21 @@
       if (pay && l.pay !== pay) return false;
       return true;
     });
-    document.getElementById('filterCount').textContent = '전체 ' + data.length + '개 현장';
+    var fc = document.getElementById('filterCount');
+    if (fc) fc.textContent = '전체 ' + data.length + '개 현장';
     renderListings(data);
   }
 
   function resetFilters() {
-    if (document.getElementById('typeFilter')) document.getElementById('typeFilter').value = '';
-    if (document.getElementById('roleFilter')) document.getElementById('roleFilter').value = '';
-    if (document.getElementById('payFilter'))  document.getElementById('payFilter').value  = '';
-    currentRegion = '전체';
-    document.querySelectorAll('.region-tab').forEach(function(t, i) { t.classList.toggle('active', i === 0); });
+    ['typeFilter','roleFilter','payFilter'].forEach(function(id) {
+      var e = document.getElementById(id); if (e) e.value = '';
+    });
+    currentRegion = '전체'; currentKeyword = '';
+    var si = document.getElementById('searchInput'); if (si) si.value = '';
+    document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
+    var first = document.querySelector('.region-tab'); if (first) first.classList.add('active');
     applyFilters();
   }
-
-  document.addEventListener('DOMContentLoaded', async function() {
-    var db = getSupabase();
-    if (db) {
-      try {
-        var result = await db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
-        if (!result.error && result.data) {
-          _cachedData = result.data;
-          var filtered = result.data;
-          if (_q) {
-            var kw = _q.toLowerCase();
-            filtered = result.data.filter(function(l) {
-              return (l.title && l.title.toLowerCase().includes(kw)) ||
-                     (l.description && l.description.toLowerCase().includes(kw)) ||
-                     (l.company && l.company.toLowerCase().includes(kw));
-            });
-          }
-          if (_r) filtered = filtered.filter(function(l) { return l.region === _r; });
-          document.getElementById('filterCount').textContent = '전체 ' + filtered.length + '개 현장';
-          renderListings(filtered);
-          return;
-        }
-      } catch(e) { console.warn('listings 로드 오류:', e); }
-    }
-    _cachedData = window.LISTINGS_FALLBACK || [];
-    renderListings(_cachedData);
-    document.getElementById('filterCount').textContent = '전체 ' + _cachedData.length + '개 현장';
-  });
 </script>
 </body>
 </html>
