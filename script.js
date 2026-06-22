@@ -392,10 +392,10 @@ function updateAuthUI(user) {
   var topbarLinks = document.querySelector('.topbar-links');
   if (!topbarLinks) return;
   if (user) {
-    var email = user.email || '';
-    var shortEmail = email.length > 14 ? email.substring(0, 14) + '...' : email;
+    var nickname = (user.user_metadata && user.user_metadata.nickname) ? user.user_metadata.nickname : (user.email || '').split('@')[0];
     topbarLinks.innerHTML =
-      '<span style="color:rgba(255,255,255,0.6);font-size:12px;margin-right:4px;">👤 ' + shortEmail + '</span>' +
+      '<a href="profile.html" style="color:rgba(255,255,255,0.85);font-size:12px;font-weight:600;text-decoration:none;margin-right:4px;">👤 ' + nickname + '</a>' +
+      '<a href="my-listings.html" style="color:rgba(255,255,255,0.7);font-size:12px;text-decoration:none;margin-right:4px;">내 현장</a>' +
       '<a href="#" onclick="logout();return false;" class="btn-join" style="background:#555;border-color:#555;">로그아웃</a>';
   }
 }
