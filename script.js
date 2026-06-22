@@ -431,8 +431,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   await renderBest();
 
   initTicker();
-  animateNumber(document.getElementById('todayVisit'), 2847);
-  animateNumber(document.getElementById('todaySite'), 93);
+  animateNumber(document.getElementById('todayVisit'), 47);
+  animateNumber(document.getElementById('todaySite'), 5);
 
   document.querySelectorAll('.section-header, .best-card, .news-item, .stat-card, .banner-content, .cta-box').forEach(function(el) {
     el.classList.add('section-reveal');
