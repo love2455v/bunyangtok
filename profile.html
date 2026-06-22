@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 프로필 - 분양톡</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', sans-serif; min-height: 100vh; background: #F8FAFC; }
+    .topbar { background: #1E1E1E; padding: 10px 0; }
+    .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+    .topbar-stats { display: flex; gap: 20px; color: rgba(255,255,255,0.6); font-size: 12px; }
+    .topbar-stats strong { color: #FF6B2B; }
+    .topbar-links { display: flex; gap: 12px; align-items: center; }
+    .btn-join { background: #FF6B2B; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; border: 1.5px solid #FF6B2B; }
+    .header { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 16px 0; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; gap: 16px; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-text { font-size: 22px; font-weight: 900; color: #1E1E1E; }
+    .logo-accent { color: #FF6B2B; }
+    .page-wrap { max-width: 600px; margin: 40px auto; padding: 0 20px 60px; }
+    .page-title { font-size: 24px; font-weight: 800; color: #1E1E1E; margin-bottom: 6px; }
+    .page-sub { font-size: 14px; color: #94A3B8; margin-bottom: 32px; }
+    .profile-card { background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; padding: 28px; margin-bottom: 16px; }
+    .card-title { font-size: 15px; font-weight: 800; color: #1E1E1E; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #F1F5F9; display: flex; align-items: center; gap: 8px; }
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
+    .form-input { width: 100%; height: 48px; padding: 0 16px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 15px; font-family: inherit; color: #1E1E1E; background: #F8FAFC; outline: none; transition: all 0.2s; }
+    .form-input:focus { border-color: #FF6B2B; background: #fff; box-shadow: 0 0 0 3px rgba(255,107,43,0.1); }
+    .form-input:disabled { color: #94A3B8; cursor: not-allowed; }
+    .btn-save { width: 100%; height: 48px; background: linear-gradient(135deg, #FF6B2B 0%, #FF8C42 100%); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .btn-save:hover { opacity: 0.9; }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { width: 100%; height: 48px; background: #fff; border: 1.5px solid #E2E8F0; color: #64748B; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 10px; transition: all 0.2s; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+    .btn-secondary:hover { border-color: #FF6B2B; color: #FF6B2B; }
+    .msg { display: none; border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
+    .msg.success { display: block; background: #F0FDF4; border: 1.5px solid #86EFAC; color: #16A34A; }
+    .msg.error { display: block; background: #FEF2F2; border: 1.5px solid #FECACA; color: #DC2626; }
+    .user-avatar { width: 64px; height: 64px; background: linear-gradient(135deg, #FF6B2B, #FF8C42); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px; }
+    .user-info-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .user-id { font-size: 13px; color: #94A3B8; margin-top: 2px; }
+    .hint { font-size: 11px; color: #94A3B8; margin-top: 5px; }
+    .quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .quick-link { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 16px; text-decoration: none; color: #334155; font-size: 13px; font-weight: 600; text-align: center; transition: all 0.2s; }
+    .quick-link:hover { border-color: #FF6B2B; color: #FF6B2B; background: #fff3ee; }
+    .quick-link .ql-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+    .divider { height: 1px; background: #F1F5F9; margin: 16px 0; }
+    .logout-btn { width: 100%; height: 44px; background: #fff; border: 1.5px solid #FECACA; color: #DC2626; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .logout-btn:hover { background: #FEF2F2; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong>47</strong>명</span>
+      <span>📋 신규현장 <strong>5</strong>건</span>
+    </div>
+    <div class="topbar-links" id="topbarLinks">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="logo-icon.svg" width="36" height="36" alt="" style="border-radius:8px;">
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div id="loadingWrap" style="text-align:center;padding:60px;color:#94A3B8;">불러오는 중...</div>
+  <div id="profileWrap" style="display:none;">
+    <div class="page-title">내 프로필</div>
+    <div class="page-sub">별명과 비밀번호를 변경할 수 있어요</div>
+
+    <!-- 유저 정보 -->
+    <div class="profile-card">
+      <div class="user-info-row">
+        <div class="user-avatar">👤</div>
+        <div>
+          <div style="font-size:18px;font-weight:800;color:#1E1E1E;" id="displayNickname">-</div>
+          <div class="user-id" id="displayUserId">-</div>
+        </div>
+      </div>
+      <div class="quick-links">
+        <a href="my-listings.html" class="quick-link"><span class="ql-icon">📋</span>내 현장 관리</a>
+        <a href="register.html" class="quick-link"><span class="ql-icon">✏️</span>현장 등록</a>
+      </div>
+    </div>
+
+    <!-- 별명 변경 -->
+    <div class="profile-card">
+      <div class="card-title">😊 별명 변경</div>
+      <div class="msg" id="nicknameMsg"></div>
+      <div class="form-group">
+        <label class="form-label">새 별명</label>
+        <input type="text" id="newNickname" class="form-input" placeholder="10자 이내" maxlength="10" />
+        <div class="hint">상단바와 프로필에 표시되는 이름입니다</div>
+      </div>
+      <button class="btn-save" onclick="saveNickname()">별명 저장</button>
+    </div>
+
+    <!-- 비밀번호 변경 -->
+    <div class="profile-card">
+      <div class="card-title">🔒 비밀번호 변경</div>
+      <div class="msg" id="pwMsg"></div>
+      <div class="form-group">
+        <label class="form-label">새 비밀번호</label>
+        <input type="password" id="newPw" class="form-input" placeholder="8자 이상" minlength="8" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">새 비밀번호 확인</label>
+        <input type="password" id="newPwConfirm" class="form-input" placeholder="비밀번호 재입력" />
+      </div>
+      <button class="btn-save" onclick="savePassword()">비밀번호 변경</button>
+    </div>
+
+    <!-- 로그아웃 -->
+    <div class="profile-card">
+      <button class="logout-btn" onclick="doLogout()">🚪 로그아웃</button>
+    </div>
+  </div>
+
+  <!-- 비로그인 -->
+  <div id="notLoginWrap" style="display:none;text-align:center;padding:60px 20px;">
+    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+    <div style="font-size:18px;font-weight:700;color:#1E1E1E;margin-bottom:8px;">로그인이 필요합니다</div>
+    <div style="font-size:14px;color:#94A3B8;margin-bottom:24px;">프로필을 보려면 먼저 로그인해주세요</div>
+    <a href="login.html" style="display:inline-block;background:#FF6B2B;color:#fff;padding:12px 32px;border-radius:10px;font-weight:700;text-decoration:none;">로그인하기</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+let _db = null;
+let _user = null;
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  setTimeout(() => { el.className = 'msg'; }, 3500);
+}
+
+async function saveNickname() {
+  const nickname = document.getElementById('newNickname').value.trim();
+  if (!nickname) { showMsg('nicknameMsg', '별명을 입력해주세요', 'error'); return; }
+  try {
+    const { error } = await _db.auth.updateUser({ data: { nickname } });
+    if (error) throw error;
+    document.getElementById('displayNickname').textContent = nickname;
+    showMsg('nicknameMsg', '✓ 별명이 변경되었습니다', 'success');
+    updateAuthUI(_user);
+  } catch(e) {
+    showMsg('nicknameMsg', e.message || '오류가 발생했습니다', 'error');
+  }
+}
+
+async function savePassword() {
+  const pw = document.getElementById('newPw').value;
+  const pw2 = document.getElementById('newPwConfirm').value;
+  if (!pw || pw.length < 8) { showMsg('pwMsg', '8자 이상 입력해주세요', 'error'); return; }
+  if (pw !== pw2) { showMsg('pwMsg', '비밀번호가 일치하지 않습니다', 'error'); return; }
+  try {
+    const { error } = await _db.auth.updateUser({ password: pw });
+    if (error) throw error;
+    showMsg('pwMsg', '✓ 비밀번호가 변경되었습니다', 'success');
+    document.getElementById('newPw').value = '';
+    document.getElementById('newPwConfirm').value = '';
+  } catch(e) {
+    showMsg('pwMsg', e.message || '오류가 발생했습니다', 'error');
+  }
+}
+
+async function doLogout() {
+  if (_db) await _db.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+  _db = getSupabase();
+  if (!_db) {
+    document.getElementById('loadingWrap').style.display = 'none';
+    document.getElementById('notLoginWrap').style.display = 'block';
+    return;
+  }
+
+  try {
+    const { data } = await _db.auth.getUser();
+    _user = data?.user || null;
+  } catch(e) { _user = null; }
+
+  document.getElementById('loadingWrap').style.display = 'none';
+
+  if (!_user) {
+    document.getElementById('notLoginWrap').style.display = 'block';
+    return;
+  }
+
+  updateAuthUI(_user);
+  document.getElementById('profileWrap').style.display = 'block';
+
+  const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : _user.email.split('@')[0];
+  const userId = _user.email ? _user.email.split('@')[0] : '-';
+
+  document.getElementById('displayNickname').textContent = nickname;
+  document.getElementById('displayUserId').textContent = '아이디: ' + userId;
+  document.getElementById('newNickname').value = nickname;
+});
+</script>
+</body>
+</html>
