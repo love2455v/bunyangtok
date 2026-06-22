@@ -107,6 +107,11 @@
       </div>
     </div>
     <div class="form-group">
+      <label class="form-label">별명 <span class="required">*</span></label>
+      <div class="input-wrap"><span class="input-icon">😊</span><input type="text" id="nickname" class="form-input" placeholder="예) 홍팀장, 서울에이스 (10자 이내)" maxlength="10" required /></div>
+      <div style="font-size:11px;color:#94A3B8;margin-top:5px;">상단바 및 프로필에 표시되는 이름입니다</div>
+    </div>
+    <div class="form-group">
       <label class="form-label">아이디 <span class="required">*</span></label>
       <div class="id-check-wrap">
         <div class="input-wrap" style="flex:1;position:relative;"><span class="input-icon">👤</span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" autocomplete="username" oninput="resetCheck()" /></div>
@@ -197,6 +202,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('passwordConfirm').value;
   const name = document.getElementById('name').value.trim();
+  const nickname = document.getElementById('nickname').value.trim();
   const errEl = document.getElementById('errorMsg');
   const succEl = document.getElementById('successMsg');
   const btn = document.getElementById('submitBtn');
@@ -225,7 +231,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     // 1단계: 회원가입
     const { data: signUpData, error: signUpError } = await db.auth.signUp({
       email, password,
-      options: { data: { name, username: userId } }
+      options: { data: { name, username: userId, nickname } }
     });
     if (signUpError) {
       const m = signUpError.message || '';
@@ -238,7 +244,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
 
     if (signInData?.session) {
       // profiles 테이블에 username 저장 (있으면)
-      try { await db.from('profiles').upsert({ user_id: signInData.user.id, username: userId, name }); } catch(_) {}
+      try { await db.from('profiles').upsert({ user_id: signInData.user.id, username: userId, name, nickname }); } catch(_) {}
       window.location.href = 'index.html';
     } else {
       // 이메일 인증이 활성화된 경우
