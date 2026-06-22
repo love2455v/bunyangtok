@@ -375,11 +375,12 @@ async function logout() {
 // ===== 현장등록 (로그인 필요) =====
 function goRegister() {
   var db = getSupabase();
-  if (!db) { window.location.href = 'login.html'; return; }
-  db.auth.getUser().then(function(result) {
-    if (result.error || !result.data || !result.data.user) {
+  if (!db) { window.location.href = 'login.html?next=register.html'; return; }
+  db.auth.getSession().then(function(sess) {
+    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+    if (!user) {
       alert('현장 등록은 로그인 후 이용 가능합니다.');
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?next=register.html';
     } else {
       window.location.href = 'register.html';
     }
@@ -406,8 +407,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   var currentUser = null;
   if (db) {
     try {
-      var sess = await db.auth.getSession();
-      currentUser = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+      var { data: { user: _u }, error: _e } = await db.auth.getUser();
+      currentUser = _u || null;
     } catch(e) {}
   }
 
