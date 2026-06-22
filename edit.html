@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>현장 수정 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    .edit-page { padding: 40px 0 80px; background: #F8FAFC; min-height: 80vh; }
+    .edit-form { background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); max-width: 780px; margin: 0 auto; }
+    .form-title { font-size: 24px; font-weight: 800; color: #1E1E1E; margin-bottom: 6px; }
+    .form-sub { font-size: 14px; color: #64748B; margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 14px; font-family: inherit; box-sizing: border-box; transition: border-color 0.2s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #FF6B2B; }
+    .form-textarea { resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .required { color: #EF4444; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; }
+    .btn-submit { width: 100%; padding: 16px; background: #FF6B2B; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    .btn-submit:hover { background: #e05a1f; }
+    .btn-delete { width: 100%; padding: 14px; background: #fff; color: #EF4444; border: 2px solid #EF4444; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    .btn-delete:hover { background: #FEF2F2; }
+    .section-title { font-size: 15px; font-weight: 700; color: #2563EB; margin-bottom: 18px; }
+    .section-wrap { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 2px solid #E2E8F0; }
+    #loadingMsg { text-align: center; padding: 60px 0; color: #64748B; font-size: 16px; }
+    #errorMsg { text-align: center; padding: 60px 0; color: #EF4444; font-size: 16px; display: none; }
+    @media(max-width:600px) { .form-row { grid-template-columns: 1fr; } .edit-form { padding: 24px 16px; } }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats"><span>✏️ 현장 수정</span></div>
+    <div class="topbar-links">
+      <a href="my-listings.html">내 현장 목록</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link">지역현장</a>
+      <a href="my-listings.html" class="nav-link">내 현장</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="my-listings.html">내 현장</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<div class="edit-page">
+  <div class="container">
+    <div id="loadingMsg">⏳ 현장 정보를 불러오는 중...</div>
+    <div id="errorMsg">❌ 현장을 찾을 수 없거나 수정 권한이 없습니다. <a href="listings.html">목록으로 돌아가기</a></div>
+
+    <div class="edit-form" id="editForm" style="display:none;">
+      <div class="form-title">✏️ 현장 수정</div>
+      <div class="form-sub">내용을 수정하고 저장 버튼을 누르세요. <span style="color:#EF4444">*</span> 필수항목</div>
+
+      <!-- 기본정보 -->
+      <div class="section-wrap">
+        <div class="section-title">📌 기본 정보</div>
+        <div class="form-group">
+          <label class="form-label">현장명 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="title" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">지역 <span class="required">*</span></label>
+            <select class="form-select" id="region" required>
+              <option value="">지역 선택</option>
+              <option>서울</option><option>경기남부</option><option>경기북부</option>
+              <option>인천</option><option>부산</option><option>울산</option>
+              <option>대구</option><option>경상도</option><option>대전</option>
+              <option>세종</option><option>충청도</option><option>광주</option>
+              <option>전라도</option><option>강원도</option><option>제주도</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">업종 <span class="required">*</span></label>
+            <select class="form-select" id="type" required>
+              <option value="">업종 선택</option>
+              <option>아파트</option><option>오피스텔</option><option>상가</option>
+              <option>도시형생활주택</option><option>타운하우스</option><option>기타</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">회사명 <span class="required">*</span></label>
+          <input type="text" class="form-input" id="company" required />
+        </div>
+      </div>
+
+      <!-- 모집 조건 -->
+      <div class="section-wrap">
+        <div class="section-title">💼 모집 조건</div>
+        <div class="form-group">
+          <label class="form-label">모집 직종</label>
+          <div class="checkbox-group" id="roleGroup">
+            <label class="checkbox-item"><input type="checkbox" value="본부장" /> 본부장</label>
+            <label class="checkbox-item"><input type="checkbox" value="팀장" /> 팀장</label>
+            <label class="checkbox-item"><input type="checkbox" value="팀원" /> 팀원</label>
+            <label class="checkbox-item"><input type="checkbox" value="사이드" /> 사이드</label>
+            <label class="checkbox-item"><input type="checkbox" value="각개" /> 각개</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">급여 형태</label>
+            <select class="form-select" id="pay">
+              <option value="">선택</option>
+              <option>계약수수료</option>
+              <option>기본급+인센티브</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">팀 수수료</label>
+            <input type="text" class="form-input" id="fee" placeholder="예: 1,200만원" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">경력 조건</label>
+            <select class="form-select" id="career">
+              <option>경력무관</option>
+              <option>3개월이상</option>
+              <option>6개월이상</option>
+              <option>12개월이상</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">복리후생</label>
+          <div class="checkbox-group" id="welfareGroup">
+            <label class="checkbox-item"><input type="checkbox" value="숙소제공" /> 숙소제공</label>
+            <label class="checkbox-item"><input type="checkbox" value="숙소비지원" /> 숙소비지원</label>
+            <label class="checkbox-item"><input type="checkbox" value="광고비지원" /> 광고비지원</label>
+            <label class="checkbox-item"><input type="checkbox" value="팀정착금" /> 팀정착금</label>
+            <label class="checkbox-item"><input type="checkbox" value="잔금유예" /> 잔금유예</label>
+            <label class="checkbox-item"><input type="checkbox" value="선납할인" /> 선납할인</label>
+            <label class="checkbox-item"><input type="checkbox" value="페이백" /> 페이백</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상세 내용 -->
+      <div class="section-wrap">
+        <div class="section-title">📝 상세 내용</div>
+        <div class="form-group">
+          <label class="form-label">상세 내용 <span class="required">*</span></label>
+          <textarea class="form-textarea" id="description" style="height:160px;" required></textarea>
+        </div>
+      </div>
+
+      <!-- 연락처 -->
+      <div class="section-wrap">
+        <div class="section-title">📞 연락처</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">전화번호</label>
+            <input type="tel" class="form-input" id="phone" placeholder="010-0000-0000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">카카오 오픈채팅 URL</label>
+            <input type="text" class="form-input" id="kakao_url" placeholder="https://open.kakao.com/..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- 공개 여부 -->
+      <div style="margin-bottom:28px;">
+        <label class="form-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="is_active" style="width:18px;height:18px;" />
+          <span>현장 공개 (체크 해제 시 비공개)</span>
+        </label>
+      </div>
+
+      <button class="btn-submit" onclick="saveEdit()">💾 수정 저장</button>
+      <button class="btn-delete" onclick="deleteListing()">🗑️ 현장 삭제</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+var ADMIN_EMAIL = 'love2455v@bunyangtok.com';
+var listingId = new URLSearchParams(location.search).get('id');
+
+(async function init() {
+  if (!listingId) { showError(); return; }
+
+  var db = getSupabase();
+  if (!db) { showError(); return; }
+
+  // 로그인 확인
+  var { data: { user } } = await db.auth.getUser();
+  if (!user) { alert('로그인이 필요합니다.'); location.href = 'login.html'; return; }
+
+  // 현장 데이터 로드
+  var { data, error } = await db.from('listings').select('*').eq('id', listingId).single();
+  if (error || !data) { showError(); return; }
+
+  // 권한 확인: 본인이거나 관리자
+  var isOwner = data.user_id === user.id;
+  var isAdmin = user.email === ADMIN_EMAIL;
+  if (!isOwner && !isAdmin) { showError(); return; }
+
+  // 폼에 데이터 채우기
+  document.getElementById('title').value = data.title || '';
+  setSelect('region', data.region);
+  setSelect('type', data.type);
+  document.getElementById('company').value = data.company || '';
+  document.getElementById('description').value = data.description || '';
+  setSelect('pay', data.pay);
+  document.getElementById('fee').value = data.fee || '';
+  setSelect('career', data.career);
+  document.getElementById('phone').value = data.phone || '';
+  document.getElementById('kakao_url').value = data.kakao_url || '';
+  document.getElementById('is_active').checked = data.is_active !== false;
+
+  // 직종 체크박스
+  var roles = Array.isArray(data.role) ? data.role : [];
+  document.querySelectorAll('#roleGroup input[type=checkbox]').forEach(function(cb) {
+    cb.checked = roles.includes(cb.value);
+  });
+
+  // 복리후생 체크박스
+  var welfares = Array.isArray(data.welfare) ? data.welfare : [];
+  document.querySelectorAll('#welfareGroup input[type=checkbox]').forEach(function(cb) {
+    cb.checked = welfares.includes(cb.value);
+  });
+
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('editForm').style.display = 'block';
+})();
+
+function setSelect(id, val) {
+  var el = document.getElementById(id);
+  if (!el || !val) return;
+  for (var i = 0; i < el.options.length; i++) {
+    if (el.options[i].value === val || el.options[i].text === val) {
+      el.selectedIndex = i; break;
+    }
+  }
+}
+
+function showError() {
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'block';
+}
+
+async function saveEdit() {
+  var db = getSupabase();
+  var { data: { user } } = await db.auth.getUser();
+  if (!user) { alert('로그인 필요'); return; }
+
+  var roles = [...document.querySelectorAll('#roleGroup input:checked')].map(c => c.value);
+  var welfare = [...document.querySelectorAll('#welfareGroup input:checked')].map(c => c.value);
+
+  var payload = {
+    title: document.getElementById('title').value,
+    region: document.getElementById('region').value,
+    type: document.getElementById('type').value,
+    company: document.getElementById('company').value,
+    description: document.getElementById('description').value,
+    pay: document.getElementById('pay').value,
+    fee: document.getElementById('fee').value,
+    career: document.getElementById('career').value,
+    phone: document.getElementById('phone').value,
+    kakao_url: document.getElementById('kakao_url').value,
+    is_active: document.getElementById('is_active').checked,
+    role: roles,
+    welfare: welfare,
+  };
+
+  var { error } = await db.from('listings').update(payload).eq('id', listingId);
+  if (error) { alert('저장 오류: ' + error.message); return; }
+  alert('✅ 현장이 수정되었습니다!');
+  location.href = 'my-listings.html';
+}
+
+async function deleteListing() {
+  if (!confirm('정말 이 현장을 삭제하시겠습니까?\n삭제 후 복구가 불가능합니다.')) return;
+  var db = getSupabase();
+  var { error } = await db.from('listings').delete().eq('id', listingId);
+  if (error) { alert('삭제 오류: ' + error.message); return; }
+  alert('현장이 삭제되었습니다.');
+  location.href = 'my-listings.html';
+}
+</script>
+</body>
+</html>
