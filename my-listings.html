@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 현장 목록 - 분양톡</title>
+  <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    .my-page { padding: 40px 0 80px; background: #F8FAFC; min-height: 80vh; }
+    .my-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .my-title { font-size: 22px; font-weight: 800; color: #1E1E1E; }
+    .my-sub { font-size: 14px; color: #64748B; margin-top: 4px; }
+    .btn-new { display: inline-block; padding: 10px 20px; background: #FF6B2B; color: #fff; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 14px; }
+    .my-list { display: flex; flex-direction: column; gap: 14px; }
+    .my-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 16px; }
+    .my-card-thumb { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #E2E8F0; }
+    .my-card-body { flex: 1; min-width: 0; }
+    .my-card-title { font-size: 15px; font-weight: 700; color: #1E1E1E; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .my-card-meta { font-size: 13px; color: #64748B; }
+    .my-card-status { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+    .status-active { background: #DCFCE7; color: #16A34A; }
+    .status-inactive { background: #FEF3C7; color: #D97706; }
+    .my-card-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-edit { padding: 8px 16px; background: #F1F5F9; color: #374151; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-edit:hover { background: #E2E8F0; }
+    .btn-view { padding: 8px 16px; background: #FF6B2B; color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+    .empty-msg { text-align: center; padding: 80px 0; color: #94A3B8; }
+    .empty-msg a { color: #FF6B2B; font-weight: 700; }
+    .admin-badge { display: inline-block; background: #7C3AED; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+    #loadingMsg { text-align: center; padding: 60px 0; color: #64748B; }
+    @media(max-width:600px) { .my-card { flex-wrap: wrap; } .my-card-thumb { display: none; } .my-card-btns { width: 100%; } }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats"><span>📋 내 등록 현장</span></div>
+    <div class="topbar-links">
+      <a href="listings.html">전체 현장</a>
+      <a href="register.html" class="btn-join">+ 현장등록</a>
+    </div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link">지역현장</a>
+      <a href="my-listings.html" class="nav-link active">내 현장</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="my-listings.html">내 현장</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<div class="my-page">
+  <div class="container">
+    <div class="my-header">
+      <div>
+        <div class="my-title" id="pageTitle">내 등록 현장</div>
+        <div class="my-sub" id="pageSub">로딩 중...</div>
+      </div>
+      <a href="register.html" class="btn-new">+ 새 현장 등록</a>
+    </div>
+
+    <div id="loadingMsg">⏳ 불러오는 중...</div>
+    <div class="my-list" id="myList"></div>
+    <div class="empty-msg" id="emptyMsg" style="display:none;">
+      등록한 현장이 없습니다.<br/><br/>
+      <a href="register.html">첫 번째 현장을 등록해보세요 →</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+var ADMIN_EMAIL = 'love2455v@bunyangtok.com';
+
+(async function init() {
+  var db = getSupabase();
+  if (!db) { document.getElementById('loadingMsg').textContent = 'Supabase 연결 오류'; return; }
+
+  var { data: { user } } = await db.auth.getUser();
+  if (!user) {
+    alert('로그인이 필요합니다.');
+    location.href = 'login.html';
+    return;
+  }
+
+  var isAdmin = user.email === ADMIN_EMAIL;
+
+  // 관리자면 전체, 아니면 내 현장만
+  var query = db.from('listings').select('*').order('created_at', { ascending: false });
+  if (!isAdmin) query = query.eq('user_id', user.id);
+
+  var { data, error } = await query;
+  document.getElementById('loadingMsg').style.display = 'none';
+
+  if (isAdmin) {
+    document.getElementById('pageTitle').innerHTML = '전체 현장 관리 <span class="admin-badge">관리자</span>';
+  }
+  document.getElementById('pageSub').textContent = '총 ' + (data ? data.length : 0) + '개 현장';
+
+  if (error || !data || data.length === 0) {
+    document.getElementById('emptyMsg').style.display = 'block';
+    return;
+  }
+
+  var list = document.getElementById('myList');
+  data.forEach(function(item) {
+    var d = new Date(item.created_at);
+    var dateStr = d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+    var statusClass = item.is_active ? 'status-active' : 'status-inactive';
+    var statusText = item.is_active ? '공개중' : '비공개';
+
+    var card = document.createElement('div');
+    card.className = 'my-card';
+    card.innerHTML = '<img class="my-card-thumb" src="' + (item.img || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=200&q=70') + '" alt="" />' +
+      '<div class="my-card-body">' +
+        '<div class="my-card-title">' + escHtml(item.title || '제목 없음') + '</div>' +
+        '<div class="my-card-meta">' +
+          '<span class="my-card-status ' + statusClass + '">' + statusText + '</span>' +
+          escHtml(item.region || '') + ' · ' + escHtml(item.type || '') + ' · ' + dateStr +
+        '</div>' +
+      '</div>' +
+      '<div class="my-card-btns">' +
+        '<a href="detail.html?id=' + item.id + '" class="btn-edit">보기</a>' +
+        '<a href="edit.html?id=' + item.id + '" class="btn-view">✏️ 수정</a>' +
+      '</div>';
+    list.appendChild(card);
+  });
+})();
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
