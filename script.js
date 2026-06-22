@@ -374,17 +374,7 @@ async function logout() {
 
 // ===== 현장등록 (로그인 필요) =====
 function goRegister() {
-  var db = getSupabase();
-  if (!db) { window.location.href = 'login.html?next=register.html'; return; }
-  db.auth.getSession().then(function(sess) {
-    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
-    if (!user) {
-      alert('현장 등록은 로그인 후 이용 가능합니다.');
-      window.location.href = 'login.html?next=register.html';
-    } else {
-      window.location.href = 'register.html';
-    }
-  });
+  window.location.href = 'register.html';
 }
 
 // ===== 헤더 로그인 상태 UI 업데이트 =====
