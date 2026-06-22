@@ -1,8 +1,8 @@
 /* ============================
-   분양톡 - 메인 스크립트 (Supabase 연동)
+   ë¶ìí¡ - ë©ì¸ ì¤í¬ë¦½í¸ (Supabase ì°ë)
    ============================ */
 
-// ===== Supabase 설정 =====
+// ===== Supabase ì¤ì  =====
 const SUPABASE_URL = 'https://prjmiekiehvveklbqxjt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable__4jfHSNP9Cifbtyvt-dI6Q_uiHjjZEo';
 var _supabase = null;
@@ -15,68 +15,68 @@ function getSupabase() {
   return _supabase;
 }
 
-// ===== 폴백 데이터 (Supabase 연결 실패 시) =====
+// ===== í´ë°± ë°ì´í° (Supabase ì°ê²° ì¤í¨ ì) =====
 var LISTINGS_FALLBACK = [
   {
-    id: 1, region: "서울", type: "아파트", badges: ["HOT", "AD"],
+    id: 1, region: "ìì¸", type: "ìíí¸", badges: ["HOT", "AD"],
     img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70",
-    title: "노원역 효성해링턴 센트럴 (신규)",
-    description: "팀 수수료 1,800만원, 광고비지원 50%, 일반분양아파트 신규현장 콜 무수히 뜹니다.",
-    role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "6개월이상", company: "지승", fee: "1,800만원"
+    title: "ë¸ìì­ í¨ì±í´ë§í´ ì¼í¸ë´ (ì ê·)",
+    description: "í ììë£ 1,800ë§ì, ê´ê³ ë¹ì§ì 50%, ì¼ë°ë¶ììíí¸ ì ê·íì¥ ì½ ë¬´ìí ë¹ëë¤.",
+    role: ["íì¥", "íì"], pay: "ê³ì½ììë£", welfare: ["ì¼ë¹", "ê´ê³ ë¹ì§ì"],
+    career: "6ê°ìì´ì", company: "ì§ì¹", fee: "1,800ë§ì"
   },
   {
-    id: 2, region: "인천", type: "아파트", badges: ["HOT"],
+    id: 2, region: "ì¸ì²", type: "ìíí¸", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
-    title: "힐스테이트 구월 아트파크",
-    description: "1호선 예술공원역 직통연결, 랜드마크 498세대 4개동, 롯데백화점 자리 최고의 입지",
-    role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["경력무관"],
-    career: "12개월이상", company: "지우알엔씨", fee: "1,200만원"
+    title: "íì¤íì´í¸ êµ¬ì ìí¸íí¬",
+    description: "1í¸ì  ìì ê³µìì­ ì§íµì°ê²°, ëëë§í¬ 498ì¸ë 4ê°ë, ë¡¯ë°ë°±íì  ìë¦¬ ìµê³ ì ìì§",
+    role: ["íì¥", "íì", "ì¬ì´ë"], pay: "ê³ì½ììë£", welfare: ["ê²½ë ¥ë¬´ê´"],
+    career: "12ê°ìì´ì", company: "ì§ì°ììì¨", fee: "1,200ë§ì"
   },
   {
-    id: 3, region: "부산", type: "아파트", badges: ["NEW", "AD"],
+    id: 3, region: "ë¶ì°", type: "ìíí¸", badges: ["NEW", "AD"],
     img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70",
-    title: "알티에로 광안 팀장/팀원/사이드 모집",
-    description: "부산 민락동 광안대교 파노라마 뷰, MBC자리, 부산최초 하이퍼엔드 아파트 분양",
-    role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["일비", "경력무관"],
-    career: "경력무관", company: "(주)루트플래닝", fee: "협의"
+    title: "ìí°ìë¡ ê´ì íì¥/íì/ì¬ì´ë ëª¨ì§",
+    description: "ë¶ì° ë¯¼ë½ë ê´ìëêµ íë¸ë¼ë§ ë·°, MBCìë¦¬, ë¶ì°ìµì´ íì´í¼ìë ìíí¸ ë¶ì",
+    role: ["íì¥", "íì", "ì¬ì´ë"], pay: "ê³ì½ììë£", welfare: ["ì¼ë¹", "ê²½ë ¥ë¬´ê´"],
+    career: "ê²½ë ¥ë¬´ê´", company: "(ì£¼)ë£¨í¸íëë", fee: "íì"
   },
   {
-    id: 4, region: "경기남부", type: "아파트", badges: ["HOT", "대박"],
+    id: 4, region: "ê²½ê¸°ë¨ë¶", type: "ìíí¸", badges: ["HOT", "ëë°"],
     img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=70",
-    title: "수지자이 에디시온 (대행사 직영)",
-    description: "일비 7만원 (방문시 상담), 대행사 직영으로 빠른 계약 진행",
-    role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비"],
-    career: "3개월이상", company: "주식회사 유성", fee: "800만원"
+    title: "ìì§ìì´ ìëìì¨ (ëíì¬ ì§ì)",
+    description: "ì¼ë¹ 7ë§ì (ë°©ë¬¸ì ìë´), ëíì¬ ì§ìì¼ë¡ ë¹ ë¥¸ ê³ì½ ì§í",
+    role: ["íì¥", "íì"], pay: "ê³ì½ììë£", welfare: ["ì¼ë¹"],
+    career: "3ê°ìì´ì", company: "ì£¼ìíì¬ ì ì±", fee: "800ë§ì"
   },
   {
-    id: 5, region: "충청도", type: "아파트", badges: ["HOT"],
+    id: 5, region: "ì¶©ì²­ë", type: "ìíí¸", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70",
-    title: "천안 성성호수공원 파격 조건 변경",
-    description: "경쟁 상대 없는 독점 현장, 이보다 계약 쓰기 편한 곳은 없습니다.",
-    role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "경력무관", company: "씨아이앤드플러스", fee: "970만원"
+    title: "ì²ì ì±ì±í¸ìê³µì íê²© ì¡°ê±´ ë³ê²½",
+    description: "ê²½ì ìë ìë ëì  íì¥, ì´ë³´ë¤ ê³ì½ ì°ê¸° í¸í ê³³ì ììµëë¤.",
+    role: ["íì¥", "íì"], pay: "ê³ì½ììë£", welfare: ["ì¼ë¹", "ê´ê³ ë¹ì§ì"],
+    career: "ê²½ë ¥ë¬´ê´", company: "ì¨ìì´ì¤ëíë¬ì¤", fee: "970ë§ì"
   },
   {
-    id: 6, region: "경기남부", type: "아파트", badges: ["NEW"],
+    id: 6, region: "ê²½ê¸°ë¨ë¶", type: "ìíí¸", badges: ["NEW"],
     img: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?w=600&q=70",
-    title: "경기광주역 롯데캐슬 시그니처 2,326세대",
-    description: "매주 총괄 광고 집행, 압도적 혜택! 대형 단지 안정적 현장",
-    role: ["본부장", "팀장"], pay: "계약수수료", welfare: ["광고비지원"],
-    career: "경력무관", company: "도우씨앤디", fee: "협의"
+    title: "ê²½ê¸°ê´ì£¼ì­ ë¡¯ë°ìºì¬ ìê·¸ëì² 2,326ì¸ë",
+    description: "ë§¤ì£¼ ì´ê´ ê´ê³  ì§í, ìëì  íí! ëí ë¨ì§ ìì ì  íì¥",
+    role: ["ë³¸ë¶ì¥", "íì¥"], pay: "ê³ì½ììë£", welfare: ["ê´ê³ ë¹ì§ì"],
+    career: "ê²½ë ¥ë¬´ê´", company: "ëì°ì¨ì¤ë", fee: "íì"
   }
 ];
 
-// ===== 현재 필터 상태 =====
-var currentRegion = '전체';
+// ===== íì¬ íí° ìí =====
+var currentRegion = 'ì ì²´';
 var currentKeyword = '';
 
-// ===== Supabase에서 현장 불러오기 =====
+// ===== Supabaseìì íì¥ ë¶ë¬ì¤ê¸° =====
 async function loadListings(region, keyword) {
   var db = getSupabase();
   if (!db) {
     var data = LISTINGS_FALLBACK.slice();
-    if (region && region !== '전체') data = data.filter(function(l) { return l.region === region; });
+    if (region && region !== 'ì ì²´') data = data.filter(function(l) { return l.region === region; });
     if (keyword) {
       var kw = keyword.toLowerCase();
       data = data.filter(function(l) {
@@ -88,25 +88,33 @@ async function loadListings(region, keyword) {
   }
 
   try {
-    var query = db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
-    if (region && region !== '전체') query = query.eq('region', region);
-    if (keyword) query = query.or('title.ilike.%' + keyword + '%,description.ilike.%' + keyword + '%,company.ilike.%' + keyword + '%');
-
-    var result = await query;
-    if (result.error) throw result.error;
-    renderListings(result.data || []);
+    var allResult = await db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
+    if (allResult.error) throw allResult.error;
+    window._cachedData = allResult.data || [];
+    var data = window._cachedData.slice();
+    if (region && region !== '전체') data = data.filter(function(l) { return l.region === region; });
+    if (keyword) {
+      var kw = keyword.toLowerCase();
+      data = data.filter(function(l) {
+        return (l.title||'').toLowerCase().includes(kw)||(l.description||'').toLowerCase().includes(kw)||(l.company||'').toLowerCase().includes(kw);
+      });
+    }
+    var fc = document.getElementById('filterCount');
+    if (fc) fc.textContent = '전체 ' + data.length + '개 현장';
+    renderListings(data);
   } catch (err) {
     console.error('Supabase 오류:', err);
+    window._cachedData = LISTINGS_FALLBACK;
     renderListings(LISTINGS_FALLBACK);
   }
 }
 
-// ===== 현장 카드 렌더링 =====
+// ===== íì¥ ì¹´ë ë ëë§ =====
 function renderListings(data) {
   var grid = document.getElementById('listingsGrid');
   if (!grid) return;
   if (!data || data.length === 0) {
-    grid.innerHTML = '<div style="text-align:center;padding:60px;color:#999;">해당 지역 현장이 없습니다.</div>';
+    grid.innerHTML = '<div style="text-align:center;padding:60px;color:#999;">í´ë¹ ì§ì­ íì¥ì´ ììµëë¤.</div>';
     return;
   }
   grid.innerHTML = data.map(function(item) {
@@ -122,23 +130,23 @@ function renderListings(data) {
       '<div class="card-body">' +
       '<div class="card-badges">' +
         badges.map(function(b) {
-          var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === '대박' ? 'best' : 'type';
+          var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === 'ëë°' ? 'best' : 'type';
           return '<span class="badge badge-' + cls + '">' + b + '</span>';
         }).join('') +
-        '<span class="badge badge-type">' + (item.type || '아파트') + '</span>' +
+        '<span class="badge badge-type">' + (item.type || 'ìíí¸') + '</span>' +
       '</div>' +
       '<div class="card-title">' + item.title + '</div>' +
       '<div class="card-desc">' + desc + '</div>' +
       '<div class="card-info">' +
-        '<span class="info-tag">📍 ' + item.region + '</span>' +
-        '<span class="info-tag highlight">💰 팀수수료 ' + (item.fee || '협의') + '</span>' +
+        '<span class="info-tag">ð ' + item.region + '</span>' +
+        '<span class="info-tag highlight">ð° íììë£ ' + (item.fee || 'íì') + '</span>' +
         '<span class="info-tag">' + role.join('/') + '</span>' +
         welfare.map(function(w) { return '<span class="info-tag">' + w + '</span>'; }).join('') +
-        '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
+        '<span class="info-tag">ê²½ë ¥: ' + (item.career || 'ê²½ë ¥ë¬´ê´') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company">📋 ' + item.company + '</span>' +
-        '<span class="card-btn">상세보기</span>' +
+        '<span class="card-company">ð ' + item.company + '</span>' +
+        '<span class="card-btn">ìì¸ë³´ê¸°</span>' +
       '</div>' +
       '</div>' +
     '</div>';
@@ -146,7 +154,7 @@ function renderListings(data) {
   initScrollAnimations();
 }
 
-// ===== 베스트 현장 렌더링 =====
+// ===== ë² ì¤í¸ íì¥ ë ëë§ =====
 async function renderBest() {
   var grid = document.getElementById('bestGrid');
   if (!grid) return;
@@ -162,7 +170,7 @@ async function renderBest() {
             '<div class="best-rank ' + (rankClass[i] || '') + '">' + (i + 1) + '</div>' +
             '<div class="best-info">' +
               '<div class="best-title">' + item.title + '</div>' +
-              '<div class="best-meta">📍 ' + item.region + ' · ' + (item.type || '아파트') + ' · 조회 ' + (item.views || 0).toLocaleString() + '</div>' +
+              '<div class="best-meta">ð ' + item.region + ' Â· ' + (item.type || 'ìíí¸') + ' Â· ì¡°í ' + (item.views || 0).toLocaleString() + '</div>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -171,27 +179,27 @@ async function renderBest() {
     } catch(e) {}
   }
 
-  // 폴백
+  // í´ë°±
   var BEST = [
-    { rank: 1, title: "거제 하이엔드 일반분양 아파트", region: "경상도", type: "아파트", views: "4,821" },
-    { rank: 2, title: "힐스테이트 가야 조건변경", region: "경기남부", type: "아파트", views: "3,962" },
-    { rank: 3, title: "힐스테이트 구월 아트파크", region: "인천", type: "아파트", views: "3,541" },
-    { rank: 4, title: "노원역 효성해링턴 센트럴", region: "서울", type: "아파트", views: "3,204" },
-    { rank: 5, title: "경기광주역 롯데캐슬 시그니처", region: "경기남부", type: "아파트", views: "2,987" },
-    { rank: 6, title: "수지자이 에디시온", region: "경기남부", type: "아파트", views: "2,744" },
+    { rank: 1, title: "ê±°ì  íì´ìë ì¼ë°ë¶ì ìíí¸", region: "ê²½ìë", type: "ìíí¸", views: "4,821" },
+    { rank: 2, title: "íì¤íì´í¸ ê°ì¼ ì¡°ê±´ë³ê²½", region: "ê²½ê¸°ë¨ë¶", type: "ìíí¸", views: "3,962" },
+    { rank: 3, title: "íì¤íì´í¸ êµ¬ì ìí¸íí¬", region: "ì¸ì²", type: "ìíí¸", views: "3,541" },
+    { rank: 4, title: "ë¸ìì­ í¨ì±í´ë§í´ ì¼í¸ë´", region: "ìì¸", type: "ìíí¸", views: "3,204" },
+    { rank: 5, title: "ê²½ê¸°ê´ì£¼ì­ ë¡¯ë°ìºì¬ ìê·¸ëì²", region: "ê²½ê¸°ë¨ë¶", type: "ìíí¸", views: "2,987" },
+    { rank: 6, title: "ìì§ìì´ ìëìì¨", region: "ê²½ê¸°ë¨ë¶", type: "ìíí¸", views: "2,744" },
   ];
   grid.innerHTML = BEST.map(function(item, i) {
     return '<div class="best-card" onclick="location.href=\'listings.html\'">' +
       '<div class="best-rank ' + (rankClass[i] || '') + '">' + item.rank + '</div>' +
       '<div class="best-info">' +
         '<div class="best-title">' + item.title + '</div>' +
-        '<div class="best-meta">📍 ' + item.region + ' · ' + item.type + ' · 조회 ' + item.views + '</div>' +
+        '<div class="best-meta">ð ' + item.region + ' Â· ' + item.type + ' Â· ì¡°í ' + item.views + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
-// ===== 지역 필터 =====
+// ===== ì§ì­ íí° =====
 function filterRegion(el, region) {
   document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
   el.classList.add('active');
@@ -199,18 +207,18 @@ function filterRegion(el, region) {
   loadListings(region, currentKeyword);
 }
 
-// ===== 필터 초기화 =====
+// ===== íí° ì´ê¸°í =====
 function resetFilters() {
   document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
   var first = document.querySelector('.region-tab');
   if (first) first.classList.add('active');
   document.querySelectorAll('.filter-select').forEach(function(s) { s.selectedIndex = 0; });
-  currentRegion = '전체';
+  currentRegion = 'ì ì²´';
   currentKeyword = '';
-  loadListings('전체', '');
+  loadListings('ì ì²´', '');
 }
 
-// ===== 검색 =====
+// ===== ê²ì =====
 function doSearch() {
   var keyword = (document.getElementById('searchInput') ? document.getElementById('searchInput').value.trim() : '');
   var region = (document.getElementById('regionSelect') ? document.getElementById('regionSelect').value : '');
@@ -230,20 +238,20 @@ if (document.getElementById('searchInput')) {
   });
 }
 
-// ===== 모바일 메뉴 =====
+// ===== ëª¨ë°ì¼ ë©ë´ =====
 function toggleMobileMenu() {
   var menu = document.getElementById('mobileMenu');
   if (menu) menu.classList.toggle('open');
 }
 
-// ===== 티커 =====
+// ===== í°ì»¤ =====
 function initTicker() {
   var content = document.getElementById('tickerContent');
   if (!content) return;
   content.innerHTML += content.innerHTML;
 }
 
-// ===== 숫자 애니메이션 =====
+// ===== ì«ì ì ëë©ì´ì =====
 function animateNumber(el, target) {
   if (!el) return;
   var current = 0;
@@ -255,42 +263,46 @@ function animateNumber(el, target) {
   }, 30);
 }
 
-// ===== 스크롤 애니메이션 =====
+// ===== ì¤í¬ë¡¤ ì ëë©ì´ì =====
 function initScrollAnimations() {
-  var targets = document.querySelectorAll('.fade-up, .section-reveal');
-  if (!targets.length) return;
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var targets = document.querySelectorAll('.fade-up, .section-reveal');
+      if (!targets.length) return;
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+      targets.forEach(function(el) { observer.observe(el); });
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  targets.forEach(function(el) { observer.observe(el); });
+  });
 }
 
-// ===== URL 파라미터 =====
+// ===== URL íë¼ë¯¸í° =====
 function getUrlParam(name) {
   return new URLSearchParams(window.location.search).get(name) || '';
 }
 
-// ===== 현장 등록 =====
+// ===== íì¥ ë±ë¡ =====
 async function submitListing(e) {
   e.preventDefault();
   var db = getSupabase();
   var btn = document.getElementById('submitBtn');
-  if (btn) { btn.textContent = '등록 중...'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'ë±ë¡ ì¤...'; btn.disabled = true; }
 
   var formData = {
     region: document.getElementById('region') ? document.getElementById('region').value : '',
-    type: document.getElementById('type') ? document.getElementById('type').value : '아파트',
+    type: document.getElementById('type') ? document.getElementById('type').value : 'ìíí¸',
     title: document.getElementById('title') ? document.getElementById('title').value : '',
     description: document.getElementById('description') ? document.getElementById('description').value : '',
     company: document.getElementById('company') ? document.getElementById('company').value : '',
     fee: document.getElementById('fee') ? document.getElementById('fee').value : '',
     pay: document.getElementById('pay') ? document.getElementById('pay').value : '',
-    career: document.getElementById('career') ? document.getElementById('career').value : '경력무관',
+    career: document.getElementById('career') ? document.getElementById('career').value : 'ê²½ë ¥ë¬´ê´',
     role: Array.from(document.querySelectorAll('input[name="role"]:checked')).map(function(el) { return el.value; }),
     welfare: Array.from(document.querySelectorAll('input[name="welfare"]:checked')).map(function(el) { return el.value; }),
     badges: [],
@@ -298,8 +310,8 @@ async function submitListing(e) {
   };
 
   if (!db) {
-    alert('잠시 후 다시 시도해주세요.');
-    if (btn) { btn.textContent = '현장 등록하기'; btn.disabled = false; }
+    alert('ì ì í ë¤ì ìëí´ì£¼ì¸ì.');
+    if (btn) { btn.textContent = 'íì¥ ë±ë¡íê¸°'; btn.disabled = false; }
     return;
   }
 
@@ -310,73 +322,73 @@ async function submitListing(e) {
 
     var result = await db.from('listings').insert([formData]);
     if (result.error) throw result.error;
-    alert('현장이 성공적으로 등록되었습니다!');
+    alert('íì¥ì´ ì±ê³µì ì¼ë¡ ë±ë¡ëììµëë¤!');
     window.location.href = 'listings.html';
   } catch (err) {
-    alert('등록 오류: ' + (err.message || err));
-    if (btn) { btn.textContent = '현장 등록하기'; btn.disabled = false; }
+    alert('ë±ë¡ ì¤ë¥: ' + (err.message || err));
+    if (btn) { btn.textContent = 'íì¥ ë±ë¡íê¸°'; btn.disabled = false; }
   }
 }
 
-// ===== 회원가입 =====
+// ===== íìê°ì =====
 async function submitSignup(e) {
   e.preventDefault();
   var db = getSupabase();
-  if (!db) { alert('연결 오류'); return; }
+  if (!db) { alert('ì°ê²° ì¤ë¥'); return; }
   var email = document.getElementById('email') ? document.getElementById('email').value : '';
   var password = document.getElementById('password') ? document.getElementById('password').value : '';
   var name = document.getElementById('name') ? document.getElementById('name').value : '';
   var btn = document.getElementById('submitBtn');
-  if (btn) { btn.textContent = '처리 중...'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'ì²ë¦¬ ì¤...'; btn.disabled = true; }
   try {
     var result = await db.auth.signUp({ email: email, password: password, options: { data: { name: name } } });
     if (result.error) throw result.error;
-    alert('회원가입 완료! 이메일을 확인해주세요.');
+    alert('íìê°ì ìë£! ì´ë©ì¼ì íì¸í´ì£¼ì¸ì.');
     window.location.href = 'login.html';
   } catch (err) {
-    alert('오류: ' + (err.message || err));
-    if (btn) { btn.textContent = '회원가입'; btn.disabled = false; }
+    alert('ì¤ë¥: ' + (err.message || err));
+    if (btn) { btn.textContent = 'íìê°ì'; btn.disabled = false; }
   }
 }
 
-// ===== 로그인 =====
+// ===== ë¡ê·¸ì¸ =====
 async function submitLogin(e) {
   e.preventDefault();
   var db = getSupabase();
-  if (!db) { alert('연결 오류'); return; }
-  // userId 필드(아이디 방식) 또는 email 필드 둘 다 지원
+  if (!db) { alert('ì°ê²° ì¤ë¥'); return; }
+  // userId íë(ìì´ë ë°©ì) ëë email íë ë ë¤ ì§ì
   var userId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
   var emailRaw = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
   var email = userId ? (userId + '@bunyangtok.com') : emailRaw;
   var password = document.getElementById('password') ? document.getElementById('password').value : '';
   var btn = document.getElementById('submitBtn');
-  if (!email) { alert('아이디를 입력해주세요.'); return; }
-  if (btn) { btn.textContent = '로그인 중...'; btn.disabled = true; }
+  if (!email) { alert('ìì´ëë¥¼ ìë ¥í´ì£¼ì¸ì.'); return; }
+  if (btn) { btn.textContent = 'ë¡ê·¸ì¸ ì¤...'; btn.disabled = true; }
   try {
     var result = await db.auth.signInWithPassword({ email: email, password: password });
     if (result.error) throw result.error;
     window.location.href = 'index.html';
   } catch (err) {
-    alert('아이디 또는 비밀번호가 올바르지 않습니다.');
-    if (btn) { btn.textContent = '로그인'; btn.disabled = false; }
+    alert('ìì´ë ëë ë¹ë°ë²í¸ê° ì¬ë°ë¥´ì§ ììµëë¤.');
+    if (btn) { btn.textContent = 'ë¡ê·¸ì¸'; btn.disabled = false; }
   }
 }
 
-// ===== 로그아웃 =====
+// ===== ë¡ê·¸ìì =====
 async function logout() {
   var db = getSupabase();
   if (db) await db.auth.signOut();
   window.location.href = 'index.html';
 }
 
-// ===== 현장등록 (로그인 필요) =====
+// ===== íì¥ë±ë¡ (ë¡ê·¸ì¸ íì) =====
 function goRegister() {
   var db = getSupabase();
   if (!db) { window.location.href = 'login.html?next=register.html'; return; }
   db.auth.getSession().then(function(sess) {
     var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
     if (!user) {
-      alert('현장 등록은 로그인 후 이용 가능합니다.');
+      alert('íì¥ ë±ë¡ì ë¡ê·¸ì¸ í ì´ì© ê°ë¥í©ëë¤.');
       window.location.href = 'login.html?next=register.html';
     } else {
       window.location.href = 'register.html';
@@ -384,7 +396,7 @@ function goRegister() {
   });
 }
 
-// ===== 헤더 로그인 상태 UI 업데이트 =====
+// ===== í¤ë ë¡ê·¸ì¸ ìí UI ìë°ì´í¸ =====
 function updateAuthUI(user) {
   var topbarLinks = document.querySelector('.topbar-links');
   if (!topbarLinks) return;
@@ -392,14 +404,14 @@ function updateAuthUI(user) {
     var email = user.email || '';
     var shortEmail = email.length > 14 ? email.substring(0, 14) + '...' : email;
     topbarLinks.innerHTML =
-      '<span style="color:rgba(255,255,255,0.6);font-size:12px;margin-right:4px;">👤 ' + shortEmail + '</span>' +
-      '<a href="#" onclick="logout();return false;" class="btn-join" style="background:#555;border-color:#555;">로그아웃</a>';
+      '<span style="color:rgba(255,255,255,0.6);font-size:12px;margin-right:4px;">ð¤ ' + shortEmail + '</span>' +
+      '<a href="#" onclick="logout();return false;" class="btn-join" style="background:#555;border-color:#555;">ë¡ê·¸ìì</a>';
   }
 }
 
-// ===== 초기화 =====
+// ===== ì´ê¸°í =====
 document.addEventListener('DOMContentLoaded', async function() {
-  // 로그인 상태 확인
+  // ë¡ê·¸ì¸ ìí íì¸
   var db = getSupabase();
   var currentUser = null;
   if (db) {
@@ -409,14 +421,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch(e) {}
   }
 
-  // register.html은 로그인 필수
+  // register.htmlì ë¡ê·¸ì¸ íì
   if (window.location.pathname.includes('register.html') && !currentUser) {
-    alert('현장 등록은 로그인 후 이용 가능합니다.');
+    alert('íì¥ ë±ë¡ì ë¡ê·¸ì¸ í ì´ì© ê°ë¥í©ëë¤.');
     window.location.href = 'login.html?next=register.html';
     return;
   }
 
-  // 헤더 UI 업데이트
+  // í¤ë UI ìë°ì´í¸
   updateAuthUI(currentUser);
 
   var urlRegion = getUrlParam('region');
@@ -439,6 +451,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   var registerForm = document.getElementById('registerForm');
   if (registerForm) registerForm.addEventListener('submit', submitListing);
 
-  // signup.html / login.html은 각 파일의 인라인 스크립트가 직접 처리
-  // (중복 이벤트 방지 — script.js에서는 별도 연결 안 함)
+  // signup.html / login.htmlì ê° íì¼ì ì¸ë¼ì¸ ì¤í¬ë¦½í¸ê° ì§ì  ì²ë¦¬
+  // (ì¤ë³µ ì´ë²¤í¸ ë°©ì§ â script.jsììë ë³ë ì°ê²° ì í¨)
 });
