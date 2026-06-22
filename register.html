@@ -57,13 +57,13 @@
 
           <div class="form-group">
             <label class="form-label">현장명 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 힐스테이트 구월 아트파크" required />
+            <input type="text" class="form-input" id="title" placeholder="예: 힐스테이트 구월 아트파크" required />
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">지역 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select class="form-select" id="region" required>
                 <option value="">지역 선택</option>
                 <option>서울</option><option>경기남부</option><option>경기북부</option>
                 <option>인천</option><option>부산</option><option>울산</option>
@@ -74,7 +74,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">업종 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select class="form-select" id="type" required>
                 <option value="">업종 선택</option>
                 <option>아파트</option><option>오피스텔</option><option>상가</option>
                 <option>도시형생활주택</option><option>타운하우스</option><option>기타</option>
@@ -84,12 +84,12 @@
 
           <div class="form-group">
             <label class="form-label">현장 주소 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 인천광역시 남동구 구월동 000번지" required />
+            <input type="text" class="form-input" id="address" placeholder="예: 인천광역시 남동구 구월동 000번지" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">회사명 (대행사/시행사) <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: (주)크리사온" required />
+            <input type="text" class="form-input" id="company" placeholder="예: (주)크리사온" required />
           </div>
         </div>
 
@@ -111,7 +111,7 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">급여 형태 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select class="form-select" id="pay" required>
                 <option value="">선택</option>
                 <option>계약수수료</option>
                 <option>기본급+인센티브</option>
@@ -119,14 +119,14 @@
             </div>
             <div class="form-group">
               <label class="form-label">팀 수수료</label>
-              <input type="text" class="form-input" placeholder="예: 1,200만원, 협의" />
+              <input type="text" class="form-input" id="fee" placeholder="예: 1,200만원, 협의" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">경력 조건</label>
-              <select class="form-select">
+              <select class="form-select" id="career">
                 <option>경력무관</option>
                 <option>3개월이상</option>
                 <option>6개월이상</option>
@@ -135,20 +135,20 @@
             </div>
             <div class="form-group">
               <label class="form-label">일비</label>
-              <input type="text" class="form-input" placeholder="예: 5만원, 없음" />
+              <input type="text" class="form-input" id="daily" placeholder="예: 5만원, 없음" />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">복리후생 (해당 항목 선택)</label>
             <div class="checkbox-group">
-              <label class="checkbox-item"><input type="checkbox" /> 숙소제공</label>
-              <label class="checkbox-item"><input type="checkbox" /> 숙소비지원</label>
-              <label class="checkbox-item"><input type="checkbox" /> 광고비지원</label>
-              <label class="checkbox-item"><input type="checkbox" /> 팀정착금</label>
-              <label class="checkbox-item"><input type="checkbox" /> 잔금유예</label>
-              <label class="checkbox-item"><input type="checkbox" /> 선납할인</label>
-              <label class="checkbox-item"><input type="checkbox" /> 페이백</label>
+              <label class="checkbox-item"><input type="checkbox" value="숙소제공" /> 숙소제공</label>
+              <label class="checkbox-item"><input type="checkbox" value="숙소비지원" /> 숙소비지원</label>
+              <label class="checkbox-item"><input type="checkbox" value="광고비지원" /> 광고비지원</label>
+              <label class="checkbox-item"><input type="checkbox" value="팀정착금" /> 팀정착금</label>
+              <label class="checkbox-item"><input type="checkbox" value="잔금유예" /> 잔금유예</label>
+              <label class="checkbox-item"><input type="checkbox" value="선납할인" /> 선납할인</label>
+              <label class="checkbox-item"><input type="checkbox" value="페이백" /> 페이백</label>
             </div>
           </div>
         </div>
@@ -159,12 +159,12 @@
 
           <div class="form-group">
             <label class="form-label">현장 소개 제목 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 팀수수료 1800만원! 광고비 50% 지원, 신규현장" required />
+            <input type="text" class="form-input" id="titleInput" placeholder="예: 팀수수료 1800만원! 광고비 50% 지원, 신규현장" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">상세 내용 <span class="required">*</span></label>
-            <textarea class="form-textarea" style="height:180px" placeholder="현장 특징, 분양가, 세대수, 수수료 상세, 지원 혜택, 현장 분위기 등을 자세히 작성해주세요." required></textarea>
+            <textarea class="form-textarea" id="description" style="height:180px" placeholder="현장 특징, 분양가, 세대수, 수수료 상세, 지원 혜택, 현장 분위기 등을 자세히 작성해주세요." required></textarea>
           </div>
         </div>
 
@@ -175,17 +175,17 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">담당자명 <span class="required">*</span></label>
-              <input type="text" class="form-input" placeholder="담당자 이름" required />
+              <input type="text" class="form-input" id="manager" placeholder="담당자 이름" required />
             </div>
             <div class="form-group">
               <label class="form-label">연락처 <span class="required">*</span></label>
-              <input type="tel" class="form-input" placeholder="010-0000-0000" required />
+              <input type="tel" class="form-input" id="phone" placeholder="010-0000-0000" required />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">카카오톡 오픈채팅 또는 링크</label>
-            <input type="text" class="form-input" placeholder="https://open.kakao.com/..." />
+            <input type="text" class="form-input" id="kakao_url" placeholder="https://open.kakao.com/..." />
           </div>
         </div>
 
@@ -258,10 +258,69 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault();
-  alert('✅ 현장 등록 신청이 완료되었습니다!\n\n검토 후 영업일 24시간 이내에 게시됩니다.\n문의: 1800-XXXX');
-  location.href = 'index.html';
+  var btn = document.querySelector('.form-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ 등록 중...';
+
+  var db = getSupabase();
+  if (!db) { alert('Supabase 연결 오류'); btn.disabled=false; btn.textContent='✅ 현장 등록 신청하기'; return; }
+
+  var user = null;
+  try { var s = await db.auth.getUser(); user = s.data.user; } catch(err) {}
+  if (!user) {
+    alert('로그인 후 현장을 등록할 수 있습니다.');
+    location.href = 'login.html';
+    return;
+  }
+
+  // 직종 체크박스
+  var roles = [...document.querySelectorAll('.checkbox-group input[type=checkbox]:checked')].map(c => c.value).filter(v => ['본부장','팀장','팀원','사이드','각개'].includes(v));
+  // 복리후생 체크박스
+  var welfare = [...document.querySelectorAll('.checkbox-group input[type=checkbox]:checked')].map(c => c.value).filter(v => ['숙소제공','숙소비지원','광고비지원','팀정착금','잔금유예','선납할인','페이백'].includes(v));
+
+  var region = document.getElementById('region').value;
+  var type = document.getElementById('type').value;
+  var company = document.getElementById('company').value;
+  var title = document.getElementById('titleInput').value;
+  var description = document.getElementById('description').value;
+  var pay = document.getElementById('pay').value;
+  var fee = document.getElementById('fee').value;
+  var career = document.getElementById('career').value;
+  var phone = document.getElementById('phone').value;
+  var kakao_url = document.getElementById('kakao_url').value;
+
+  var payload = {
+    region: region,
+    type: type,
+    company: company,
+    title: title,
+    description: description,
+    pay: pay,
+    fee: fee,
+    career: career,
+    role: roles,
+    welfare: welfare,
+    phone: phone,
+    kakao_url: kakao_url,
+    badges: [],
+    is_active: true,
+    user_id: user.id,
+    img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70'
+  };
+
+  var { error } = await db.from('listings').insert(payload);
+  if (error) {
+    console.error(error);
+    alert('등록 중 오류가 발생했습니다: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = '✅ 현장 등록 신청하기';
+    return;
+  }
+
+  alert('✅ 현장이 등록되었습니다!\n목록 페이지로 이동합니다.');
+  location.href = 'listings.html';
 }
 </script>
 </body>
