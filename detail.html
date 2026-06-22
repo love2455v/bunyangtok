@@ -8,193 +8,745 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link rel="stylesheet" href="style.css?v=4" />
   <style>
-    :root { --orange:#FF6B2B; --orange-light:#fff3ee; --orange-dark:#e85a1b; --dark:#1E1E1E; --gray:#64748B; --light:#F8F9FA; --border:#E2E8F0; --white:#fff; }
-    body { background:var(--light); font-family:'Pretendard',sans-serif; }
-    .breadcrumb { background:var(--white); border-bottom:1px solid var(--border); padding:11px 0; }
-    .breadcrumb-inner { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--gray); }
-    .breadcrumb-inner a { color:var(--orange); text-decoration:none; }
-    .breadcrumb-inner .sep { color:#CBD5E1; }
-    .breadcrumb-inner .current { color:#334155; font-weight:600; }
-    .detail-hero { background:var(--white); border-bottom:1px solid var(--border); padding:32px 0 0; }
-    .detail-hero-inner { display:grid; grid-template-columns:480px 1fr; gap:36px; align-items:flex-start; }
-    .detail-hero-img { border-radius:12px; overflow:hidden; aspect-ratio:16/10; background:#EEE; }
-    .detail-hero-img img { width:100%; height:100%; object-fit:cover; display:block; }
-    .detail-hero-info { padding-bottom:32px; }
-    .detail-meta-row { display:flex; align-items:center; gap:12px; font-size:12px; color:var(--gray); margin-bottom:14px; }
-    .detail-badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
-    .dbadge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; }
-    .dbadge-hot { background:#FF6B2B; color:#fff; }
-    .dbadge-new { background:#10B981; color:#fff; }
-    .dbadge-ad  { background:#7C3AED; color:#fff; }
-    .dbadge-best { background:#F59E0B; color:#fff; }
-    .dbadge-type { background:#F1F5F9; color:#475569; border:1px solid var(--border); }
-    .detail-title { font-size:22px; font-weight:800; color:var(--dark); line-height:1.45; margin-bottom:10px; }
-    .detail-desc-short { font-size:14px; color:var(--gray); line-height:1.7; margin-bottom:18px; border-left:3px solid var(--orange); padding-left:12px; }
-    .detail-quick-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
-    .dq-tag { background:var(--light); border:1px solid var(--border); border-radius:6px; padding:6px 12px; font-size:13px; color:#334155; font-weight:500; }
-    .dq-tag.highlight { background:var(--orange-light); border-color:#FED7AA; color:var(--orange); font-weight:700; }
-    .detail-cta-row { display:flex; gap:10px; }
-    .btn-call { flex:1; padding:14px; background:var(--orange); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; display:block; }
-    .btn-call:hover { background:var(--orange-dark); }
-    .btn-kakao { flex:1; padding:14px; background:#FEE500; color:#000; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; display:block; }
-    .btn-save { padding:14px 18px; background:#fff; border:1.5px solid var(--border); border-radius:10px; font-size:15px; cursor:pointer; color:var(--gray); }
-    .detail-body { padding:32px 0 60px; }
-    .detail-body-inner { display:grid; grid-template-columns:1fr 300px; gap:24px; }
-    .detail-section { background:var(--white); border-radius:12px; border:1px solid var(--border); padding:28px; margin-bottom:20px; }
-    .section-heading { font-size:16px; font-weight:800; color:var(--dark); margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
-    .section-heading .sh-bar { width:4px; height:18px; background:var(--orange); border-radius:2px; flex-shrink:0; }
-    .info-table { width:100%; border-collapse:collapse; }
-    .info-table tr { border-bottom:1px solid var(--border); }
-    .info-table tr:last-child { border-bottom:none; }
-    .info-table th { width:120px; padding:14px 16px; font-size:13px; font-weight:600; color:var(--gray); background:var(--light); text-align:left; white-space:nowrap; }
-    .info-table td { padding:14px 16px; font-size:14px; color:#1E293B; font-weight:500; }
-    .info-table td.fee-val { font-size:20px; font-weight:800; color:var(--orange); }
-    .welfare-tags { display:flex; flex-wrap:wrap; gap:10px; }
-    .welfare-tag { background:var(--orange-light); color:var(--orange); border:1px solid #FED7AA; border-radius:20px; padding:7px 16px; font-size:13px; font-weight:600; }
-    .welfare-tag-empty { color:#CBD5E1; font-size:14px; }
-    .detail-desc-body { font-size:15px; line-height:1.9; color:#334155; white-space:pre-wrap; word-break:break-word; }
-    .warning-banner { background:#FFFBEB; border:1px solid #FDE68A; border-radius:10px; padding:14px 18px; font-size:13px; color:#92400E; line-height:1.6; margin-top:20px; }
-    .sidebar-card { background:var(--white); border-radius:12px; border:1px solid var(--border); padding:22px; position:sticky; top:80px; }
-    .sidebar-company-name { font-size:15px; font-weight:800; color:var(--dark); margin-bottom:4px; }
-    .sidebar-fee { font-size:24px; font-weight:900; color:var(--orange); margin-bottom:16px; }
-    .sidebar-fee small { font-size:13px; color:var(--gray); font-weight:500; }
-    .sidebar-divider { height:1px; background:var(--border); margin:16px 0; }
-    .sidebar-info-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; padding:5px 0; }
-    .sidebar-info-row .label { color:var(--gray); }
-    .sidebar-info-row .value { font-weight:600; color:#1E293B; }
-    .sidebar-btns { display:flex; flex-direction:column; gap:8px; margin-top:18px; }
-    .sidebar-btn-call { padding:14px; background:var(--orange); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; display:block; }
-    .sidebar-btn-kakao { padding:14px; background:#FEE500; color:#000; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; text-align:center; text-decoration:none; display:block; }
-    .sidebar-btn-save { padding:11px; background:#fff; border:1.5px solid var(--border); border-radius:10px; font-size:14px; cursor:pointer; color:var(--gray); font-weight:600; }
-    .sidebar-views { text-align:center; font-size:12px; color:#CBD5E1; margin-top:14px; }
-    .related-section { margin-top:24px; }
-    .related-heading { font-size:16px; font-weight:800; color:var(--dark); margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
-    .related-heading a { font-size:13px; color:var(--orange); font-weight:500; }
-    .loading-wrap { display:flex; align-items:center; justify-content:center; padding:80px 20px; flex-direction:column; gap:16px; }
-    .spinner { width:40px; height:40px; border:4px solid var(--border); border-top-color:var(--orange); border-radius:50%; animation:spin 0.8s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    .loading-txt { color:var(--gray); font-size:14px; }
-    .error-wrap { text-align:center; padding:80px 20px; color:var(--gray); }
-    .error-wrap strong { display:block; font-size:18px; color:var(--dark); margin-bottom:8px; }
-    .error-wrap a { color:var(--orange); font-weight:600; }
-    @media (max-width:960px) { .detail-hero-inner { grid-template-columns:1fr; } .detail-body-inner { grid-template-columns:1fr; } .sidebar-card { position:static; } }
-    @media (max-width:640px) { .detail-section { padding:20px; } .detail-title { font-size:18px; } .info-table th { width:90px; } }
+    /* ===== 상세페이지 전용 스타일 ===== */
+    :root {
+      --orange: #FF6B2B;
+      --orange-light: #fff3ee;
+      --orange-dark: #e85a1b;
+      --dark: #1E1E1E;
+      --gray: #64748B;
+      --light: #F8FyFA;
+      --border: #E2E8F0;
+      --white: #fff;
+    }
+
+    body { background: var(--light); font-family: 'Pretendard', sans-serif; }
+
+    /* 브레드크럼 */
+    .breadcrumb {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 0;
+    }
+    .breadcrumb-inner { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray); }
+    .breadcrumb-inner a { color: var(--orange); text-decoration: none; }
+    .breadcrumb-inner a:hover { text-decoration: underline; }
+    .breadcrumb-inner .sep { color: #CBD5E1; }
+    .breadcrumb-inner .current { color: #334155; font-weight: 600; }
+
+    /* 상단 히어로 섹션 */
+    .detail-hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 0 0;
+    }
+    .detail-hero-inner {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 36px;
+      align-items: flex-start;
+    }
+    .detail-hero-img {
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      background: #EEE;
+    }
+    .detail-hero-img img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .detail-hero-info { padding-bottom: 32px; }
+    .detail-meta-row {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 12px; color: var(--gray); margin-bottom: 14px;
+    }
+    .detail-meta-row .date { color: #94A3B8; }
+    .detail-meta-row .views { color: #94A3B8; }
+    .detail-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .dbadge {
+      display: inline-block; padding: 4px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+    }
+    .dbadge-hot { background: #FF6B2B; color: #fff; }
+    .dbadge-new { background: #10B981; color: #fff; }
+    .dbadge-ad  { background: #7C3AED; color: #fff; }
+    .dbadge-best { background: #F59E0B; color: #fff; }
+    .dbadge-type { background: #F1F5F9; color: #475569; border: 1px solid var(--border); }
+    .detail-title {
+      font-size: 22px; font-weight: 800; color: var(--dark);
+      line-height: 1.45; margin-bottom: 10px;
+    }
+    .detail-desc-short {
+      font-size: 14px; color: var(--gray); line-height: 1.7;
+      margin-bottom: 18px;
+      border-left: 3px solid var(--orange); padding-left: 12px;
+    }
+    .detail-quick-tags {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;
+    }
+    .dq-tag {
+      background: var(--light); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #334155; font-weight: 500;
+    }
+    .dq-tag.highlight { background: var(--orange-light); border-color: #FED7AA; color: var(--orange); font-weight: 700; }
+    .detail-cta-row { display: flex; gap: 10px; }
+    .btn-call {
+      flex: 1; padding: 14px; background: var(--orange); color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none; display: block;
+      transition: background 0.2s;
+    }
+    .btn-call:hover { background: var(--orange-dark); }
+    .btn-kakao {
+      flex: 1; padding: 14px; background: #FEE500; color: #000;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none; display: block;
+    }
+    .btn-save {
+      padding: 14px 18px; background: #fff; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 15px; cursor: pointer; color: var(--gray);
+    }
+    .btn-save:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* 본문 레이아웃 */
+    .detail-body {
+      padding: 32px 0 60px;
+    }
+    .detail-body-inner {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+    }
+    .detail-main { min-width: 0; }
+    .detail-sidebar { }
+
+    /* 섹션 카드 */
+    .detail-section {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .section-heading {
+      font-size: 16px; font-weight: 800; color: var(--dark);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-heading .sh-bar {
+      width: 4px; height: 18px; background: var(--orange); border-radius: 2px; flex-shrink: 0;
+    }
+
+    /* 정보 테이블 */
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table tr { border-bottom: 1px solid var(--border); }
+    .info-table tr:last-child { border-bottom: none; }
+    .info-table th {
+      width: 120px; padding: 14px 16px; font-size: 13px; font-weight: 600;
+      color: var(--gray); background: var(--light); text-align: left;
+      white-space: nowrap;
+    }
+    .info-table td {
+      padding: 14px 16px; font-size: 14px; color: #1E293B; font-weight: 500;
+    }
+    .info-table td.fee-val {
+      font-size: 20px; font-weight: 800; color: var(--orange);
+    }
+    .info-table-2col { }
+    .info-table-2col .info-table th { width: 100px; }
+
+    /* 복리후생 태그 */
+    .welfare-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+    .welfare-tag {
+      background: var(--orange-light); color: var(--orange);
+      border: 1px solid #FED7AA; border-radius: 20px;
+      padding: 7px 16px; font-size: 13px; font-weight: 600;
+    }
+    .welfare-tag-empty { color: #CBD5E1; font-size: 14px; }
+
+    /* 상세 텍스트 */
+    .detail-desc-body {
+      font-size: 15px; line-height: 1.9; color: #334155;
+      white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* 경고 배너 */
+    .warning-banner {
+      background: #FFFBEB; border: 1px solid #FDE68A;
+      border-radius: 10px; padding: 14px 18px;
+      font-size: 13px; color: #92400E; line-height: 1.6;
+      margin-top: 20px;
+    }
+
+    /* 사이드바 스티키 카드 */
+    .sidebar-card {
+      background: var(--white); border-radius: 12px;
+      border: 1px solid var(--border); padding: 22px;
+      position: sticky; top: 80px;
+    }
+    .sidebar-company-name {
+      font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 4px;
+    }
+    .sidebar-fee {
+      font-size: 24px; font-weight: 900; color: var(--orange);
+      margin-bottom: 16px;
+    }
+    .sidebar-fee small { font-size: 13px; color: var(--gray); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .sidebar-info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; padding: 5px 0;
+    }
+    .sidebar-info-row .label { color: var(--gray); }
+    .sidebar-info-row .value { font-weight: 600; color: #1E293B; }
+    .sidebar-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+    .sidebar-btn-call {
+      padding: 14px; background: var(--orange); color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none; display: block;
+      transition: background 0.2s;
+    }
+    .sidebar-btn-call:hover { background: var(--orange-dark); }
+    .sidebar-btn-kakao {
+      padding: 14px; background: #FEE500; color: #000;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none; display: block;
+    }
+    .sidebar-btn-save {
+      padding: 11px; background: #fff; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px; cursor: pointer;
+      color: var(--gray); font-weight: 600;
+    }
+    .sidebar-btn-save:hover { border-color: var(--orange); color: var(--orange); }
+    .sidebar-views {
+      text-align: center; font-size: 12px; color: #CBD5E1; margin-top: 14px;
+    }
+
+    /* 관련현장 */
+    .related-section { margin-top: 24px; }
+    .related-heading {
+      font-size: 16px; font-weight: 800; color: var(--dark);
+      margin-bottom: 16px; display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .related-heading a { font-size: 13px; color: var(--orange); font-weight: 500; }
+
+    /* 로딩 / 에러 */
+    .loading-wrap {
+      display: flex; align-items: center; justify-content: center;
+      padding: 80px 20px; flex-direction: column; gap: 16px;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid var(--border);
+      border-top-color: var(--orange); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-txt { color: var(--gray); font-size: 14px; }
+
+    .error-wrap {
+      text-align: center; padding: 80px 20px; color: var(--gray);
+    }
+    .error-wrap strong { display: block; font-size: 18px; color: var(--dark); margin-bottom: 8px; }
+    .error-wrap a { color: var(--orange); font-weight: 600; }
+
+    /* 반응형 */
+    @media (max-width: 960px) {
+      .detail-hero-inner { grid-template-columns: 1fr; gap: 20px; }
+      .detail-hero-img { aspect-ratio: 16/9; }
+      .detail-body-inner { grid-template-columns: 1fr; }
+      .sidebar-card { position: static; }
+    }
+    @media (max-width: 640px) {
+      .detail-section { padding: 20px; }
+      .detail-title { font-size: 18px; }
+      .detail-cta-row { flex-wrap: wrap; }
+      .btn-call, .btn-kakao { flex: 1 1 calc(50% - 5px); }
+      .btn-save { width: 100%; }
+      .info-table th { width: 90px; }
+    }
   </style>
 </head>
 <body>
-<div class="topbar"><div class="container topbar-inner"><div class="topbar-stats"><span>👥 오늘 방문 <strong>2,847</strong>명</span><span>📋 신규현장 <strong>93</strong>건</span></div><div class="topbar-links" id="topbarLinks"><a href="login.html">로그인</a><a href="signup.html" class="btn-join">회원가입</a></div></div></div>
-<header class="header"><div class="container header-inner"><a href="index.html" class="logo"><img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;"><span class="logo-text">분양<span class="logo-accent">톡</span></span></a><nav class="nav-desktop"><a href="index.html" class="nav-link">HOME</a><a href="listings.html" class="nav-link active">지역현장</a><a href="map.html" class="nav-link">지도현장</a><a href="supporters.html" class="nav-link">서포터즈</a><a href="register.html" class="nav-link btn-register">+ 현장등록</a></nav><button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button></div><div class="mobile-menu" id="mobileMenu"><a href="index.html">HOME</a><a href="listings.html">지역현장</a><a href="map.html">지도현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a></div></header>
-<div class="breadcrumb"><div class="container breadcrumb-inner"><a href="index.html">홈</a><span class="sep">›</span><a href="listings.html">지역현장</a><span class="sep">›</span><span class="current" id="breadTitle">현장 상세</span></div></div>
-<div id="pageLoading"><div class="loading-wrap"><div class="spinner"></div><div class="loading-txt">현장 정보를 불러오는 중...</div></div></div>
-<div id="pageError" style="display:none;"><div class="error-wrap"><strong>현장을 찾을 수 없습니다</strong>삭제되었거나 존재하지 않는 현장입니다.<br><br><a href="listings.html">← 현장 목록으로</a></div></div>
-<div id="pageContent" style="display:none;">
-  <div class="detail-hero"><div class="container detail-hero-inner"><div class="detail-hero-img"><img id="heroImg" src="" alt="" onerror="this.parentElement.style.display='none'"></div><div class="detail-hero-info"><div class="detail-meta-row"><span id="metaDate">등록일 -</span><span>·</span><span id="metaViews">조회 0</span></div><div class="detail-badges" id="heroBadges"></div><div class="detail-title" id="heroTitle"></div><div class="detail-desc-short" id="heroDescShort"></div><div class="detail-quick-tags" id="heroTags"></div><div class="detail-cta-row"><a id="heroCallBtn" href="#" class="btn-call">📞 전화 문의</a><a href="#" onclick="alert('카카오톡으로 연결됩니다.');return false;" class="btn-kakao">💬 카카오 문의</a><button onclick="saveFavorite()" class="btn-save">🔖</button></div></div></div></div>
-  <div class="detail-body"><div class="container detail-body-inner">
-    <div class="detail-main">
-      <div class="detail-section"><div class="section-heading"><span class="sh-bar"></span> 기본요강</div><table class="info-table"><tr><th>업종</th><td id="infoType"></td><th>직종</th><td id="infoRole"></td></tr><tr><th>경력조건</th><td id="infoCareer"></td><th>투입일</th><td id="infoJoinDate">즉시 투입</td></tr><tr><th>지역</th><td id="infoRegion"></td><th>업체명</th><td id="infoCompany"></td></tr></table></div>
-      <div class="detail-section"><div class="section-heading"><span class="sh-bar"></span> 급여정보</div><table class="info-table"><tr><th>형태</th><td id="infoPay"></td></tr><tr><th>팀 수수료</th><td class="fee-val" id="infoFee"></td></tr></table></div>
-      <div class="detail-section"><div class="section-heading"><span class="sh-bar"></span> 근무후생 / 복리후생</div><div class="welfare-tags" id="welfareTagsWrap"></div></div>
-      <div class="detail-section"><div class="section-heading"><span class="sh-bar"></span> 상세정보</div><div class="detail-desc-body" id="detailDescFull"></div><div class="warning-banner">⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 직접 확인하세요.<br>분양톡은 구인·구직 정보 중개 플랫폼으로, 실제 고용관계는 해당 업체와 협의하시기 바랍니다.</div></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <div class="topbar-stats">
+      <span>👥 오늘 방문 <strong id="topVisit">2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
     </div>
-    <div class="detail-sidebar"><div class="sidebar-card"><div class="sidebar-company-name" id="sideCompany"></div><div class="sidebar-fee" id="sideFee"></div><div class="sidebar-divider"></div><div class="sidebar-info-row"><span class="label">업종</span><span class="value" id="sideType"></span></div><div class="sidebar-info-row"><span class="label">지역</span><span class="value" id="sideRegion"></span></div><div class="sidebar-info-row"><span class="label">직종</span><span class="value" id="sideRole"></span></div><div class="sidebar-info-row"><span class="label">경력</span><span class="value" id="sideCareer"></span></div><div class="sidebar-divider"></div><div class="sidebar-btns"><a id="sideCallBtn" href="#" class="sidebar-btn-call">📞 전화 문의하기</a><a href="#" onclick="alert('카카오톡으로 연결됩니다.');return false;" class="sidebar-btn-kakao">💬 카카오 문의</a><button onclick="saveFavorite()" class="sidebar-btn-save">🔖 관심현장 저장</button></div><div class="sidebar-views" id="sideViews"></div></div></div>
-  </div>
-  <div class="container related-section"><div class="related-heading">📋 비슷한 현장<a href="listings.html">전체보기 →</a></div><div class="listings-grid" id="relatedGrid"></div></div>
+    <div class="topbar-links" id="topbarLinks">
+      <a href="login.html">로그인</a>
+      <a href="signup.html" class="btn-join">회원가입</a>
+    </div>
   </div>
 </div>
-<footer class="footer"><div class="container footer-inner"><div class="footer-col"><div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div><p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p></div><div class="footer-col"><h4>서비스</h4><a href="listings.html">지역현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a></div><div class="footer-col"><h4>고객지원</h4><a href="notice.html">공지사항</a><a href="contact.html">고객센터</a><a href="faq.html">FAQ</a></div><div class="footer-col"><h4>고객센터</h4><div class="footer-tel">📞 1800-XXXX</div><div class="footer-hours">월~금 09:00~18:00</div></div></div><div class="footer-bottom"><div class="container"><a href="privacy.html">개인정보 처리방침</a><a href="terms.html">이용약관</a><span class="footer-copy">© 2026 분양톡</span></div></div></footer>
-<div class="float-btns"><a href="register.html" class="float-btn float-register">✏️ 등록</a><button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
+    <nav class="nav-desktop">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="listings.html" class="nav-link active">지역현장</a>
+      <a href="map.html" class="nav-link">지도현장</a>
+      <a href="supporters.html" class="nav-link">서포터즈</a>
+      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+    </nav>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html">현장등록</a>
+  </div>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <div class="container breadcrumb-inner">
+    <a href="index.html">홈</a>
+    <span class="sep">›</span>
+    <a href="listings.html">지역현장</a>
+    <span class="sep">›</span>
+    <span class="current" id="breadTitle">현장 상세</span>
+  </div>
+</div>
+
+<!-- ===== 로딩 상태 ===== -->
+<div id="pageLoading">
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-txt">현장 정보를 불러오는 중...</div>
+  </div>
+</div>
+
+<!-- ===== 에러 상태 ===== -->
+<div id="pageError" style="display:none;">
+  <div class="error-wrap">
+    <strong>현장을 찾을 수 없습니다</strong>
+    삭제되었거나 존재하지 않는 현장입니다.
+    <br><br><a href="listings.html">← 현장 목록으로</a>
+  </div>
+</div>
+
+<!-- ===== 메인 콘텐츠 (JS로 채워짐) ===== -->
+<div id="pageContent" style="display:none;">
+
+  <!-- 히어로 -->
+  <div class="detail-hero">
+    <div class="container detail-hero-inner">
+      <div class="detail-hero-img">
+        <img id="heroImg" src="" alt="" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="detail-hero-info">
+        <div class="detail-meta-row">
+          <span class="date" id="metaDate">등록일 -</span>
+          <span>·</span>
+          <span class="views" id="metaViews">조회 0</span>
+        </div>
+        <div class="detail-badges" id="heroBadges"></div>
+        <div class="detail-title" id="heroTitle"></div>
+        <div class="detail-desc-short" id="heroDescShort"></div>
+        <div class="detail-quick-tags" id="heroTags"></div>
+        <div class="detail-cta-row">
+          <a id="heroCallBtn" href="#" class="btn-call">📞 전화 문의</a>
+          <a id="heroKakaoBtn" href="#" target="_blank" class="btn-kakao">💬 카카오 문의</a>
+          <button onclick="saveFavorite()" class="btn-save">🔖</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 본문 -->
+  <div class="detail-body">
+    <div class="container detail-body-inner">
+
+      <!-- 메인 -->
+      <div class="detail-main">
+
+        <!-- 기본요강 -->
+        <div class="detail-section">
+          <div class="section-heading"><span class="sh-bar"></span> 기본요강</div>
+          <table class="info-table">
+            <tr>
+              <th>업종</th>
+              <td id="infoType"></td>
+              <th>직종</th>
+              <td id="infoRole"></td>
+            </tr>
+            <tr>
+              <th>경력조건</th>
+              <td id="infoCareer"></td>
+              <th>투입일</th>
+              <td id="infoJoinDate">즉시 투입</td>
+            </tr>
+            <tr>
+              <th>지역</th>
+              <td id="infoRegion"></td>
+              <th>업체명</th>
+              <td id="infoCompany"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 급여정보 -->
+        <div class="detail-section">
+          <div class="section-heading"><span class="sh-bar"></span> 급여정보</div>
+          <table class="info-table">
+            <tr>
+              <th>형태</th>
+              <td id="infoPay"></td>
+            </tr>
+            <tr>
+              <th>팀 수수료</th>
+              <td class="fee-val" id="infoFee"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 복리후생 -->
+        <div class="detail-section">
+          <div class="section-heading"><span class="sh-bar"></span> 근무후생 / 복리후생</div>
+          <div class="welfare-tags" id="welfareTagsWrap"></div>
+        </div>
+
+        <!-- 상세정보 -->
+        <div class="detail-section">
+          <div class="section-heading"><span class="sh-bar"></span> 상세정보</div>
+          <div class="detail-desc-body" id="detailDescFull"></div>
+
+          <!-- 경고 -->
+          <div class="warning-banner">
+            ⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 직접 확인하세요.<br>
+            분양톡은 구인·구직 정보 중개 플랫폼으로, 실제 고용관계는 해당 업체와 협의하시기 바랍니다.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 사이드바 -->
+      <div class="detail-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-company-name" id="sideCompany"></div>
+          <div class="sidebar-fee" id="sideFee"></div>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-info-row"><span class="label">업종</span><span class="value" id="sideType"></span></div>
+          <div class="sidebar-info-row"><span class="label">지역</span><span class="value" id="sideRegion"></span></div>
+          <div class="sidebar-info-row"><span class="label">직종</span><span class="value" id="sideRole"></span></div>
+          <div class="sidebar-info-row"><span class="label">경력</span><span class="value" id="sideCareer"></span></div>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-btns">
+            <a id="sideCallBtn" href="#" class="sidebar-btn-call">📞 전화 문의하기</a>
+            <a id="sideKakaoBtn" href="#" target="_blank" class="sidebar-btn-kakao">💬 카카오 문의</a>
+            <button onclick="saveFavorite()" class="sidebar-btn-save">🔖 관심현장 저장</button>
+          </div>
+          <div class="sidebar-views" id="sideViews"></div>
+        </div>
+      </div>
+
+    </div><!-- /.detail-body-inner -->
+
+    <!-- 관련현장 -->
+    <div class="container related-section">
+      <div class="related-heading">
+        📋 비슷한 현장
+        <a href="listings.html">전체보기 →</a>
+      </div>
+      <div class="listings-grid" id="relatedGrid"></div>
+    </div>
+
+  </div><!-- /.detail-body -->
+
+</div><!-- /#pageContent -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-col">
+      <div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+    </div>
+    <div class="footer-col">
+      <h4>서비스</h4>
+      <a href="listings.html">지역현장</a>
+      <a href="supporters.html">서포터즈</a>
+      <a href="register.html">현장등록</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객지원</h4>
+      <a href="notice.html">공지사항</a>
+      <a href="contact.html">고객센터</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h4>고객센터</h4>
+      <div class="footer-tel">📞 1800-XXXX</div>
+      <div class="footer-hours">월~금 09:00~18:00</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="terms.html">이용약관</a>
+      <span class="footer-copy">© 2026 분양톡</span>
+    </div>
+  </div>
+</footer>
+
+<div class="float-btns">
+  <a href="register.html" class="float-btn float-register">✏️ 등록</a>
+  <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
+/* ===== 상세페이지 전용 스크립트 ===== */
+
 const LISTING_ID = new URLSearchParams(location.search).get('id');
+
+// 날짜 포맷
 function formatDate(str) {
   if (!str) return '-';
-  try { return new Date(str).toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}); } catch(e) { return str.slice(0,10); }
+  try { return new Date(str).toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}); }
+  catch(e) { return str.slice(0,10); }
 }
+
+// 배지 HTML 생성
 function makeBadge(b) {
-  const map={'HOT':'hot','NEW':'new','AD':'ad','대박':'best','BEST':'best'};
-  return '<span class="dbadge dbadge-'+(map[b]||'type')+'">'+b+'</span>';
+  const map = { 'HOT':'hot', 'NEW':'new', 'AD':'ad', '대박':'best', 'BEST':'best' };
+  const cls = map[b] || 'type';
+  return `<span class="dbadge dbadge-${cls}">${b}</span>`;
 }
+
+// 관심현장 저장
 function saveFavorite() {
-  const saved=JSON.parse(localStorage.getItem('favorites')||'[]');
-  if(LISTING_ID&&!saved.includes(LISTING_ID)){saved.push(LISTING_ID);localStorage.setItem('favorites',JSON.stringify(saved));alert('관심현장에 저장되었습니다! ❤️');}
-  else alert('이미 저장된 현장입니다.');
+  const saved = JSON.parse(localStorage.getItem('favorites') || '[]');
+  if (LISTING_ID && !saved.includes(LISTING_ID)) {
+    saved.push(LISTING_ID);
+    localStorage.setItem('favorites', JSON.stringify(saved));
+    alert('관심현장에 저장되었습니다! ❤️');
+  } else {
+    alert('이미 저장된 현장입니다.');
+  }
 }
+
+// 메인 데이터 렌더링
 function renderDetail(item) {
-  const badges=item.badges||[];
-  const role=Array.isArray(item.role)?item.role:(item.role?[item.role]:[]);
-  const welfare=Array.isArray(item.welfare)?item.welfare:[];
-  const desc=item.description||item.desc||'';
-  document.title=item.title+' - 분양톡';
-  document.getElementById('breadTitle').textContent=item.title;
-  const img=document.getElementById('heroImg');
-  if(item.img){img.src=item.img;img.alt=item.title;}else{img.parentElement.style.display='none';}
-  document.getElementById('metaDate').textContent='등록일 '+formatDate(item.created_at);
-  document.getElementById('metaViews').textContent='조회 '+(item.views||0).toLocaleString()+'회';
-  document.getElementById('heroBadges').innerHTML=badges.map(makeBadge).join('')+'<span class="dbadge dbadge-type">'+(item.type||'아파트')+'</span>';
-  document.getElementById('heroTitle').textContent=item.title;
-  const shortDesc=desc.split('\n').filter(l=>l.trim()).slice(0,2).join(' ');
-  document.getElementById('heroDescShort').textContent=shortDesc||desc.slice(0,80);
-  document.getElementById('heroTags').innerHTML=[
-    '<span class="dq-tag">📍 '+item.region+'</span>',
-    '<span class="dq-tag">'+(item.type||'아파트')+'</span>',
-    '<span class="dq-tag highlight">💰 팀수수료 '+(item.fee||'협의')+'</span>',
-    role.length?'<span class="dq-tag">👥 '+role.join(' / ')+'</span>':'',
-    '<span class="dq-tag">📋 '+(item.career||'경력무관')+'</span>',
+  const badges = item.badges || [];
+  const role   = Array.isArray(item.role) ? item.role : (item.role ? [item.role] : []);
+  const welfare= Array.isArray(item.welfare) ? item.welfare : [];
+  const desc   = item.description || item.desc || '';
+
+  document.title = item.title + ' - 분양톡';
+  document.getElementById('breadTitle').textContent = item.title;
+
+  // 히어로
+  const img = document.getElementById('heroImg');
+  if (item.img) { img.src = item.img; img.alt = item.title; }
+  else { img.parentElement.style.display = 'none'; }
+
+  document.getElementById('metaDate').textContent = '등록일 ' + formatDate(item.created_at);
+  document.getElementById('metaViews').textContent = '조회 ' + (item.views || 0).toLocaleString() + '회';
+
+  document.getElementById('heroBadges').innerHTML =
+    badges.map(makeBadge).join('') +
+    `<span class="dbadge dbadge-type">${item.type || '아파트'}</span>`;
+
+  document.getElementById('heroTitle').textContent = item.title;
+
+  // 간단 소개 (description 첫 2줄)
+  const shortDesc = desc.split('\n').filter(l => l.trim()).slice(0, 2).join(' ');
+  document.getElementById('heroDescShort').textContent = shortDesc || desc.slice(0, 80);
+
+  // 빠른 태그
+  document.getElementById('heroTags').innerHTML = [
+    `<span class="dq-tag">📍 ${item.region}</span>`,
+    `<span class="dq-tag">${item.type || '아파트'}</span>`,
+    `<span class="dq-tag highlight">💰 팀수수료 ${item.fee || '협의'}</span>`,
+    role.length ? `<span class="dq-tag">👥 ${role.join(' / ')}</span>` : '',
+    `<span class="dq-tag">📋 ${item.career || '경력무관'}</span>`,
   ].join('');
-  if(item.contact){document.getElementById('heroCallBtn').href='tel:'+item.contact;document.getElementById('sideCallBtn').href='tel:'+item.contact;}
-  document.getElementById('infoType').textContent=item.type||'-';
-  document.getElementById('infoRole').textContent=role.join(' / ')||'-';
-  document.getElementById('infoCareer').textContent=item.career||'경력무관';
-  document.getElementById('infoRegion').textContent=item.region||'-';
-  document.getElementById('infoCompany').textContent=item.company||'-';
-  document.getElementById('infoPay').textContent=item.pay||'-';
-  document.getElementById('infoFee').textContent=item.fee||'협의';
-  const ww=document.getElementById('welfareTagsWrap');
-  if(welfare.length){ww.innerHTML=welfare.map(w=>'<span class="welfare-tag">✓ '+w+'</span>').join('');}
-  else{ww.innerHTML='<span class="welfare-tag-empty">복리후생 정보가 없습니다.</span>';}
-  document.getElementById('detailDescFull').textContent=desc;
-  document.getElementById('sideCompany').textContent=item.company||'-';
-  document.getElementById('sideFee').innerHTML='<small>팀 수수료</small><br>'+(item.fee||'협의');
-  document.getElementById('sideType').textContent=item.type||'-';
-  document.getElementById('sideRegion').textContent=item.region||'-';
-  document.getElementById('sideRole').textContent=role.join('/')||'-';
-  document.getElementById('sideCareer').textContent=item.career||'경력무관';
-  document.getElementById('sideViews').textContent='👁️ 조회 '+(item.views||0).toLocaleString()+'회';
+
+  // 전화 버튼
+  if (item.phone) {
+    document.getElementById('heroCallBtn').href = 'tel:' + item.phone;
+    document.getElementById('sideCallBtn').href = 'tel:' + item.phone;
+  } else {
+    document.getElementById('heroCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
+    document.getElementById('sideCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
+  }
+  // 카카오 버튼
+  if (item.kakao_url) {
+    document.getElementById('heroKakaoBtn').href = item.kakao_url;
+    document.getElementById('sideKakaoBtn').href = item.kakao_url;
+  } else {
+    document.getElementById('heroKakaoBtn').onclick = function(e){ e.preventDefault(); alert('카카오 오픈채팅이 등록되지 않은 현장입니다.'); };
+    document.getElementById('sideKakaoBtn').onclick = function(e){ e.preventDefault(); alert('카카오 오픈채팅이 등록되지 않은 현장입니다.'); };
+  }
+
+  // 기본요강
+  document.getElementById('infoType').textContent    = item.type || '-';
+  document.getElementById('infoRole').textContent    = role.join(' / ') || '-';
+  document.getElementById('infoCareer').textContent  = item.career || '경력무관';
+  document.getElementById('infoRegion').textContent  = item.region || '-';
+  document.getElementById('infoCompany').textContent = item.company || '-';
+
+  // 급여정보
+  document.getElementById('infoPay').textContent  = item.pay || '-';
+  document.getElementById('infoFee').textContent  = item.fee || '협의';
+
+  // 복리후생
+  const welfareWrap = document.getElementById('welfareTagsWrap');
+  if (welfare.length) {
+    welfareWrap.innerHTML = welfare.map(w => `<span class="welfare-tag">✓ ${w}</span>`).join('');
+  } else {
+    welfareWrap.innerHTML = '<span class="welfare-tag-empty">복리후생 정보가 없습니다.</span>';
+  }
+
+  // 상세정보
+  document.getElementById('detailDescFull').textContent = desc;
+
+  // 사이드바
+  document.getElementById('sideCompany').textContent = item.company || '-';
+  document.getElementById('sideFee').innerHTML =
+    `<small>팀 수수료</small><br>${item.fee || '협의'}`;
+  document.getElementById('sideType').textContent   = item.type || '-';
+  document.getElementById('sideRegion').textContent = item.region || '-';
+  document.getElementById('sideRole').textContent   = role.join('/') || '-';
+  document.getElementById('sideCareer').textContent = item.career || '경력무관';
+  document.getElementById('sideViews').textContent  =
+    `👁️ 조회 ${(item.views || 0).toLocaleString()}회`;
 }
+
+// 관련현장 렌더링
 function renderRelated(items) {
-  const grid=document.getElementById('relatedGrid');
-  if(!items||!items.length){grid.style.display='none';return;}
-  grid.innerHTML=items.slice(0,3).map(function(item){
-    const badges=item.badges||[];
-    const role=Array.isArray(item.role)?item.role:[];
-    const desc=item.description||item.desc||'';
-    return '<div class="listing-card fade-up" onclick="location.href=\'detail.html?id='+item.id+'\'">'+(item.img?'<img class="card-img" src="'+item.img+'" alt="'+item.title+'" loading="lazy" onerror="this.style.display=\'none\'">':"")+'<div class="card-body"><div class="card-badges">'+badges.map(function(b){return '<span class="badge badge-'+(b.toLowerCase()==='hot'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best')+'">'+b+'</span>';}).join('')+'<span class="badge badge-type">'+(item.type||'아파트')+'</span></div><div class="card-title">'+item.title+'</div><div class="card-desc">'+desc.slice(0,60)+'...</div><div class="card-info"><span class="info-tag">📍 '+item.region+'</span><span class="info-tag highlight">💰 '+(item.fee||'협의')+'</span>'+(role.length?'<span class="info-tag">'+role.join('/')+'</span>':'')+'</div><div class="card-footer"><span class="card-company">📋 '+item.company+'</span><span class="card-btn">상세보기</span></div></div></div>';
+  const grid = document.getElementById('relatedGrid');
+  if (!items || !items.length) { grid.style.display = 'none'; return; }
+  grid.innerHTML = items.slice(0, 3).map(item => {
+    const badges = item.badges || [];
+    const role   = Array.isArray(item.role) ? item.role : [];
+    const desc   = item.description || item.desc || '';
+    return `<div class="listing-card fade-up" onclick="location.href='detail.html?id=${item.id}'">
+      ${item.img ? `<img class="card-img" src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <div class="card-body">
+        <div class="card-badges">
+          ${badges.map(b => `<span class="badge badge-${b.toLowerCase()==='hot'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best'}">${b}</span>`).join('')}
+          <span class="badge badge-type">${item.type || '아파트'}</span>
+        </div>
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${desc.slice(0,60)}...</div>
+        <div class="card-info">
+          <span class="info-tag">📍 ${item.region}</span>
+          <span class="info-tag highlight">💰 ${item.fee || '협의'}</span>
+          ${role.length ? `<span class="info-tag">${role.join('/')}</span>` : ''}
+        </div>
+        <div class="card-footer">
+          <span class="card-company">📋 ${item.company}</span>
+          <span class="card-btn">상세보기</span>
+        </div>
+      </div>
+    </div>`;
   }).join('');
   initScrollAnimations();
 }
-async function incrementViews(db,id){try{const{data}=await db.from('listings').select('views').eq('id',id).single();const nv=(data&&data.views||0)+1;await db.from('listings').update({views:nv}).eq('id',id);document.getElementById('metaViews').textContent='조회 '+nv.toLocaleString()+'회';document.getElementById('sideViews').textContent='👁️ 조회 '+nv.toLocaleString()+'회';}catch(e){}}
-async function initDetailPage(){
-  const db=getSupabase();
-  if(!LISTING_ID){document.getElementById('pageLoading').style.display='none';document.getElementById('pageError').style.display='block';return;}
-  if(db){try{const sess=await db.auth.getSession();const user=sess&&sess.data&&sess.data.session&&sess.data.session.user;updateAuthUI(user);}catch(e){}}
-  if(db){try{
-    const{data,error}=await db.from('listings').select('*').eq('id',LISTING_ID).single();
-    if(error||!data)throw new Error('not found');
-    renderDetail(data);
-    document.getElementById('pageLoading').style.display='none';
-    document.getElementById('pageContent').style.display='block';
-    incrementViews(db,LISTING_ID);
-    const{data:relData}=await db.from('listings').select('*').eq('is_active',true).neq('id',LISTING_ID).or('region.eq.'+data.region+',type.eq.'+data.type).order('created_at',{ascending:false}).limit(3);
-    renderRelated(relData||[]);
-    initScrollAnimations();
-    return;
-  }catch(e){console.warn('Supabase 조회 실패:',e);}}
-  const fallback=(window.LISTINGS_FALLBACK||[]).find(function(l){return String(l.id)===String(LISTING_ID);});
-  if(fallback){renderDetail(fallback);document.getElementById('pageLoading').style.display='none';document.getElementById('pageContent').style.display='block';const related=(window.LISTINGS_FALLBACK||[]).filter(function(l){return l.id!==fallback.id;}).slice(0,3);renderRelated(related);initScrollAnimations();}
-  else{document.getElementById('pageLoading').style.display='none';document.getElementById('pageError').style.display='block';}
+
+// 뷰 카운트 증가
+async function incrementViews(db, id) {
+  try {
+    const { data } = await db.from('listings').select('views').eq('id', id).single();
+    const newViews = (data?.views || 0) + 1;
+    await db.from('listings').update({ views: newViews }).eq('id', id);
+    // UI 업데이트
+    document.getElementById('metaViews').textContent = '조회 ' + newViews.toLocaleString() + '회';
+    document.getElementById('sideViews').textContent = `👁️ 조회 ${newViews.toLocaleString()}회`;
+  } catch(e) {}
 }
-document.addEventListener('DOMContentLoaded',initDetailPage);
+
+// 페이지 초기화
+async function initDetailPage() {
+  const db = getSupabase();
+
+  // ID 없으면 에러
+  if (!LISTING_ID) {
+    document.getElementById('pageLoading').style.display = 'none';
+    document.getElementById('pageError').style.display = 'block';
+    return;
+  }
+
+  // 로그인 상태 체크
+  if (db) {
+    try {
+      const sess = await db.auth.getSession();
+      const user = sess?.data?.session?.user;
+      updateAuthUI(user);
+    } catch(e) {}
+  }
+
+  // Supabase에서 현장 데이터 조회
+  if (db) {
+    try {
+      const { data, error } = await db
+        .from('listings')
+        .select('*')
+        .eq('id', LISTING_ID)
+        .single();
+
+      if (error || !data) throw new Error('not found');
+
+      renderDetail(data);
+
+      document.getElementById('pageLoading').style.display = 'none';
+      document.getElementById('pageContent').style.display = 'block';
+
+      // 조회수 증가 (비동기, UI와 무관하게)
+      incrementViews(db, LISTING_ID);
+
+      // 관련현장 (같은 지역 or 같은 업종)
+      const { data: relData } = await db
+        .from('listings')
+        .select('*')
+        .eq('is_active', true)
+        .neq('id', LISTING_ID)
+        .or(`region.eq.${data.region},type.eq.${data.type}`)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      renderRelated(relData || []);
+
+      initScrollAnimations();
+      return;
+
+    } catch(e) {
+      console.warn('Supabase 조회 실패, 폴백 시도:', e);
+    }
+  }
+
+  // 폴백: LISTINGS_FALLBACK에서 찾기
+  const fallback = (window.LISTINGS_FALLBACK || []).find(l => String(l.id) === String(LISTING_ID));
+  if (fallback) {
+    renderDetail(fallback);
+    document.getElementById('pageLoading').style.display = 'none';
+    document.getElementById('pageContent').style.display = 'block';
+    const related = (window.LISTINGS_FALLBACK || []).filter(l => l.id !== fallback.id).slice(0, 3);
+    renderRelated(related);
+    initScrollAnimations();
+  } else {
+    document.getElementById('pageLoading').style.display = 'none';
+    document.getElementById('pageError').style.display = 'block';
+  }
+}
+
+// 시작
+document.addEventListener('DOMContentLoaded', initDetailPage);
 </script>
 </body>
 </html>
