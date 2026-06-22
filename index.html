@@ -61,7 +61,7 @@
       <a href="listings.html" class="nav-link">지역현장</a>
       <a href="map.html" class="nav-link">지도현장</a>
       <a href="supporters.html" class="nav-link">서포터즈</a>
-      <a href="#" href="register.html" class="nav-link btn-register">+ 현장등록</a>
+      <a href="#" onclick="goRegister();return false;" class="nav-link btn-register">+ 현장등록</a>
     </nav>
 
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
@@ -73,7 +73,7 @@
     <a href="listings.html">지역현장</a>
     <a href="map.html">지도현장</a>
     <a href="supporters.html">서포터즈</a>
-    <a href="register.html">현장등록</a>
+    <a href="#" onclick="goRegister();return false;">현장등록</a>
     <a href="login.html">로그인</a>
     <a href="signup.html">회원가입</a>
   </div>
@@ -284,7 +284,7 @@
 
 <!-- 플로팅 버튼 -->
 <div class="float-btns">
-  <button class="float-btn float-register" onclick="location.href='register.html'">
+  <button class="float-btn float-register" onclick="goRegister()">
     <span>현장</span><span>등록</span>
   </button>
   <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
