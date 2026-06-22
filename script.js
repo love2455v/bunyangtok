@@ -344,17 +344,20 @@ async function submitLogin(e) {
   e.preventDefault();
   var db = getSupabase();
   if (!db) { alert('연결 오류'); return; }
-  var email = document.getElementById('email') ? document.getElementById('email').value : '';
+  // userId 필드(아이디 방식) 또는 email 필드 둘 다 지원
+  var userId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
+  var emailRaw = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
+  var email = userId ? (userId + '@bunyangtok.com') : emailRaw;
   var password = document.getElementById('password') ? document.getElementById('password').value : '';
   var btn = document.getElementById('submitBtn');
+  if (!email) { alert('아이디를 입력해주세요.'); return; }
   if (btn) { btn.textContent = '로그인 중...'; btn.disabled = true; }
   try {
     var result = await db.auth.signInWithPassword({ email: email, password: password });
     if (result.error) throw result.error;
-    alert('로그인 성공!');
     window.location.href = 'index.html';
   } catch (err) {
-    alert('로그인 실패: ' + (err.message || err));
+    alert('아이디 또는 비밀번호가 올바르지 않습니다.');
     if (btn) { btn.textContent = '로그인'; btn.disabled = false; }
   }
 }
@@ -436,9 +439,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   var registerForm = document.getElementById('registerForm');
   if (registerForm) registerForm.addEventListener('submit', submitListing);
 
-  var signupForm = document.getElementById('signupForm');
-  if (signupForm) signupForm.addEventListener('submit', submitSignup);
-
-  var loginForm = document.getElementById('loginForm');
-  if (loginForm) loginForm.addEventListener('submit', submitLogin);
+  // signup.html / login.html은 각 파일의 인라인 스크립트가 직접 처리
+  // (중복 이벤트 방지 — script.js에서는 별도 연결 안 함)
 });
