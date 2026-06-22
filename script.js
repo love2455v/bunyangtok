@@ -349,7 +349,8 @@ async function submitLogin(e) {
   e.preventDefault();
   var db = getSupabase();
   if (!db) { alert('연결 오류'); return; }
-  var email = document.getElementById('email') ? document.getElementById('email').value : '';
+  var loginId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
+  var email = loginId.includes('@') ? loginId : loginId + '@bunyangtok.com';
   var password = document.getElementById('password') ? document.getElementById('password').value : '';
   var btn = document.getElementById('submitBtn');
   if (btn) { btn.textContent = '로그인 중...'; btn.disabled = true; }
