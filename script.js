@@ -87,6 +87,17 @@ async function loadListings(region, keyword) {
     return;
   }
 
+  // 캐시가 있으면 Supabase 재요청 없이 클라이언트 필터만
+  if (window._cachedData) {
+    var cf = window._cachedData;
+    if (region && region !== '전체') cf = cf.filter(function(l){ return l.region === region; });
+    if (keyword) { var kw2 = keyword.toLowerCase(); cf = cf.filter(function(l){ return (l.title||'').toLowerCase().includes(kw2)||(l.description||'').toLowerCase().includes(kw2)||(l.company||'').toLowerCase().includes(kw2); }); }
+    var fcEl2 = document.getElementById('filterCount');
+    if (fcEl2) fcEl2.textContent = '전체 ' + cf.length + '개 현장';
+    renderListings(cf);
+    return;
+  }
+
   try {
     // 전체 데이터 캐시 후 클라이언트 필터
     var allResult = await db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
