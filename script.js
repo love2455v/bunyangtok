@@ -146,7 +146,7 @@ function renderListings(data) {
       (item.img ? '<img class="card-img" src="' + item.img + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
       '<div class="card-body">' +
       '<div class="card-chat-name">' + item.title + '</div>' +
-      '<div class="card-chat-preview"><span class="card-chat-region">📍 ' + item.region + '</span><span class="card-chat-fee">' + (item.fee || '협의') + '</span></div>' +
+      '<div class="card-chat-preview"><span class="card-chat-region">' + item.region + '</span><span class="card-chat-fee">' + (item.fee || '협의') + '</span></div>' +
       '<div class="card-badges">' +
         badges.map(function(b) {
           var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === '대박' ? 'best' : 'type';
@@ -157,14 +157,14 @@ function renderListings(data) {
       '<div class="card-title">' + item.title + '</div>' +
       '<div class="card-desc">' + desc + '</div>' +
       '<div class="card-info">' +
-        '<span class="info-tag">📍 ' + item.region + '</span>' +
+        '<span class="info-tag">' + item.region + '</span>' +
         '<span class="info-tag highlight">💰 팀수수료 ' + (item.fee || '협의') + '</span>' +
         '<span class="info-tag">' + role.join('/') + '</span>' +
         welfare.map(function(w) { return '<span class="info-tag">' + w + '</span>'; }).join('') +
         '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company">📋 ' + item.company + '</span>' +
+        '<span class="card-company">' + item.company + '</span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
       '</div>' +
@@ -193,7 +193,7 @@ async function renderBest() {
             '<div class="best-rank ' + (rankClass[i] || '') + '">' + (i + 1) + '</div>' +
             '<div class="best-info">' +
               '<div class="best-title">' + item.title + '</div>' +
-              '<div class="best-meta">📍 ' + item.region + ' · ' + (item.type || '아파트') + ' · 조회 ' + (item.views || 0).toLocaleString() + '</div>' +
+              '<div class="best-meta">' + item.region + ' · ' + (item.type || '아파트') + ' · 조회 ' + (item.views || 0).toLocaleString() + '</div>' +
             '</div>' +
           '</div>';
         }).join('');
