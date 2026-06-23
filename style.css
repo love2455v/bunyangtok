@@ -368,6 +368,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* 데스크탑: chat 전용 요소 숨기기 */
 .card-chat-name { display: none; }
+.card-chat-preview { display: none; }
 .card-chat-right { display: none; }
 
 @media (max-width: 600px) {
@@ -439,16 +440,17 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     text-overflow: ellipsis;
   }
 
-  /* 현장명 (마지막 메시지 미리보기) */
-  .card-title {
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    color: #999 !important;
-    margin-bottom: 0 !important;
+  /* 현장명은 card-chat-name으로 표시, 원본 숨기기 */
+  .card-title { display: none !important; }
+
+  /* 키워드 미리보기 (직종·복리후생) */
+  .card-chat-preview {
+    display: block;
+    font-size: 13px;
+    color: #999;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block !important;
   }
 
   /* 우측: 지역 + 수수료 뱃지 */
