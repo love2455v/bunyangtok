@@ -362,3 +362,119 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .id-check-wrap .btn-check { width: 100%; height: 46px; border-radius: 10px; }
   .id-check-wrap .input-wrap { width: 100%; }
 }
+
+
+/* ===== 카카오톡 채팅창 스타일 (분양톡 모바일 UI) ===== */
+
+/* 데스크탑: chat 전용 요소 숨기기 */
+.card-chat-name { display: none; }
+.card-chat-right { display: none; }
+
+@media (max-width: 600px) {
+  /* 히어로 섹션 숨기기 */
+  .hero { display: none; }
+
+  /* 리스트 그리드 → 카카오톡 채팅목록처럼 */
+  .listings-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* 카드: 채팅 행 스타일 */
+  .listing-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 16px;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    box-shadow: none !important;
+    background: #fff;
+    transform: none !important;
+    transition: background .15s !important;
+  }
+  .listing-card:hover { transform: none !important; background: #fafafa !important; }
+  .listing-card.hot-card,
+  .listing-card.ad-card { border-left: none !important; }
+
+  /* 이미지: 작은 프로필 아이콘 */
+  .card-img {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 14px;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  /* 카드 바디: 중앙 텍스트 영역 */
+  .card-body {
+    flex: 1;
+    min-width: 0;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  /* 숨기기 */
+  .card-badges { display: none !important; }
+  .card-desc   { display: none !important; }
+  .card-info   { display: none !important; }
+  .card-footer { display: none !important; }
+
+  /* 회사명 (카톡의 대화상대 이름) */
+  .card-chat-name {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 현장명 (마지막 메시지 미리보기) */
+  .card-title {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #999 !important;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block !important;
+  }
+
+  /* 우측: 지역 + 수수료 뱃지 */
+  .card-chat-right {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .card-chat-region {
+    font-size: 11px;
+    color: #bbb;
+    white-space: nowrap;
+  }
+
+  .card-chat-fee {
+    background: #FF6B2B;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  /* register-form, id-check-wrap은 이전 @media 블록에서 처리됨 */
+}
