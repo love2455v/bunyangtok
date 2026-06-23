@@ -5,6 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현장 등록 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    .upload-area {
+      border: 2px dashed #CBD5E1; border-radius: 12px; padding: 32px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      background: #F8FAFC; color: #64748B; font-size: 14px; line-height: 1.8;
+    }
+    .upload-area:hover { border-color: #FF6B2B; background: #fff3ee; color: #FF6B2B; }
+    .upload-area.dragover { border-color: #FF6B2B; background: #fff3ee; }
+    .preview-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px; margin-top: 14px;
+    }
+    .preview-item {
+      position: relative; aspect-ratio: 1; border-radius: 10px;
+      overflow: hidden; border: 2px solid #E2E8F0;
+    }
+    .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .preview-item:first-child { border-color: #FF6B2B; }
+    .preview-remove {
+      position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
+      background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%;
+      font-size: 14px; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; line-height: 1;
+    }
+    .preview-main-badge {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(255,107,43,0.85); color: #fff;
+      font-size: 11px; font-weight: 700; text-align: center; padding: 3px;
+    }
+    .upload-count { font-size: 12px; color: #94A3B8; margin-top: 8px; text-align: right; }
+  </style>
 </head>
 <body>
 
@@ -168,6 +199,23 @@
           </div>
         </div>
 
+
+        <!-- 현장 사진 -->
+        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:6px;">📷 현장 사진 <span style="font-size:13px;font-weight:400;color:#94A3B8;">선택사항 · 최대 10장</span></div>
+          <div style="font-size:13px;color:#94A3B8;margin-bottom:14px;">첫 번째 사진이 대표 이미지로 사용됩니다. JPG·PNG·WEBP, 장당 5MB 이하</div>
+          <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="previewImages(this)">
+          <div class="upload-area" id="uploadArea"
+            onclick="document.getElementById('imageInput').click()"
+            ondragover="event.preventDefault();this.classList.add('dragover')"
+            ondragleave="this.classList.remove('dragover')"
+            ondrop="handleDrop(event)">
+            📷 클릭하거나 사진을 여기에 끌어다 놓으세요
+          </div>
+          <div class="preview-grid" id="imagePreview"></div>
+          <div class="upload-count" id="uploadCount"></div>
+        </div>
+
         <!-- 연락처 -->
         <div style="margin-bottom:32px;">
           <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📞 연락처</div>
@@ -275,52 +323,110 @@ async function submitForm(e) {
     return;
   }
 
+  // 이미지 업로드
+  var imageUrls = [];
+  if (selectedFiles.length > 0) {
+    btn.textContent = '📷 사진 업로드 중... (0/' + selectedFiles.length + ')';
+    for (var i = 0; i < selectedFiles.length; i++) {
+      btn.textContent = '📷 사진 업로드 중... (' + (i+1) + '/' + selectedFiles.length + ')';
+      var file = selectedFiles[i];
+      var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+      var path = user.id + '/' + Date.now() + '_' + i + '.' + ext;
+      try {
+        var uploadRes = await db.storage.from('listing-images').upload(path, file, { cacheControl: '3600', upsert: false });
+        if (!uploadRes.error) {
+          var urlRes = db.storage.from('listing-images').getPublicUrl(path);
+          imageUrls.push(urlRes.data.publicUrl);
+        }
+      } catch(uploadErr) { console.warn('이미지 업로드 실패:', uploadErr); }
+    }
+  }
+
+  btn.textContent = '⏳ 현장 정보 저장 중...';
+
   // 직종 체크박스
   var roles = [...document.querySelectorAll('.checkbox-group input[type=checkbox]:checked')].map(c => c.value).filter(v => ['본부장','팀장','팀원','사이드','각개'].includes(v));
   // 복리후생 체크박스
   var welfare = [...document.querySelectorAll('.checkbox-group input[type=checkbox]:checked')].map(c => c.value).filter(v => ['숙소제공','숙소비지원','광고비지원','팀정착금','잔금유예','선납할인','페이백'].includes(v));
 
-  var region = document.getElementById('region').value;
-  var type = document.getElementById('type').value;
-  var company = document.getElementById('company').value;
-  var title = document.getElementById('titleInput').value;
-  var description = document.getElementById('description').value;
-  var pay = document.getElementById('pay').value;
-  var fee = document.getElementById('fee').value;
-  var career = document.getElementById('career').value;
-  var phone = document.getElementById('phone').value;
-  var kakao_url = document.getElementById('kakao_url').value;
-
   var payload = {
-    region: region,
-    type: type,
-    company: company,
-    title: title,
-    description: description,
-    pay: pay,
-    fee: fee,
-    career: career,
+    region: document.getElementById('region').value,
+    type: document.getElementById('type').value,
+    company: document.getElementById('company').value,
+    title: document.getElementById('titleInput').value,
+    description: document.getElementById('description').value,
+    pay: document.getElementById('pay').value,
+    fee: document.getElementById('fee').value,
+    career: document.getElementById('career').value,
     role: roles,
     welfare: welfare,
-    phone: phone,
-    kakao_url: kakao_url,
+    phone: document.getElementById('phone').value,
+    kakao_url: document.getElementById('kakao_url').value,
     badges: [],
     is_active: true,
     user_id: user.id,
-    img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70'
+    images: imageUrls,
+    img: imageUrls[0] || ''
   };
 
   var { error } = await db.from('listings').insert(payload);
   if (error) {
     console.error(error);
     alert('등록 중 오류가 발생했습니다: ' + error.message);
-    btn.disabled = false;
-    btn.textContent = '✅ 현장 등록 신청하기';
+    btn.disabled = false; btn.textContent = '✅ 현장 등록 신청하기';
     return;
   }
 
   alert('✅ 현장이 등록되었습니다!\n목록 페이지로 이동합니다.');
   location.href = 'listings.html';
+}
+
+// ===== 이미지 관련 =====
+var selectedFiles = [];
+
+function previewImages(input) {
+  var files = [...input.files];
+  var remaining = 10 - selectedFiles.length;
+  files.slice(0, remaining).forEach(function(file) {
+    if (file.size > 5 * 1024 * 1024) { alert(file.name + ' 파일이 5MB를 초과합니다.'); return; }
+    selectedFiles.push(file);
+  });
+  renderPreviews();
+  input.value = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  var files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+  var input = { files: files };
+  previewImages(input);
+}
+
+function removeImage(idx) {
+  selectedFiles.splice(idx, 1);
+  renderPreviews();
+}
+
+function renderPreviews() {
+  var grid = document.getElementById('imagePreview');
+  var count = document.getElementById('uploadCount');
+  var area = document.getElementById('uploadArea');
+  if (!grid) return;
+
+  grid.innerHTML = selectedFiles.map(function(file, i) {
+    var url = URL.createObjectURL(file);
+    return '<div class="preview-item">' +
+      '<img src="' + url + '" alt="사진 ' + (i+1) + '">' +
+      '<button type="button" onclick="removeImage(' + i + ')" class="preview-remove">×</button>' +
+      (i === 0 ? '<div class="preview-main-badge">대표</div>' : '') +
+      '</div>';
+  }).join('');
+
+  if (count) count.textContent = selectedFiles.length > 0 ? selectedFiles.length + '/10장 선택됨' : '';
+  if (area) area.style.display = selectedFiles.length >= 10 ? 'none' : 'flex';
+  if (area) area.style.flexDirection = 'column';
+  if (area) area.style.alignItems = 'center';
 }
 </script>
 </body>
