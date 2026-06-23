@@ -311,3 +311,16 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .banner-content { flex-direction: column; text-align: center; }
   .form-row { grid-template-columns: 1fr; }
 }
+
+/* ===== 모바일 추가 (390px 기준) ===== */
+@media (max-width: 600px) {
+  /* topbar: 통계 숨기고 로그인/회원가입만 */
+  .topbar-stats { display: none; }
+  .topbar-inner { justify-content: flex-end; }
+
+  /* listings 필터바: 2열 그리드 */
+  .filter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .filter-select { width: 100%; }
+  .filter-reset { grid-column: 1 / -1; }
+  .filter-count { grid-column: 1 / -1; margin-left: 0; text-align: right; }
+}
