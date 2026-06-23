@@ -39,7 +39,7 @@
 <body>
 <div class="topbar">
   <div class="container topbar-inner">
-    <div class="topbar-stats"><span>👥 오늘 방문 <strong>2,847</strong>명</span><span>📋 신규현장 <strong>5</strong>건</span></div>
+    <div class="topbar-stats"><span> 오늘 방문 <strong>2,847</strong>명</span><span> 신규현장 <strong>5</strong>건</span></div>
     <div class="topbar-links"><a href="login.html">로그인</a><a href="signup.html" class="btn-join">회원가입</a></div>
   </div>
 </div>
@@ -59,7 +59,7 @@
     <a href="index.html">HOME</a><a href="listings.html">지역현장</a><a href="map.html">지도현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a><a href="login.html">로그인</a><a href="signup.html">회원가입</a>
   </div>
 </header>
-<div style="padding:16px 0 8px;background:var(--bg);border-bottom:1px solid var(--border);"><div class="container"><h2 style="font-size:18px;font-weight:800;color:var(--charcoal);margin:0;">📍 지도 현장 검색</h2></div></div>
+<div style="padding:16px 0 8px;background:var(--bg);border-bottom:1px solid var(--border);"><div class="container"><h2 style="font-size:18px;font-weight:800;color:var(--charcoal);margin:0;"> 지도 현장 검색</h2></div></div>
 <div class="map-wrap">
   <div class="map-sidebar">
     <div class="sidebar-header">현장 목록<div class="sidebar-count" id="sidebarCount">불러오는 중...</div></div>
@@ -94,8 +94,8 @@ var REGION_COORDS={'서울':[37.5665,126.9780],'경기남부':[37.2750,127.0090]
 var map,allListings=[],markers=[],currentRegion='전체';
 var orangeIcon=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#ff6b2b;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',iconSize:[14,14],iconAnchor:[7,7]});
 var activeIcon=L.divIcon({className:'',html:'<div style="width:20px;height:20px;background:#ff6b2b;border:3px solid #fff;border-radius:50%;box-shadow:0 3px 10px rgba(255,107,43,0.6);"></div>',iconSize:[20,20],iconAnchor:[10,10]});
-function placeMarkers(listings){markers.forEach(function(m){map.removeLayer(m);});markers=[];listings.forEach(function(l,i){var bc=REGION_COORDS[l.region];if(!bc)return;var s=Number(l.id)||i;var m=L.marker([bc[0]+((s*17)%100-50)/1500,bc[1]+((s*31)%100-50)/1200],{icon:orangeIcon}).addTo(map);m.bindPopup('<div class="map-popup-title">'+l.title+'</div><div class="map-popup-info">📍 '+l.region+' · 💰 '+(l.fee||'협의')+'</div><a class="map-popup-link" href="detail.html?id='+l.id+'">상세보기 →</a>');(function(idx){m.on('click',function(){setActiveMarker(idx);scrollToCard(idx);});})(i);markers.push(m);});}
-function renderSidebar(listings){var list=document.getElementById('sidebarList');var count=document.getElementById('sidebarCount');if(count)count.textContent=listings.length+'개 현장';if(!listings.length){list.innerHTML='<div style="padding:30px;text-align:center;color:#999;font-size:13px;">해당 지역 현장이 없습니다.</div>';return;}list.innerHTML=listings.map(function(l,i){var r=Array.isArray(l.role)?l.role.join('/'):(l.role||'');return '<div class="sidebar-card" id="sc'+i+'" onclick="focusMarker('+i+')"><div class="sc-region">'+l.region+'</div><div class="sc-title">'+l.title+'</div><div class="sc-info"><span class="sc-fee">💰 '+(l.fee||'협의')+'</span>'+(r?' · '+r:'')+'</div></div>';}).join('');}
+function placeMarkers(listings){markers.forEach(function(m){map.removeLayer(m);});markers=[];listings.forEach(function(l,i){var bc=REGION_COORDS[l.region];if(!bc)return;var s=Number(l.id)||i;var m=L.marker([bc[0]+((s*17)%100-50)/1500,bc[1]+((s*31)%100-50)/1200],{icon:orangeIcon}).addTo(map);m.bindPopup('<div class="map-popup-title">'+l.title+'</div><div class="map-popup-info"> '+l.region+' ·  '+(l.fee||'협의')+'</div><a class="map-popup-link" href="detail.html?id='+l.id+'">상세보기 →</a>');(function(idx){m.on('click',function(){setActiveMarker(idx);scrollToCard(idx);});})(i);markers.push(m);});}
+function renderSidebar(listings){var list=document.getElementById('sidebarList');var count=document.getElementById('sidebarCount');if(count)count.textContent=listings.length+'개 현장';if(!listings.length){list.innerHTML='<div style="padding:30px;text-align:center;color:#999;font-size:13px;">해당 지역 현장이 없습니다.</div>';return;}list.innerHTML=listings.map(function(l,i){var r=Array.isArray(l.role)?l.role.join('/'):(l.role||'');return '<div class="sidebar-card" id="sc'+i+'" onclick="focusMarker('+i+')"><div class="sc-region">'+l.region+'</div><div class="sc-title">'+l.title+'</div><div class="sc-info"><span class="sc-fee"> '+(l.fee||'협의')+'</span>'+(r?' · '+r:'')+'</div></div>';}).join('');}
 function setActiveMarker(idx){markers.forEach(function(m){m.setIcon(orangeIcon);});if(markers[idx])markers[idx].setIcon(activeIcon);document.querySelectorAll('.sidebar-card').forEach(function(c){c.classList.remove('active');});var card=document.getElementById('sc'+idx);if(card)card.classList.add('active');}
 function scrollToCard(idx){var c=document.getElementById('sc'+idx);if(c)c.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function focusMarker(idx){setActiveMarker(idx);if(markers[idx]){map.flyTo(markers[idx].getLatLng(),13,{duration:0.6});markers[idx].openPopup();}}
