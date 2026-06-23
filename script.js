@@ -448,3 +448,72 @@ document.addEventListener('DOMContentLoaded', async function() {
   var loginForm = document.getElementById('loginForm');
   if (loginForm) loginForm.addEventListener('submit', submitLogin);
 });
+
+
+/* ===== 관심현장 Supabase 연동 ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  if (!new URLSearchParams(location.search).get('id')) return;
+  var FAVE_ID = new URLSearchParams(location.search).get('id');
+
+  function showFavToast(msg, ok) {
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:'+(ok===false?'#444':'#ff6b2b')+';color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.2);transition:opacity 0.3s;';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function(){ el.style.opacity='0'; }, 2000);
+    setTimeout(function(){ el.remove(); }, 2400);
+  }
+
+  function updateFavUI(isFav) {
+    document.querySelectorAll('.btn-save').forEach(function(b){
+      b.textContent = isFav ? '❤️' : '🔖';
+      b.style.borderColor = isFav ? '#ff6b2b' : '';
+      b.style.color = isFav ? '#ff6b2b' : '';
+    });
+    document.querySelectorAll('.sidebar-btn-save').forEach(function(b){
+      b.innerHTML = isFav ? '❤️ 관심현장 저장됨' : '🔖 관심현장 저장';
+      b.style.borderColor = isFav ? '#ff6b2b' : '';
+      b.style.color = isFav ? '#ff6b2b' : '';
+    });
+  }
+
+  function localFavToggle() {
+    var s = JSON.parse(localStorage.getItem('favorites')||'[]');
+    var i = s.indexOf(String(FAVE_ID));
+    if (i === -1) { s.push(String(FAVE_ID)); localStorage.setItem('favorites',JSON.stringify(s)); updateFavUI(true); showFavToast('❤️ 관심현장에 저장되었습니다!'); }
+    else { s.splice(i,1); localStorage.setItem('favorites',JSON.stringify(s)); updateFavUI(false); showFavToast('관심현장에서 제거되었습니다.', false); }
+  }
+
+  window.saveFavorite = async function() {
+    var db = getSupabase();
+    if (!db) { localFavToggle(); return; }
+    var sess, user;
+    try { sess = await db.auth.getSession(); user = sess&&sess.data&&sess.data.session?sess.data.session.user:null; } catch(e){}
+    if (!user) {
+      if (confirm('로그인 후 관심현장을 저장할 수 있습니다.\n로그인 하시겠습니까?'))
+        location.href = 'login.html?next=' + encodeURIComponent('detail.html?id='+FAVE_ID);
+      return;
+    }
+    try {
+      var chk = await db.from('favorites').select('id').eq('user_id',user.id).eq('listing_id',String(FAVE_ID)).maybeSingle();
+      if (chk.data) { await db.from('favorites').delete().eq('user_id',user.id).eq('listing_id',String(FAVE_ID)); updateFavUI(false); showFavToast('관심현장에서 제거되었습니다.', false); }
+      else { var ins=await db.from('favorites').insert({user_id:user.id,listing_id:String(FAVE_ID)}); if(ins.error)throw ins.error; updateFavUI(true); showFavToast('❤️ 관심현장에 저장되었습니다!'); }
+    } catch(e) { localFavToggle(); }
+  };
+
+  (async function() {
+    var db = getSupabase();
+    if (db) {
+      try {
+        var sess=await db.auth.getSession();
+        var user=sess&&sess.data&&sess.data.session?sess.data.session.user:null;
+        if(user){
+          var res=await db.from('favorites').select('id').eq('user_id',user.id).eq('listing_id',String(FAVE_ID)).maybeSingle();
+          if(res.data){updateFavUI(true);return;}
+        }
+      } catch(e){}
+    }
+    var saved=JSON.parse(localStorage.getItem('favorites')||'[]');
+    if(saved.includes(String(FAVE_ID)))updateFavUI(true);
+  })();
+});
