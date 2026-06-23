@@ -43,7 +43,7 @@
   <div class="container topbar-inner">
     <div class="topbar-stats">
       <span>👥 오늘 방문 <strong>2,847</strong>명</span>
-      <span>📋 신규현장 <strong>93</strong>건</span>
+      <span>신규현장 <strong>93</strong>건</span>
     </div>
     <div class="topbar-links">
       <a href="login.html">로그인</a>
@@ -77,14 +77,14 @@
 <div class="register-page">
   <div class="container">
     <div class="register-form">
-      <div class="form-title">📋 현장 구인 등록</div>
+      <div class="form-title">현장 구인 등록</div>
       <div class="form-sub">모든 항목을 정확히 입력하면 더 많은 상담사가 지원합니다. <span style="color:#EF4444">*</span> 필수항목</div>
 
       <form id="registerForm" onsubmit="submitForm(event)">
 
         <!-- 기본정보 -->
         <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📌 기본 정보</div>
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">기본 정보</div>
 
           <div class="form-group">
             <label class="form-label">현장명 <span class="required">*</span></label>
@@ -126,7 +126,7 @@
 
         <!-- 모집 조건 -->
         <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">💼 모집 조건</div>
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">모집 조건</div>
 
           <div class="form-group">
             <label class="form-label">모집 직종 <span class="required">*</span></label>
@@ -186,7 +186,7 @@
 
         <!-- 상세 내용 -->
         <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📝 상세 내용</div>
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">상세 내용</div>
 
           <div class="form-group">
             <label class="form-label">현장 소개 제목 <span class="required">*</span></label>
@@ -218,7 +218,7 @@
 
         <!-- 연락처 -->
         <div style="margin-bottom:32px;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📞 연락처</div>
+          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">연락처</div>
 
           <div class="form-row">
             <div class="form-group">
@@ -239,7 +239,7 @@
 
         <!-- 광고 상품 선택 -->
         <div style="margin-bottom:32px; padding:24px; background:#F0F9FF; border-radius:10px; border:1px solid #BAE6FD;">
-          <div style="font-size:16px; font-weight:700; color:#0369A1; margin-bottom:16px;">⚡ 광고 상품 선택 (선택사항)</div>
+          <div style="font-size:16px; font-weight:700; color:#0369A1; margin-bottom:16px;">광고 상품 선택 (선택사항)</div>
           <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:12px;">
             <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#fff; border-radius:8px; border:1.5px solid #E2E8F0; cursor:pointer;">
               <input type="radio" name="adPlan" value="free" checked />
@@ -261,11 +261,11 @@
         </div>
 
         <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:16px; margin-bottom:24px; font-size:13px; color:#DC2626; line-height:1.6;">
-          ⚠️ 허위 정보 기재 시 계정 정지 및 법적 조치가 취해질 수 있습니다.<br/>
+          허위 정보 기재 시 계정 정지 및 법적 조치가 취해질 수 있습니다.<br/>
           등록된 현장 정보는 검토 후 게시됩니다 (영업일 기준 24시간 이내).
         </div>
 
-        <button type="submit" class="form-submit">✅ 현장 등록 신청하기</button>
+        <button type="submit" class="form-submit">현장 등록 신청하기</button>
       </form>
     </div>
   </div>
@@ -290,7 +290,7 @@
     </div>
     <div class="footer-col">
       <h4>고객센터</h4>
-      <div class="footer-tel">📞 1668-3473</div>
+      <div class="footer-tel">1668-3473</div>
       <div class="footer-hours">월~금 09:00~18:00</div>
     </div>
   </div>
@@ -313,7 +313,7 @@ async function submitForm(e) {
   btn.textContent = '⏳ 등록 중...';
 
   var db = getSupabase();
-  if (!db) { alert('Supabase 연결 오류'); btn.disabled=false; btn.textContent='✅ 현장 등록 신청하기'; return; }
+  if (!db) { alert('Supabase 연결 오류'); btn.disabled=false; btn.textContent='현장 등록 신청하기'; return; }
 
   var user = null;
   try { var s = await db.auth.getUser(); user = s.data.user; } catch(err) {}
@@ -373,11 +373,11 @@ async function submitForm(e) {
   if (error) {
     console.error(error);
     alert('등록 중 오류가 발생했습니다: ' + error.message);
-    btn.disabled = false; btn.textContent = '✅ 현장 등록 신청하기';
+    btn.disabled = false; btn.textContent = '현장 등록 신청하기';
     return;
   }
 
-  alert('✅ 현장이 등록되었습니다!\n목록 페이지로 이동합니다.');
+  alert('현장이 등록되었습니다!\n목록 페이지로 이동합니다.');
   location.href = 'listings.html';
 }
 
