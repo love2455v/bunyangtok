@@ -430,6 +430,41 @@ function updateAuthUI(user) {
   }
 }
 
+// ===== 폰트 크기 토글 (모바일 전용) =====
+function initFontToggle() {
+  if (window.innerWidth > 600) return;
+  var sizes = ['sm', 'md', 'lg'];
+  var icons = { sm: '가', md: '가', lg: '가' };
+  var labels = { sm: '소', md: '중', lg: '대' };
+
+  // 저장된 설정 적용 (기본: md)
+  var saved = localStorage.getItem('btFontSize') || 'md';
+  document.body.classList.add('fs-' + saved);
+
+  // 버튼 생성
+  var btn = document.createElement('button');
+  btn.className = 'font-toggle-btn';
+  btn.setAttribute('aria-label', '폰트 크기 조절');
+
+  function updateBtn(size) {
+    btn.innerHTML =
+      '<span class="ft-icon">' + (size === 'sm' ? '가↓' : size === 'lg' ? '가↑' : '가') + '</span>' +
+      '<span class="ft-label">' + labels[size] + '</span>';
+  }
+  updateBtn(saved);
+
+  btn.addEventListener('click', function() {
+    var cur = sizes.find(function(s){ return document.body.classList.contains('fs-' + s); }) || 'md';
+    var next = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
+    sizes.forEach(function(s){ document.body.classList.remove('fs-' + s); });
+    document.body.classList.add('fs-' + next);
+    localStorage.setItem('btFontSize', next);
+    updateBtn(next);
+  });
+
+  document.body.appendChild(btn);
+}
+
 // ===== 초기화 =====
 document.addEventListener('DOMContentLoaded', async function() {
   // 로그인 상태 확인
@@ -477,6 +512,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   var loginForm = document.getElementById('loginForm');
   if (loginForm) loginForm.addEventListener('submit', submitLogin);
+
+  // 폰트 크기 토글 버튼 (모바일 전용)
+  initFontToggle();
 });
 
 
