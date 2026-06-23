@@ -480,3 +480,69 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   /* register-form, id-check-wrap은 이전 @media 블록에서 처리됨 */
 }
+
+
+/* ===== 모바일 폰트 축소 + 3단계 크기 토글 ===== */
+.font-toggle-btn { display: none; }
+
+@media (max-width: 600px) {
+  /* 기본 모바일: 정보밀도 우선 (중간 크기) */
+  .card-chat-name    { font-size: 13.5px !important; }
+  .card-chat-preview { font-size: 11.5px !important; }
+  .card-chat-region  { font-size: 10px   !important; }
+  .card-chat-fee     { font-size: 10px   !important; padding: 2px 8px !important; }
+  .card-img          { width: 46px !important; height: 46px !important; }
+  .listing-card      { padding: 10px 14px !important; gap: 11px !important; }
+  .region-tab        { font-size: 12.5px; padding: 7px 14px; }
+  .filter-select     { font-size: 12.5px; padding: 7px 10px; }
+
+  /* 폰트 토글 FAB 버튼 */
+  .font-toggle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 92px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    background: #2C2C2C;
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.35);
+    z-index: 300;
+    cursor: pointer;
+    border: 2px solid #444;
+    transition: transform .15s, background .15s;
+    line-height: 1;
+  }
+  .font-toggle-btn:active { transform: scale(0.9); }
+  .font-toggle-btn .ft-icon { font-size: 17px; font-weight: 800; }
+  .font-toggle-btn .ft-label { font-size: 8px; color: #aaa; margin-top: 1px; }
+
+  /* ── 소 (sm): 최대 정보밀도 ── */
+  body.fs-sm .card-chat-name    { font-size: 12px    !important; }
+  body.fs-sm .card-chat-preview { font-size: 10.5px  !important; }
+  body.fs-sm .card-img          { width: 40px !important; height: 40px !important; }
+  body.fs-sm .listing-card      { padding: 8px 13px  !important; gap: 9px !important; }
+  body.fs-sm .card-chat-fee     { font-size: 9.5px   !important; padding: 2px 6px !important; }
+  body.fs-sm .card-chat-region  { font-size: 9px     !important; }
+  body.fs-sm .card-chat-right   { gap: 4px !important; }
+
+  /* ── 중 (md): 기본 ── */
+  body.fs-md .card-chat-name    { font-size: 14px    !important; }
+  body.fs-md .card-chat-preview { font-size: 12px    !important; }
+  body.fs-md .card-img          { width: 48px !important; height: 48px !important; }
+  body.fs-md .listing-card      { padding: 12px 15px !important; gap: 12px !important; }
+  body.fs-md .card-chat-fee     { font-size: 11px    !important; padding: 3px 9px !important; }
+  body.fs-md .card-chat-region  { font-size: 11px    !important; }
+
+  /* ── 대 (lg): 읽기 편한 ── */
+  body.fs-lg .card-chat-name    { font-size: 16px    !important; }
+  body.fs-lg .card-chat-preview { font-size: 13.5px  !important; }
+  body.fs-lg .card-img          { width: 56px !important; height: 56px !important; }
+  body.fs-lg .listing-card      { padding: 14px 16px !important; gap: 14px !important; }
+  body.fs-lg .card-chat-fee     { font-size: 12px    !important; padding: 3px 10px !important; }
+  body.fs-lg .card-chat-region  { font-size: 11.5px  !important; }
+}
