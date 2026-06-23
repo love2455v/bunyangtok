@@ -119,6 +119,21 @@
         <option value="계약수수료">계약수수료</option>
         <option value="기본급+인센">기본급+인센</option>
       </select>
+      <select class="filter-select" id="feeFilter" onchange="applyFilters()">
+        <option value="">수수료 전체</option>
+        <option value="under500">500만원 미만</option>
+        <option value="500to1000">500~1000만원</option>
+        <option value="1000to1500">1000~1500만원</option>
+        <option value="over1500">1500만원+</option>
+        <option value="협의">협의</option>
+      </select>
+      <select class="filter-select" id="welfareFilter" onchange="applyFilters()">
+        <option value="">복리후생 전체</option>
+        <option value="일비">일비</option>
+        <option value="광고비지원">광고비지원</option>
+        <option value="숙소제공">숙소제공</option>
+        <option value="경력무관">경력무관</option>
+      </select>
       <select class="filter-select" id="sortFilter" onchange="applyFilters()">
         <option value="latest">최신순</option>
         <option value="best">인기순</option>
@@ -183,7 +198,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-  // URL 파라미터 처리
   (function() {
     var p = new URLSearchParams(location.search);
     var q = p.get('q'), r = p.get('region');
@@ -191,7 +205,12 @@
     if (r) { currentRegion = r; var ei2 = document.getElementById('regionSelect'); if (ei2) ei2.value = r; }
   })();
 
-  // ===== 클라이언트 필터 함수 =====
+  function parseFeeNum(s) {
+    if (!s || s === '협의' || s.trim() === '') return -1;
+    var m = s.replace(/,/g,'').match(/(\d+)/);
+    return m ? parseInt(m[1]) : -1;
+  }
+
   function filterRegion(el, region) {
     document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
     el.classList.add('active');
@@ -200,30 +219,57 @@
   }
 
   function applyFilters() {
-    var type = (document.getElementById('typeFilter') || {}).value || '';
-    var role = (document.getElementById('roleFilter') || {}).value || '';
-    var pay  = (document.getElementById('payFilter')  || {}).value || '';
+    var type    = (document.getElementById('typeFilter')    ||{}).value||'';
+    var role    = (document.getElementById('roleFilter')    ||{}).value||'';
+    var pay     = (document.getElementById('payFilter')     ||{}).value||'';
+    var fee     = (document.getElementById('feeFilter')     ||{}).value||'';
+    var welfare = (document.getElementById('welfareFilter') ||{}).value||'';
+    var sort    = (document.getElementById('sortFilter')    ||{}).value||'latest';
+
     var data = (window._cachedData || []).filter(function(l) {
       if (currentRegion && currentRegion !== '전체' && l.region !== currentRegion) return false;
+      if (currentKeyword) {
+        var kw = currentKeyword.toLowerCase();
+        if (!((l.title||'').toLowerCase().includes(kw)||(l.description||'').toLowerCase().includes(kw)||(l.company||'').toLowerCase().includes(kw))) return false;
+      }
       if (type && l.type !== type) return false;
-      var lRole = Array.isArray(l.role) ? l.role : [];
-      if (role && !lRole.includes(role)) return false;
+      var lR = Array.isArray(l.role) ? l.role : [];
+      if (role && !lR.includes(role)) return false;
       if (pay && l.pay !== pay) return false;
+      if (fee) {
+        var fn = parseFeeNum(l.fee);
+        if (fee === '협의' && fn !== -1) return false;
+        if (fee === 'under500' && (fn < 0 || fn >= 500)) return false;
+        if (fee === '500to1000' && (fn < 500 || fn >= 1000)) return false;
+        if (fee === '1000to1500' && (fn < 1000 || fn >= 1500)) return false;
+        if (fee === 'over1500' && fn < 1500) return false;
+      }
+      if (welfare) {
+        var lW = Array.isArray(l.welfare) ? l.welfare : [];
+        if (!lW.includes(welfare)) return false;
+      }
       return true;
     });
+
+    if (sort === 'fee') {
+      data.sort(function(a,b){ var fa=parseFeeNum(a.fee),fb=parseFeeNum(b.fee); if(fa===-1)return 1; if(fb===-1)return -1; return fb-fa; });
+    } else if (sort === 'best') {
+      data.sort(function(a,b){ return (b.views||0)-(a.views||0); });
+    }
+
     var fc = document.getElementById('filterCount');
     if (fc) fc.textContent = '전체 ' + data.length + '개 현장';
     renderListings(data);
   }
 
   function resetFilters() {
-    ['typeFilter','roleFilter','payFilter'].forEach(function(id) {
-      var e = document.getElementById(id); if (e) e.value = '';
+    ['typeFilter','roleFilter','payFilter','feeFilter','welfareFilter'].forEach(function(id){
+      var e=document.getElementById(id); if(e) e.value='';
     });
-    currentRegion = '전체'; currentKeyword = '';
-    var si = document.getElementById('searchInput'); if (si) si.value = '';
-    document.querySelectorAll('.region-tab').forEach(function(t) { t.classList.remove('active'); });
-    var first = document.querySelector('.region-tab'); if (first) first.classList.add('active');
+    currentRegion='전체'; currentKeyword='';
+    var si=document.getElementById('searchInput'); if(si) si.value='';
+    document.querySelectorAll('.region-tab').forEach(function(t){t.classList.remove('active');});
+    var first=document.querySelector('.region-tab'); if(first) first.classList.add('active');
     applyFilters();
   }
 </script>
