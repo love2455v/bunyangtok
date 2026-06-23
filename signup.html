@@ -80,10 +80,10 @@
     <div class="left-benefits">
       <div class="left-copy"><h2>분양 종사자를 위한<br/>최고의 플랫폼</h2></div>
       <ul class="benefit-list">
-        <li><div class="benefit-icon">🔥</div><div>전국 신규 현장 실시간 알림 수신</div></li>
-        <li><div class="benefit-icon">💰</div><div>팀수수료, 복리후생 상세 비교 가능</div></li>
-        <li><div class="benefit-icon">📋</div><div>현장 직접 등록 및 상담사 모집</div></li>
-        <li><div class="benefit-icon">🏆</div><div>베스트 현장 TOP10 우선 확인</div></li>
+        <li><div class="benefit-icon"></div><div>전국 신규 현장 실시간 알림 수신</div></li>
+        <li><div class="benefit-icon"></div><div>팀수수료, 복리후생 상세 비교 가능</div></li>
+        <li><div class="benefit-icon"></div><div>현장 직접 등록 및 상담사 모집</div></li>
+        <li><div class="benefit-icon"></div><div>베스트 현장 TOP10 우선 확인</div></li>
       </ul>
     </div>
     <div class="left-note">지금 바로 무료로 시작하세요</div>
@@ -91,7 +91,7 @@
 </div>
 <div class="auth-right">
   <div class="logo-mobile"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;margin-right:7px;">분양<span>톡</span></div>
-  <h1 class="auth-title">함께 시작해볼까요? 🚀</h1>
+  <h1 class="auth-title">함께 시작해볼까요? </h1>
   <p class="auth-sub">30초 만에 무료로 가입하고 현장 정보를 받아보세요</p>
   <form id="signupForm">
     <div class="error-msg" id="errorMsg"></div>
@@ -99,29 +99,29 @@
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">이름 <span class="required">*</span></label>
-        <div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="name" class="form-input" placeholder="홍길동" required /></div>
+        <div class="input-wrap"><span class="input-icon"></span><input type="text" id="name" class="form-input" placeholder="홍길동" required /></div>
       </div>
       <div class="form-group">
         <label class="form-label">연락처</label>
-        <div class="input-wrap"><span class="input-icon">📱</span><input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" /></div>
+        <div class="input-wrap"><span class="input-icon"></span><input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" /></div>
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">별명 <span class="required">*</span></label>
-      <div class="input-wrap"><span class="input-icon">😊</span><input type="text" id="nickname" class="form-input" placeholder="예) 홍팀장, 서울에이스 (10자 이내)" maxlength="10" required /></div>
+      <div class="input-wrap"><span class="input-icon"></span><input type="text" id="nickname" class="form-input" placeholder="예) 홍팀장, 서울에이스 (10자 이내)" maxlength="10" required /></div>
       <div style="font-size:11px;color:#94A3B8;margin-top:5px;">상단바 및 프로필에 표시되는 이름입니다</div>
     </div>
     <div class="form-group">
       <label class="form-label">아이디 <span class="required">*</span></label>
       <div class="id-check-wrap">
-        <div class="input-wrap" style="flex:1;position:relative;"><span class="input-icon">👤</span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" autocomplete="username" oninput="resetCheck()" /></div>
+        <div class="input-wrap" style="flex:1;position:relative;"><span class="input-icon"></span><input type="text" id="userId" class="form-input" placeholder="영문·숫자 4~20자" required minlength="4" maxlength="20" autocomplete="username" oninput="resetCheck()" /></div>
         <button type="button" class="btn-check" id="checkBtn" onclick="checkUserId()">중복확인</button>
       </div>
       <div class="check-result" id="checkResult"></div>
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호 <span class="required">*</span></label>
-      <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="password" class="form-input" placeholder="8자 이상 입력" required minlength="8" oninput="checkPwStrength(this.value)" /></div>
+      <div class="input-wrap"><span class="input-icon"></span><input type="password" id="password" class="form-input" placeholder="8자 이상 입력" required minlength="8" oninput="checkPwStrength(this.value)" /></div>
       <div class="pw-strength">
         <div class="pw-bars"><div class="pw-bar" id="bar1"></div><div class="pw-bar" id="bar2"></div><div class="pw-bar" id="bar3"></div><div class="pw-bar" id="bar4"></div></div>
         <div class="pw-hint" id="pwHint">8자 이상 입력해주세요</div>
@@ -129,7 +129,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호 확인 <span class="required">*</span></label>
-      <div class="input-wrap"><span class="input-icon">🔑</span><input type="password" id="passwordConfirm" class="form-input" placeholder="비밀번호를 한번 더 입력하세요" required /></div>
+      <div class="input-wrap"><span class="input-icon"></span><input type="password" id="passwordConfirm" class="form-input" placeholder="비밀번호를 한번 더 입력하세요" required /></div>
     </div>
     <div class="agree-group">
       <label class="agree-all"><input type="checkbox" id="agreeAll" onchange="toggleAll(this)" />전체 약관에 동의합니다</label>
@@ -181,15 +181,15 @@ async function checkUserId() {
     // profiles 테이블에서 username 중복 확인
     const { data, error } = await db.from('profiles').select('id').eq('username', userId).maybeSingle();
     if (data) {
-      result.textContent = '✗ 이미 사용 중인 아이디입니다';
+      result.textContent = ' 이미 사용 중인 아이디입니다';
       result.style.color = '#EF4444'; idChecked = false;
     } else {
-      result.textContent = '✓ 사용 가능한 아이디입니다';
+      result.textContent = ' 사용 가능한 아이디입니다';
       result.style.color = '#10B981'; idChecked = true;
     }
   } catch (err) {
     // profiles 테이블 없을 경우 통과
-    result.textContent = '✓ 사용 가능한 아이디입니다';
+    result.textContent = ' 사용 가능한 아이디입니다';
     result.style.color = '#10B981'; idChecked = true;
   }
 
@@ -248,7 +248,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
       window.location.href = 'index.html';
     } else {
       // 이메일 인증이 활성화된 경우
-      succEl.textContent = '✓ 가입 신청이 완료되었습니다. 잠시 후 로그인해주세요.';
+      succEl.textContent = ' 가입 신청이 완료되었습니다. 잠시 후 로그인해주세요.';
       succEl.classList.add('show');
       btn.classList.remove('loading'); btn.disabled = false;
       setTimeout(() => window.location.href = 'login.html', 2500);
