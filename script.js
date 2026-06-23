@@ -134,6 +134,7 @@ function renderListings(data) {
       '" onclick="location.href=\'detail.html?id=' + item.id + '\'">' +
       (item.img ? '<img class="card-img" src="' + item.img + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
       '<div class="card-body">' +
+      '<div class="card-chat-name">' + item.company + '</div>' +
       '<div class="card-badges">' +
         badges.map(function(b) {
           var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === '대박' ? 'best' : 'type';
@@ -154,6 +155,10 @@ function renderListings(data) {
         '<span class="card-company">📋 ' + item.company + '</span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
+      '</div>' +
+      '<div class="card-chat-right">' +
+        '<span class="card-chat-region">' + item.region + '</span>' +
+        '<span class="card-chat-fee">' + (item.fee || '협의') + '</span>' +
       '</div>' +
     '</div>';
   }).join('');
