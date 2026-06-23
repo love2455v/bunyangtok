@@ -146,7 +146,7 @@ function renderListings(data) {
       (item.img ? '<img class="card-img" src="' + item.img + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
       '<div class="card-body">' +
       '<div class="card-chat-name">' + item.title + '</div>' +
-      '<div class="card-chat-preview">' + [].concat(item.role||[]).concat(item.welfare||[]).slice(0,4).join(' · ') + '</div>' +
+      '<div class="card-chat-preview"><span class="card-chat-region">📍 ' + item.region + '</span><span class="card-chat-fee">' + (item.fee || '협의') + '</span></div>' +
       '<div class="card-badges">' +
         badges.map(function(b) {
           var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === '대박' ? 'best' : 'type';
