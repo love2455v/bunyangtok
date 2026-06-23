@@ -238,8 +238,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .float-btn { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; box-shadow: 0 4px 16px rgba(0,0,0,0.25); transition: all .2s; border: none; }
 .float-register { background: var(--primary); color: #fff; font-size: 11px; flex-direction: column; gap: 1px; }
 .float-register:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255,107,43,.5); }
-.float-top { background: var(--charcoal-mid); color: #fff; font-size: 16px; border: 2px solid #444; }
-.float-top:hover { transform: scale(1.1); background: var(--charcoal-light); }
+.float-top { display: none !important; }
 
 /* ===== 현장 등록 페이지 ===== */
 .register-page { padding: 44px 0; }
