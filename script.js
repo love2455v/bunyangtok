@@ -94,7 +94,20 @@ async function loadListings(region, keyword) {
     window._cachedData = allResult.data || [];
     var fcEl = document.getElementById('filterCount');
     if (fcEl) fcEl.textContent = '전체 ' + window._cachedData.length + '개 현장';
-    renderListings(window._cachedData);
+    // 키워드/지역 필터 적용
+    var filtered = window._cachedData;
+    if (region && region !== '전체') {
+      filtered = filtered.filter(function(l) { return l.region === region; });
+    }
+    if (keyword) {
+      var kw = keyword.toLowerCase();
+      filtered = filtered.filter(function(l) {
+        return l.title.toLowerCase().includes(kw) ||
+               (l.description || '').toLowerCase().includes(kw) ||
+               (l.company || '').toLowerCase().includes(kw);
+      });
+    }
+    renderListings(filtered);
   } catch (err) {
     console.error('Supabase 오류:', err);
     window._cachedData = LISTINGS_FALLBACK;
