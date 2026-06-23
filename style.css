@@ -546,3 +546,60 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   body.fs-lg .card-chat-fee     { font-size: 12px    !important; padding: 3px 10px !important; }
   body.fs-lg .card-chat-region  { font-size: 11.5px  !important; }
 }
+
+
+/* ===== 카드 3요소 레이아웃 (현장명 / 지역+수수료) ===== */
+@media (max-width: 600px) {
+  /* 우측 컬럼 완전 숨기기 */
+  .card-chat-right { display: none !important; }
+
+  /* 현장명: 전체 너비 활용, 굵게 */
+  .card-chat-name {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #1a1a1a !important;
+    margin-bottom: 4px;
+  }
+
+  /* 2번째 줄: 📍지역(왼쪽) + 수수료뱃지(오른쪽) */
+  .card-chat-preview {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-chat-preview .card-chat-region {
+    font-size: 11px;
+    color: #aaa;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-chat-preview .card-chat-fee {
+    background: #FF6B2B;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* 폰트 크기별 조정 */
+  body.fs-sm .card-chat-name                      { font-size: 12.5px !important; }
+  body.fs-sm .card-chat-preview .card-chat-region  { font-size: 10px; }
+  body.fs-sm .card-chat-preview .card-chat-fee     { font-size: 9.5px; padding: 2px 7px; }
+
+  body.fs-md .card-chat-name                      { font-size: 14.5px !important; }
+  body.fs-md .card-chat-preview .card-chat-region  { font-size: 11.5px; }
+  body.fs-md .card-chat-preview .card-chat-fee     { font-size: 11px; }
+
+  body.fs-lg .card-chat-name                      { font-size: 16px !important; }
+  body.fs-lg .card-chat-preview .card-chat-region  { font-size: 13px; }
+  body.fs-lg .card-chat-preview .card-chat-fee     { font-size: 12px; padding: 3px 11px; }
+}
