@@ -28,6 +28,20 @@
     #loadingMsg { text-align: center; padding: 60px 0; color: #64748B; font-size: 16px; }
     #errorMsg { text-align: center; padding: 60px 0; color: #EF4444; font-size: 16px; display: none; }
     @media(max-width:600px) { .form-row { grid-template-columns: 1fr; } .edit-form { padding: 24px 16px; } }
+
+    /* 사진 업로드 */
+    .upload-area { border: 2px dashed #CBD5E1; border-radius: 12px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; background: #F8FAFC; color: #64748B; font-size: 14px; line-height: 1.8; }
+    .upload-area:hover { border-color: #FF6B2B; background: #fff3ee; color: #FF6B2B; }
+    .upload-area.dragover { border-color: #FF6B2B; background: #fff3ee; }
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap: 10px; margin-top: 14px; }
+    .preview-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid #E2E8F0; }
+    .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .preview-item:first-child { border-color: #FF6B2B; }
+    .preview-remove { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .preview-main-badge { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,107,43,0.85); color: #fff; font-size: 11px; font-weight: 700; text-align: center; padding: 3px; }
+    .preview-existing { border-color: #10B981; }
+    .preview-new { border-color: #6366F1; }
+    .preview-tag { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.55); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -167,6 +181,23 @@
         </div>
       </div>
 
+
+      <!-- 현장 사진 -->
+      <div class="section-wrap">
+        <div class="section-title">📷 현장 사진 <span style="font-size:12px;font-weight:400;color:#94A3B8;">기존 사진 유지 + 새 사진 추가 가능 · 최대 10장</span></div>
+        <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="addNewImages(this)">
+        <div class="upload-area" id="uploadArea"
+          onclick="document.getElementById('imageInput').click()"
+          ondragover="event.preventDefault();this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="handleEditDrop(event)">
+          📷 클릭하거나 사진을 끌어다 놓으세요 (JPG·PNG·WEBP, 장당 5MB)
+        </div>
+        <div class="preview-grid" id="imagePreview"></div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:8px;" id="uploadCount"></div>
+        <div style="margin-top:8px;font-size:12px;color:#6366F1;">🟣 새 사진&nbsp;&nbsp;<span style="color:#10B981;">🟢 기존 사진</span>&nbsp;&nbsp;첫 번째 사진이 대표 이미지</div>
+      </div>
+
       <!-- 연락처 -->
       <div class="section-wrap">
         <div class="section-title">📞 연락처</div>
@@ -201,27 +232,25 @@
 <script>
 var ADMIN_EMAIL = 'love2455v@bunyangtok.com';
 var listingId = new URLSearchParams(location.search).get('id');
+var existingImages = []; // DB에 저장된 기존 이미지 URL
+var newFiles = [];       // 새로 추가할 파일
 
 (async function init() {
   if (!listingId) { showError(); return; }
-
   var db = getSupabase();
   if (!db) { showError(); return; }
 
-  // 로그인 확인
   var { data: { user } } = await db.auth.getUser();
   if (!user) { alert('로그인이 필요합니다.'); location.href = 'login.html'; return; }
 
-  // 현장 데이터 로드
   var { data, error } = await db.from('listings').select('*').eq('id', listingId).single();
   if (error || !data) { showError(); return; }
 
-  // 권한 확인: 본인이거나 관리자
   var isOwner = data.user_id === user.id;
   var isAdmin = user.email === ADMIN_EMAIL;
   if (!isOwner && !isAdmin) { showError(); return; }
 
-  // 폼에 데이터 채우기
+  // 폼 데이터 채우기
   document.getElementById('title').value = data.title || '';
   setSelect('region', data.region);
   setSelect('type', data.type);
@@ -234,17 +263,19 @@ var listingId = new URLSearchParams(location.search).get('id');
   document.getElementById('kakao_url').value = data.kakao_url || '';
   document.getElementById('is_active').checked = data.is_active !== false;
 
-  // 직종 체크박스
   var roles = Array.isArray(data.role) ? data.role : [];
-  document.querySelectorAll('#roleGroup input[type=checkbox]').forEach(function(cb) {
-    cb.checked = roles.includes(cb.value);
-  });
+  document.querySelectorAll('#roleGroup input[type=checkbox]').forEach(function(cb) { cb.checked = roles.includes(cb.value); });
 
-  // 복리후생 체크박스
   var welfares = Array.isArray(data.welfare) ? data.welfare : [];
-  document.querySelectorAll('#welfareGroup input[type=checkbox]').forEach(function(cb) {
-    cb.checked = welfares.includes(cb.value);
-  });
+  document.querySelectorAll('#welfareGroup input[type=checkbox]').forEach(function(cb) { cb.checked = welfares.includes(cb.value); });
+
+  // 기존 이미지 로드
+  if (Array.isArray(data.images) && data.images.length > 0) {
+    existingImages = data.images.filter(function(u) { return u; });
+  } else if (data.img) {
+    existingImages = [data.img];
+  }
+  renderEditPreviews();
 
   document.getElementById('loadingMsg').style.display = 'none';
   document.getElementById('editForm').style.display = 'block';
@@ -254,9 +285,7 @@ function setSelect(id, val) {
   var el = document.getElementById(id);
   if (!el || !val) return;
   for (var i = 0; i < el.options.length; i++) {
-    if (el.options[i].value === val || el.options[i].text === val) {
-      el.selectedIndex = i; break;
-    }
+    if (el.options[i].value === val || el.options[i].text === val) { el.selectedIndex = i; break; }
   }
 }
 
@@ -265,13 +294,108 @@ function showError() {
   document.getElementById('errorMsg').style.display = 'block';
 }
 
+// ===== 이미지 관련 =====
+function addNewImages(input) {
+  var files = [...input.files];
+  var total = existingImages.length + newFiles.length;
+  var remaining = 10 - total;
+  files.slice(0, remaining).forEach(function(file) {
+    if (file.size > 5 * 1024 * 1024) { alert(file.name + ' 파일이 5MB를 초과합니다.'); return; }
+    newFiles.push(file);
+  });
+  renderEditPreviews();
+  input.value = '';
+}
+
+function handleEditDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  var files = [...e.dataTransfer.files].filter(function(f) { return f.type.startsWith('image/'); });
+  addNewImages({ files: files });
+}
+
+function removeExisting(idx) {
+  existingImages.splice(idx, 1);
+  renderEditPreviews();
+}
+
+function removeNew(idx) {
+  newFiles.splice(idx, 1);
+  renderEditPreviews();
+}
+
+function renderEditPreviews() {
+  var grid = document.getElementById('imagePreview');
+  var count = document.getElementById('uploadCount');
+  var area = document.getElementById('uploadArea');
+  if (!grid) return;
+
+  var total = existingImages.length + newFiles.length;
+  var html = '';
+
+  // 기존 이미지 (초록 테두리)
+  existingImages.forEach(function(url, i) {
+    var isFirst = (i === 0 && newFiles.length === 0) || i === 0;
+    html += '<div class="preview-item preview-existing">' +
+      '<img src="' + url + '" alt="기존사진' + (i+1) + '">' +
+      '<button type="button" onclick="removeExisting(' + i + ')" class="preview-remove">×</button>' +
+      '<div class="preview-tag">기존</div>' +
+      (i === 0 ? '<div class="preview-main-badge">대표</div>' : '') +
+      '</div>';
+  });
+
+  // 새 이미지 (보라 테두리)
+  newFiles.forEach(function(file, i) {
+    var url = URL.createObjectURL(file);
+    var isFirst = existingImages.length === 0 && i === 0;
+    html += '<div class="preview-item preview-new">' +
+      '<img src="' + url + '" alt="새사진' + (i+1) + '">' +
+      '<button type="button" onclick="removeNew(' + i + ')" class="preview-remove">×</button>' +
+      '<div class="preview-tag">새 사진</div>' +
+      (isFirst ? '<div class="preview-main-badge">대표</div>' : '') +
+      '</div>';
+  });
+
+  grid.innerHTML = html;
+  if (count) count.textContent = total > 0 ? total + '/10장' : '';
+  if (area) area.style.display = total >= 10 ? 'none' : 'flex';
+  if (area) { area.style.flexDirection = 'column'; area.style.alignItems = 'center'; }
+}
+
 async function saveEdit() {
   var db = getSupabase();
   var { data: { user } } = await db.auth.getUser();
   if (!user) { alert('로그인 필요'); return; }
 
-  var roles = [...document.querySelectorAll('#roleGroup input:checked')].map(c => c.value);
-  var welfare = [...document.querySelectorAll('#welfareGroup input:checked')].map(c => c.value);
+  var saveBtn = document.querySelector('.btn-submit');
+  saveBtn.disabled = true;
+
+  // 새 이미지 업로드
+  var uploadedUrls = [];
+  if (newFiles.length > 0) {
+    saveBtn.textContent = '📷 사진 업로드 중...';
+    for (var i = 0; i < newFiles.length; i++) {
+      saveBtn.textContent = '📷 사진 업로드 중... (' + (i+1) + '/' + newFiles.length + ')';
+      var file = newFiles[i];
+      var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+      var path = user.id + '/' + Date.now() + '_' + i + '.' + ext;
+      try {
+        var up = await db.storage.from('listing-images').upload(path, file, { cacheControl: '3600', upsert: false });
+        if (!up.error) {
+          var urlRes = db.storage.from('listing-images').getPublicUrl(path);
+          uploadedUrls.push(urlRes.data.publicUrl);
+        }
+      } catch(err) { console.warn('업로드 실패:', err); }
+    }
+  }
+
+  saveBtn.textContent = '⏳ 저장 중...';
+
+  // 최종 이미지 배열 (기존 유지 + 새로 업로드)
+  var finalImages = existingImages.concat(uploadedUrls);
+
+  var roles = [...document.querySelectorAll('#roleGroup input:checked')].map(function(c) { return c.value; });
+  var welfare = [...document.querySelectorAll('#welfareGroup input:checked')].map(function(c) { return c.value; });
 
   var payload = {
     title: document.getElementById('title').value,
@@ -287,10 +411,12 @@ async function saveEdit() {
     is_active: document.getElementById('is_active').checked,
     role: roles,
     welfare: welfare,
+    images: finalImages,
+    img: finalImages[0] || ''
   };
 
   var { error } = await db.from('listings').update(payload).eq('id', listingId);
-  if (error) { alert('저장 오류: ' + error.message); return; }
+  if (error) { alert('저장 오류: ' + error.message); saveBtn.disabled = false; saveBtn.textContent = '💾 수정 저장'; return; }
   alert('✅ 현장이 수정되었습니다!');
   location.href = 'my-listings.html';
 }
