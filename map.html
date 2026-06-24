@@ -5,47 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>지도현장 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d686eda8e41e10cb124de30d34614f0&autoload=false"></script>
   <style>
-    .map-wrap{display:flex;height:calc(100vh - 108px);min-height:500px;}
-    .map-sidebar{width:340px;min-width:260px;overflow-y:auto;border-right:1px solid var(--border);background:#fff;display:flex;flex-direction:column;}
-    .sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;color:var(--charcoal);background:var(--bg);flex-shrink:0;}
-    .sidebar-count{color:var(--orange);font-size:13px;margin-top:2px;}
-    .map-region-bar{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none;}
-    .map-region-bar::-webkit-scrollbar{display:none;}
-    .map-rbtn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:#fff;cursor:pointer;white-space:nowrap;color:var(--text-sub);transition:.15s;}
-    .map-rbtn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
-    .sidebar-list{flex:1;overflow-y:auto;}
-    .sidebar-card{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
-    .sidebar-card:hover,.sidebar-card.active{background:#fff7f3;}
-    .sidebar-card.active{border-left:3px solid var(--orange);}
-    .sc-region{font-size:11px;color:var(--orange);font-weight:700;margin-bottom:3px;}
-    .sc-title{font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:5px;line-height:1.4;}
-    .sc-info{font-size:12px;color:var(--text-sub);}
-    .sc-fee{color:var(--orange);font-weight:700;}
-    #map-container{flex:1;}
-    .map-popup-title{font-weight:700;font-size:13px;margin-bottom:4px;}
-    .map-popup-info{font-size:12px;color:#666;margin-bottom:6px;}
-    .map-popup-link{display:inline-block;background:#ff6b2b;color:#fff;padding:4px 10px;border-radius:5px;font-size:11px;text-decoration:none;}
-    @media(max-width:768px){
-      .map-wrap{flex-direction:column;height:auto;}
-      .map-sidebar{width:100%;max-height:220px;border-right:none;border-bottom:1px solid var(--border);}
-      .sidebar-list{overflow-x:auto;overflow-y:hidden;display:flex;flex-direction:row;}
-      .sidebar-card{min-width:220px;border-bottom:none;border-right:1px solid var(--border);}
-      #map-container{height:420px;}
+    #kakao-map { width:100%; height:calc(100vh - 170px); min-height:420px; }
+    .map-filter { background:#fff; border-bottom:1px solid #f0f0f0; padding:10px 16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .map-filter select { padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:14px; font-family:inherit; }
+    .map-count { font-size:13px; color:#64748b; margin-left:auto; }
+    .map-dim { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:1000; }
+    .map-dim.on { display:block; }
+    .map-card {
+      display:none; position:fixed; bottom:0; left:0; right:0;
+      background:#fff; border-radius:20px 20px 0 0;
+      box-shadow:0 -4px 24px rgba(0,0,0,.18);
+      padding:24px 20px 36px; z-index:1001;
     }
+    .map-card.on { display:block; animation:slideUp .22s ease; }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .card-close { position:absolute; top:14px; right:18px; font-size:24px; background:none; border:none; color:#94a3b8; cursor:pointer; }
+    .card-name { font-size:17px; font-weight:700; color:#1e1e1e; margin-bottom:6px; padding-right:32px; line-height:1.4; }
+    .card-meta { font-size:13px; color:#64748b; margin-bottom:10px; }
+    .card-fee { display:inline-block; background:#FF6B2B; color:#fff; font-size:13px; font-weight:700; padding:5px 12px; border-radius:6px; margin-bottom:16px; }
+    .card-go { display:block; text-align:center; background:#FF6B2B; color:#fff; padding:15px; border-radius:12px; font-size:16px; font-weight:700; text-decoration:none; }
+    .card-go:hover { background:#e55a1f; }
   </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="container topbar-inner">
-    <div class="topbar-stats"><span> 오늘 방문 <strong>2,847</strong>명</span><span> 신규현장 <strong>5</strong>건</span></div>
-    <div class="topbar-links"><a href="login.html">로그인</a><a href="signup.html" class="btn-join">회원가입</a></div>
-  </div>
-</div>
+
 <header class="header">
   <div class="container header-inner">
-    <a href="index.html" class="logo"><img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;"><span class="logo-text">분양<span class="logo-accent">톡</span></span></a>
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🏗️</span>
+      <span class="logo-text">분양<span class="logo-accent">톡</span></span>
+    </a>
     <nav class="nav-desktop">
       <a href="index.html" class="nav-link">HOME</a>
       <a href="listings.html" class="nav-link">지역현장</a>
@@ -56,52 +47,121 @@
     <button class="mobile-menu-btn" onclick="document.getElementById('mobileMenu').classList.toggle('open')">☰</button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html">HOME</a><a href="listings.html">지역현장</a><a href="map.html">지도현장</a><a href="supporters.html">서포터즈</a><a href="register.html">현장등록</a><a href="login.html">로그인</a><a href="signup.html">회원가입</a>
+    <a href="index.html">HOME</a>
+    <a href="listings.html">지역현장</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html">현장등록</a>
+    <a href="login.html">로그인</a>
+    <a href="signup.html">회원가입</a>
   </div>
 </header>
-<div style="padding:16px 0 8px;background:var(--bg);border-bottom:1px solid var(--border);"><div class="container"><h2 style="font-size:18px;font-weight:800;color:var(--charcoal);margin:0;"> 지도 현장 검색</h2></div></div>
-<div class="map-wrap">
-  <div class="map-sidebar">
-    <div class="sidebar-header">현장 목록<div class="sidebar-count" id="sidebarCount">불러오는 중...</div></div>
-    <div class="map-region-bar">
-      <button class="map-rbtn active" onclick="filterMap('전체',this)">전체</button>
-      <button class="map-rbtn" onclick="filterMap('서울',this)">서울</button>
-      <button class="map-rbtn" onclick="filterMap('경기남부',this)">경기남부</button>
-      <button class="map-rbtn" onclick="filterMap('경기북부',this)">경기북부</button>
-      <button class="map-rbtn" onclick="filterMap('인천',this)">인천</button>
-      <button class="map-rbtn" onclick="filterMap('부산',this)">부산</button>
-      <button class="map-rbtn" onclick="filterMap('대구',this)">대구</button>
-      <button class="map-rbtn" onclick="filterMap('대전',this)">대전</button>
-      <button class="map-rbtn" onclick="filterMap('광주',this)">광주</button>
-      <button class="map-rbtn" onclick="filterMap('충청도',this)">충청도</button>
-      <button class="map-rbtn" onclick="filterMap('경상도',this)">경상도</button>
-      <button class="map-rbtn" onclick="filterMap('전라도',this)">전라도</button>
-      <button class="map-rbtn" onclick="filterMap('강원도',this)">강원도</button>
-      <button class="map-rbtn" onclick="filterMap('제주도',this)">제주도</button>
-    </div>
-    <div class="sidebar-list" id="sidebarList"><div style="padding:30px;text-align:center;color:#999;font-size:13px;">현장 불러오는 중...</div></div>
-  </div>
-  <div id="map-container"></div>
+
+<div class="map-filter">
+  <select id="regionSel" onchange="filterRegion(this.value)">
+    <option value="">전체 지역</option>
+    <option value="서울">서울</option>
+    <option value="경기">경기</option>
+    <option value="인천">인천</option>
+    <option value="부산">부산</option>
+    <option value="충청">충청</option>
+    <option value="대전">대전</option>
+  </select>
+  <span class="map-count" id="mapCount"></span>
 </div>
+
+<div id="kakao-map"></div>
+
+<div class="map-dim" id="dim" onclick="closeCard()"></div>
+<div class="map-card" id="mapCard">
+  <button class="card-close" onclick="closeCard()">✕</button>
+  <div class="card-name" id="cName"></div>
+  <div class="card-meta" id="cMeta"></div>
+  <div class="card-fee" id="cFee"></div>
+  <a href="#" class="card-go" id="cBtn">자세히 보기</a>
+</div>
+
 <footer class="footer">
-  <div class="footer-bottom"><div class="container"><a href="privacy.html">개인정보 처리방침</a><a href="terms.html">이용약관</a><span class="footer-copy">© 2026 분양톡. All rights reserved.</span></div></div>
+  <div class="footer-bottom">
+    <div class="container">
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="terms.html">이용약관</a>
+      <a href="posting-rules.html">게시물 운영규칙</a>
+      <span class="footer-copy">© 2026 분양톡. All rights reserved.</span>
+    </div>
+  </div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="script.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-var REGION_COORDS={'서울':[37.5665,126.9780],'경기남부':[37.2750,127.0090],'경기북부':[37.8100,127.0750],'인천':[37.4563,126.7052],'부산':[35.1796,129.0756],'울산':[35.5384,129.3114],'대구':[35.8714,128.6014],'경상도':[35.5500,128.6000],'대전':[36.3504,127.3845],'세종':[36.4800,127.2890],'충청도':[36.6358,127.4913],'광주':[35.1595,126.8526],'전라도':[35.7000,127.1000],'강원도':[37.8228,128.1555],'제주도':[33.4890,126.4983]};
-var map,allListings=[],markers=[],currentRegion='전체';
-var orangeIcon=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#ff6b2b;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',iconSize:[14,14],iconAnchor:[7,7]});
-var activeIcon=L.divIcon({className:'',html:'<div style="width:20px;height:20px;background:#ff6b2b;border:3px solid #fff;border-radius:50%;box-shadow:0 3px 10px rgba(255,107,43,0.6);"></div>',iconSize:[20,20],iconAnchor:[10,10]});
-function placeMarkers(listings){markers.forEach(function(m){map.removeLayer(m);});markers=[];listings.forEach(function(l,i){var bc=REGION_COORDS[l.region];if(!bc)return;var s=Number(l.id)||i;var m=L.marker([bc[0]+((s*17)%100-50)/1500,bc[1]+((s*31)%100-50)/1200],{icon:orangeIcon}).addTo(map);m.bindPopup('<div class="map-popup-title">'+l.title+'</div><div class="map-popup-info"> '+l.region+' ·  '+(l.fee||'협의')+'</div><a class="map-popup-link" href="detail.html?id='+l.id+'">상세보기 →</a>');(function(idx){m.on('click',function(){setActiveMarker(idx);scrollToCard(idx);});})(i);markers.push(m);});}
-function renderSidebar(listings){var list=document.getElementById('sidebarList');var count=document.getElementById('sidebarCount');if(count)count.textContent=listings.length+'개 현장';if(!listings.length){list.innerHTML='<div style="padding:30px;text-align:center;color:#999;font-size:13px;">해당 지역 현장이 없습니다.</div>';return;}list.innerHTML=listings.map(function(l,i){var r=Array.isArray(l.role)?l.role.join('/'):(l.role||'');return '<div class="sidebar-card" id="sc'+i+'" onclick="focusMarker('+i+')"><div class="sc-region">'+l.region+'</div><div class="sc-title">'+l.title+'</div><div class="sc-info"><span class="sc-fee"> '+(l.fee||'협의')+'</span>'+(r?' · '+r:'')+'</div></div>';}).join('');}
-function setActiveMarker(idx){markers.forEach(function(m){m.setIcon(orangeIcon);});if(markers[idx])markers[idx].setIcon(activeIcon);document.querySelectorAll('.sidebar-card').forEach(function(c){c.classList.remove('active');});var card=document.getElementById('sc'+idx);if(card)card.classList.add('active');}
-function scrollToCard(idx){var c=document.getElementById('sc'+idx);if(c)c.scrollIntoView({behavior:'smooth',block:'nearest'});}
-function focusMarker(idx){setActiveMarker(idx);if(markers[idx]){map.flyTo(markers[idx].getLatLng(),13,{duration:0.6});markers[idx].openPopup();}}
-function filterMap(region,btn){currentRegion=region;document.querySelectorAll('.map-rbtn').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');var f=region==='전체'?allListings:allListings.filter(function(l){return l.region===region;});renderSidebar(f);placeMarkers(f);map.flyTo(REGION_COORDS[region]||[36.5,127.5],region==='전체'?7:10,{duration:0.8});}
-async function initMap(){map=L.map('map-container').setView([36.5,127.5],7);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);var db=getSupabase();if(db){try{var r=await db.from('listings').select('*').eq('is_active',true).order('created_at',{ascending:false});allListings=(!r.error&&r.data&&r.data.length)?r.data:LISTINGS_FALLBACK;}catch(e){allListings=LISTINGS_FALLBACK;}}else{allListings=LISTINGS_FALLBACK;}renderSidebar(allListings);placeMarkers(allListings);}
-setTimeout(function(){if(map)map.invalidateSize();initMap();},100);
+const DEMO = [
+  { id:1, title:'강동구 고덕동 신규 아파트 팀장/팀원 모집', region:'서울', type:'아파트', role:'팀장/팀원', fee:'팀수수료 1,800만원', lat:37.5496, lng:127.1505 },
+  { id:2, title:'인천 송도 신도시 랜드마크 아파트 분양',    region:'인천', type:'아파트', role:'팀원/사이드', fee:'팀수수료 1,200만원', lat:37.3827, lng:126.6565 },
+  { id:3, title:'부산 해운대 오션뷰 하이엔드 팀장/팀원 모집', region:'부산', type:'오피스텔', role:'팀장/팀원', fee:'팀수수료 2,000만원', lat:35.1587, lng:129.1603 },
+  { id:4, title:'수원 영통구 대형 단지 대행사 직영 모집',    region:'경기', type:'아파트', role:'팀장/팀원/사이드', fee:'협의', lat:37.2753, lng:127.0470 },
+  { id:5, title:'천안 신규 아파트 파격 조건 변경',          region:'충청', type:'아파트', role:'팀장/팀원', fee:'팀수수료 1,500만원', lat:36.8151, lng:127.1139 },
+  { id:6, title:'경기 광주 2,300세대 대단지 본부장/팀장 모집', region:'경기', type:'아파트', role:'본부장/팀장', fee:'팀수수료 1,800만원', lat:37.4296, lng:127.2555 },
+  { id:7, title:'서울 노원구 역세권 오피스텔 팀원 모집',    region:'서울', type:'오피스텔', role:'팀원/사이드', fee:'팀수수료 800만원', lat:37.6559, lng:127.0637 },
+  { id:8, title:'대전 세종 신규 아파트 본부장/팀장 모집',   region:'대전', type:'아파트', role:'본부장/팀장', fee:'팀수수료 1,600만원', lat:36.3504, lng:127.3845 },
+];
+
+let map, markers = [];
+
+const PIN = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="38" viewBox="0 0 28 38">' +
+  '<path d="M14 0C6.27 0 0 6.27 0 14c0 9.8 14 24 14 24S28 23.8 28 14C28 6.27 21.73 0 14 0z" fill="#FF6B2B"/>' +
+  '<circle cx="14" cy="14" r="6" fill="white"/>' +
+  '<\/svg>'
+);
+
+function initMap() {
+  map = new kakao.maps.Map(document.getElementById('kakao-map'), {
+    center: new kakao.maps.LatLng(36.5, 127.6),
+    level: 8
+  });
+  addMarkers(DEMO);
+  setCount(DEMO.length);
+}
+
+function addMarkers(list) {
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+  const img = new kakao.maps.MarkerImage(PIN, new kakao.maps.Size(28, 38), { offset: new kakao.maps.Point(14, 38) });
+  list.forEach(item => {
+    const m = new kakao.maps.Marker({ position: new kakao.maps.LatLng(item.lat, item.lng), image: img, map });
+    kakao.maps.event.addListener(m, 'click', () => openCard(item));
+    markers.push(m);
+  });
+  if (list.length > 0) {
+    const b = new kakao.maps.LatLngBounds();
+    list.forEach(l => b.extend(new kakao.maps.LatLng(l.lat, l.lng)));
+    map.setBounds(b);
+  }
+}
+
+function openCard(item) {
+  document.getElementById('cName').textContent = item.title;
+  document.getElementById('cMeta').textContent = item.region + ' · ' + item.type + ' · ' + item.role;
+  document.getElementById('cFee').textContent = item.fee;
+  document.getElementById('cBtn').href = 'detail.html?id=' + item.id;
+  document.getElementById('mapCard').classList.add('on');
+  document.getElementById('dim').classList.add('on');
+}
+
+function closeCard() {
+  document.getElementById('mapCard').classList.remove('on');
+  document.getElementById('dim').classList.remove('on');
+}
+
+function filterRegion(r) {
+  const list = r ? DEMO.filter(l => l.region === r) : DEMO;
+  addMarkers(list);
+  setCount(list.length);
+}
+
+function setCount(n) { document.getElementById('mapCount').textContent = '현장 ' + n + '개'; }
+
+kakao.maps.load(initMap);
 </script>
 </body>
 </html>
