@@ -485,9 +485,9 @@ async function loadUsers() {
       const p = pm[u.id] || {};
       const susp = p.is_suspended || false;
       const adm = p.is_admin || false;
-      const uname = p.username || u.email.split('@')[0];
+      const uname = p.username || (u.email ? u.email.split('@')[0] : '(이메일 없음)');
       return `<tr>
-        <td><div style="font-weight:600;font-size:13px;">${uname}</div><div style="font-size:11px;color:#aaa;">${u.email}</div></td>
+        <td><div style="font-weight:600;font-size:13px;">${uname}</div><div style="font-size:11px;color:#aaa;">${u.email || '-'}</div></td>
         <td>${fmtDate(u.created_at)}</td>
         <td>${lm[u.id]||0}개</td>
         <td>
