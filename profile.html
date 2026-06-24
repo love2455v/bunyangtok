@@ -160,17 +160,19 @@ async function saveNickname() {
     document.getElementById('displayNickname').textContent = nickname;
     showMsg('nicknameMsg', '✓ 별명이 변경되었습니다', 'success');
     updateAuthUI(_user);
-  // 관리자 버튼 표시
+    // 관리자 버튼 표시
   (async function(){
     const ADMIN = ['love2455v','bunyangtok.com'].join('@');
     const show = () => { const el=document.getElementById('adminLink'); if(el) el.style.display=''; };
-    if(_user && _user.email === ADMIN){ show(); return; }
-    if(_user){
-      try{
-        const {data:p} = await _db.from('profiles').select('is_admin').eq('user_id',_user.id).maybeSingle();
-        if(p && p.is_admin) show();
-      }catch(e){}
-    }
+    try {
+      const _sba = typeof getSupabase === 'function' ? getSupabase() : null;
+      if (!_sba) return;
+      const { data: { user: _cu } } = await _sba.auth.getUser();
+      if (!_cu) return;
+      if (_cu.email === ADMIN) { show(); return; }
+      const { data: _cp } = await _sba.from('profiles').select('is_admin').eq('user_id', _cu.id).maybeSingle();
+      if (_cp && _cp.is_admin) show();
+    } catch(e) {}
   })();
   } catch(e) {
     showMsg('nicknameMsg', e.message || '오류가 발생했습니다', 'error');
