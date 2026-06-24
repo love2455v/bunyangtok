@@ -231,8 +231,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
   document.getElementById('profileWrap').style.display = 'block';
 
-  const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : _user.email.split('@')[0];
-  const userId = _user.email ? _user.email.split('@')[0] : '-';
+  const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : (_user.email || '').split('@')(user.email || '').split('@')[0];
+  const userId = _user.email ? (_user.email || '').split('@')(user.email || '').split('@')[0] : '-';
 
   document.getElementById('displayNickname').textContent = nickname;
   document.getElementById('displayUserId').textContent = '아이디: ' + userId;
