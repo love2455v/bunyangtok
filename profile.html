@@ -160,19 +160,20 @@ async function saveNickname() {
     document.getElementById('displayNickname').textContent = nickname;
     showMsg('nicknameMsg', '✓ 별명이 변경되었습니다', 'success');
     updateAuthUI(_user);
-    // 관리자 버튼 표시
+      // 관리자 버튼 표시
   (async function(){
-    const ADMIN = ['love2455v','bunyangtok.com'].join('@');
-    const show = () => { const el=document.getElementById('adminLink'); if(el) el.style.display=''; };
     try {
-      const _sba = typeof getSupabase === 'function' ? getSupabase() : null;
-      if (!_sba) return;
-      const { data: { user: _cu } } = await _sba.auth.getUser();
-      if (!_cu) return;
-      if (_cu.email === ADMIN) { show(); return; }
-      const { data: _cp } = await _sba.from('profiles').select('is_admin').eq('user_id', _cu.id).maybeSingle();
-      if (_cp && _cp.is_admin) show();
-    } catch(e) {}
+      const ADMIN = ['love2455v','bunyangtok.com'].join('@');
+      const sba = typeof getSupabase === 'function' ? getSupabase() : null;
+      if (!sba) return;
+      const { data: sd } = await sba.auth.getSession();
+      const u = sd && sd.session && sd.session.user;
+      if (!u) return;
+      const show = () => { const el = document.getElementById('adminLink'); if (el) el.style.display = ''; };
+      if (u.email === ADMIN) { show(); return; }
+      const { data: p } = await sba.from('profiles').select('is_admin').eq('user_id', u.id).maybeSingle();
+      if (p && p.is_admin) show();
+    } catch(e) { console.error('admin btn:', e); }
   })();
   } catch(e) {
     showMsg('nicknameMsg', e.message || '오류가 발생했습니다', 'error');
