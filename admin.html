@@ -286,7 +286,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const ADMIN_EMAIL = 'love2455v@gmail.com';
+const ADMIN_EMAIL = 'love2455v@bunyangtok.com';
 const SB_URL = 'https://prjmiekiehvveklbqxjt.supabase.co';
 const SB_KEY = 'sb_publishable__4jfHSNP9Cifbtyvt-dI6Q_uiHjjZEo';
 const db = supabase.createClient(SB_URL, SB_KEY);
@@ -457,7 +457,7 @@ CREATE TABLE profiles (
   is_suspended boolean DEFAULT false
 );
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "admin_all" ON profiles FOR ALL USING (auth.email() = 'love2455v@gmail.com');
+CREATE POLICY "admin_all" ON profiles FOR ALL USING (auth.email() = 'love2455v@bunyangtok.com');
 CREATE POLICY "users_insert" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);</code>
     </td></tr>`;
   }
@@ -505,7 +505,7 @@ CREATE TABLE notices (
 );
 ALTER TABLE notices ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON notices FOR SELECT USING (is_active = true);
-CREATE POLICY "admin_all" ON notices FOR ALL USING (auth.email() = 'love2455v@gmail.com');</code>
+CREATE POLICY "admin_all" ON notices FOR ALL USING (auth.email() = 'love2455v@bunyangtok.com');</code>
     </td></tr>`;
   }
 }
