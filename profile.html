@@ -160,22 +160,21 @@ async function saveNickname() {
     document.getElementById('displayNickname').textContent = nickname;
     showMsg('nicknameMsg', '✓ 별명이 변경되었습니다', 'success');
     updateAuthUI(_user);
-        // 관리자 버튼 표시
-  (function(){
-    const ADMIN = ['love2455v','bunyangtok.com'].join('@');
-    const show = () => { const el = document.getElementById('adminLink'); if (el) el.style.display = ''; };
-    const sba = typeof getSupabase === 'function' ? getSupabase() : null;
-    if (!sba) return;
-    sba.auth.onAuthStateChange(async function(event, session) {
-      if (!session || !session.user) return;
-      const u = session.user;
+          // 관리자 버튼 표시
+  setTimeout(async function(){
+    try {
+      const ADMIN = ['love2455v','bunyangtok.com'].join('@');
+      const sba = typeof getSupabase === 'function' ? getSupabase() : null;
+      if (!sba) return;
+      const { data: sd } = await sba.auth.getSession();
+      const u = sd && sd.session && sd.session.user;
+      if (!u) return;
+      const show = () => { const el = document.getElementById('adminLink'); if (el) el.style.display = ''; };
       if (u.email === ADMIN) { show(); return; }
-      try {
-        const { data: p } = await sba.from('profiles').select('is_admin').eq('user_id', u.id).maybeSingle();
-        if (p && p.is_admin) show();
-      } catch(e) {}
-    });
-  })();
+      const { data: p } = await sba.from('profiles').select('is_admin').eq('user_id', u.id).maybeSingle();
+      if (p && p.is_admin) show();
+    } catch(e) {}
+  }, 500);
   } catch(e) {
     showMsg('nicknameMsg', e.message || '오류가 발생했습니다', 'error');
   }
