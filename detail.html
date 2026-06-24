@@ -260,12 +260,17 @@
       .sidebar-card { position: static; }
     }
     @media (max-width: 640px) {
-      .detail-section { padding: 20px; }
+      .detail-section { padding: 18px 16px; }
       .detail-title { font-size: 18px; }
       .detail-cta-row { flex-wrap: wrap; }
       .btn-call, .btn-kakao { flex: 1 1 calc(50% - 5px); }
       .btn-save { width: 100%; }
-      .info-table th { width: 90px; }
+      .info-table, .info-table tbody { display: block; }
+      .info-table tr { display: grid !important; grid-template-columns: 76px 1fr; }
+      .info-table th, .info-table td { display: block !important; width: auto !important; padding: 9px 10px; white-space: normal; word-break: break-word; border-bottom: none; }
+      .info-table th { font-size: 12px; background: #f8fafc; }
+      .info-table td { font-size: 13px; }
+      .info-table td.fee-val { font-size: 16px; }
     }
 
     /* ===== 갤러리 슬라이드쇼 ===== */
