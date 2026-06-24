@@ -244,7 +244,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
 
     if (signInData?.session) {
       // profiles 테이블에 username 저장 (있으면)
-      try { await db.from('profiles').upsert({ user_id: signInData.user.id, username: userId, name, nickname }); } catch(_) {}
+      try { await db.from('profiles').upsert({ user_id: signInData.user.id, username: userId, name, nickname, email }, { onConflict: 'user_id' }); } catch(_) {}
       window.location.href = 'index.html';
     } else {
       // 이메일 인증이 활성화된 경우
