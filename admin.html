@@ -353,8 +353,8 @@ async function loadDashboard() {
   setVal('d-favs', favs, '건');
 
   try {
-    const { count: users } = await db.from('profiles').select('*', {count:'exact',head:true});
-    setVal('d-users', users, '명');
+    const { data: _ud } = await db.rpc('get_all_users');
+    setVal('d-users', _ud ? _ud.length : 0, '명');
   } catch(e) { setVal('d-users', '-', '명'); }
 
   // Recent listings
@@ -463,8 +463,64 @@ CREATE POLICY "users_insert" ON profiles FOR INSERT WITH CHECK (auth.uid() = id)
   }
 }
 
-async function toggleSuspend(id, current) {
-  const { error } = await db.from('profiles').update({is_suspended: !current}).eq('id', id);
+async function loadUsers() {
+  const tbody = document.getElementById('users-body');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="5">불러오는 중...</td></tr>';
+  try {
+    const { data: users, error: ue } = await db.rpc('get_all_users');
+    if (ue) throw ue;
+    const { data: profs } = await db.from('profiles').select('*');
+    const pm = {};
+    (profs||[]).forEach(p => { pm[p.user_id] = p; });
+    const { data: lData } = await db.from('listings').select('user_id');
+    const lm = {};
+    (lData||[]).forEach(l => { lm[l.user_id] = (lm[l.user_id]||0)+1; });
+    if (!users || users.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">등록된 회원이 없습니다</td></tr>';
+      return;
+    }
+    const cnt = document.getElementById('users-count');
+    if (cnt) cnt.textContent = users.length + '명';
+    tbody.innerHTML = users.map(u => {
+      const p = pm[u.id] || {};
+      const susp = p.is_suspended || false;
+      const adm = p.is_admin || false;
+      const uname = p.username || u.email.split('@')[0];
+      return `<tr>
+        <td><div style="font-weight:600;font-size:13px;">${uname}</div><div style="font-size:11px;color:#aaa;">${u.email}</div></td>
+        <td>${fmtDate(u.created_at)}</td>
+        <td>${lm[u.id]||0}개</td>
+        <td>
+          <span class="badge ${susp?'badge-red':'badge-green'}">${susp?'정지':'정상'}</span>
+          ${adm?'<span class="badge badge-orange" style="margin-left:4px;">관리자</span>':''}
+        </td>
+        <td style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn btn-xs ${adm?'btn-danger':'btn-secondary'}" onclick="toggleAdmin('${u.id}',${adm})">${adm?'권한 회수':'관리자 부여'}</button>
+          <button class="btn btn-xs ${susp?'btn-secondary':'btn-danger'}" onclick="toggleSuspend('${u.id}',${susp})">${susp?'정지 해제':'정지'}</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="padding:20px 16px;"><div style="color:#e53e3e;font-size:13px;">⚠️ get_all_users() 함수가 없습니다. Supabase SQL 에디터에서 함수를 먼저 생성해주세요.</div></td></tr>';
+  }
+}
+
+async function toggleSuspend(userId, current) {
+  if (!confirm(current ? '정지를 해제하시겠어요?' : '이 회원을 정지하시겠어요?')) return;
+  const { error } = await db.from('profiles').upsert(
+    { user_id: userId, is_suspended: !current },
+    { onConflict: 'user_id' }
+  );
+  if (error) { alert('처리 실패: ' + error.message); return; }
+  loadUsers();
+}
+
+async function toggleAdmin(userId, current) {
+  if (!confirm(current ? '관리자 권한을 회수하시겠어요?' : '이 회원에게 관리자 권한을 부여하시겠어요?')) return;
+  const { error } = await db.from('profiles').upsert(
+    { user_id: userId, is_admin: !current },
+    { onConflict: 'user_id' }
+  );
   if (error) { alert('처리 실패: ' + error.message); return; }
   loadUsers();
 }
