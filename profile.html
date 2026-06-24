@@ -222,6 +222,13 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
 
   updateAuthUI(_user);
+  // 관리자 버튼 표시 (페이지 로드 시)
+  if (_user) {
+    const _ADMIN = ['love2455v','bunyangtok.com'].join('@');
+    const _showAdmin = () => { const _el = document.getElementById('adminLink'); if (_el) _el.style.display = ''; };
+    if (_user.email === _ADMIN) { _showAdmin(); }
+    else if (_db) { _db.from('profiles').select('is_admin').eq('user_id', _user.id).maybeSingle().then(({data:_p}) => { if (_p && _p.is_admin) _showAdmin(); }); }
+  }
   document.getElementById('profileWrap').style.display = 'block';
 
   const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : _user.email.split('@')[0];
