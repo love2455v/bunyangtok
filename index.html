@@ -82,17 +82,14 @@
   </div>
 </header>
 
-<!-- ===== AD TICKER ===== -->
+<!-- ===== 공지 TICKER ===== -->
 <div class="ad-ticker">
   <div class="container">
-    <span class="ad-label">AD</span>
+    <a href="notice.html" style="text-decoration:none"><span class="ad-label" style="background:#334155;">📢 공지</span></a>
     <div class="ticker-wrap">
       <div class="ticker-content" id="tickerContent">
-        <span>노원역 효성해링턴 센트럴 - 팀수수료 1,800만원 / 광고비 50% 지원</span>
-        <span>힐스테이트 구월아트파크 - 1호선 직결 / 팀·팀원·사이드 모집</span>
-        <span>경기광주역 롯데캐슬 시그니처 - 2,326세대 / 매주 광고집행</span>
-        <span>부산 알티에로 광안 - 부산최초 하이퍼엔드 / 수수료 파격</span>
-        <span>수지자이 에디시온 - 일비 7만원 / 대행사 직영</span>
+        <span>분양톡에 오신 것을 환영합니다. 공지사항을 확인해주세요.</span>
+        <span>현장 등록은 상단 메뉴의 '현장등록'을 이용해주세요.</span>
       </div>
     </div>
   </div>
@@ -147,8 +144,8 @@
   </div>
 </section>
 
-<!-- ===== BEST 현장 ===== -->
-<section class="best-section">
+<!-- ===== BEST 현장 (유료화 준비 - 비활성) ===== -->
+<section class="best-section" style="display:none">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">베스트 현장 <small>최근 10일 인기순</small></h2>
@@ -174,7 +171,7 @@
 </section>
 
 <!-- ===== 뉴스 섹션 ===== -->
-<section class="news-section">
+<section class="news-section" style="display:none">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">부동산 뉴스</h2>
@@ -275,10 +272,17 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</body>
-</html>
-
-</div>
+<script>
+(async function() {
+  try {
+    const db = getSupabase();
+    const { data } = await db.from('notices').select('title').eq('is_active', true).order('created_at', {ascending: false}).limit(8);
+    if (data && data.length > 0) {
+      const el = document.getElementById('tickerContent');
+      if (el) el.innerHTML = data.map(n => '<span>' + n.title + '</span>').join('');
+    }
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
