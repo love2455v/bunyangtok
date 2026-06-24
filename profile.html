@@ -92,6 +92,7 @@
       <div class="quick-links">
         <a href="my-listings.html" class="quick-link"><span class="ql-icon">📋</span>내 현장 관리</a>
         <a href="register.html" class="quick-link"><span class="ql-icon">✏️</span>현장 등록</a>
+        <a href="admin.html" id="adminLink" class="quick-link" style="display:none"><span class="ql-icon">⚙️</span>관리자 페이지</a>
       </div>
     </div>
 
@@ -159,6 +160,18 @@ async function saveNickname() {
     document.getElementById('displayNickname').textContent = nickname;
     showMsg('nicknameMsg', '✓ 별명이 변경되었습니다', 'success');
     updateAuthUI(_user);
+  // 관리자 버튼 표시
+  (async function(){
+    const ADMIN = ['love2455v','bunyangtok.com'].join('@');
+    const show = () => { const el=document.getElementById('adminLink'); if(el) el.style.display=''; };
+    if(_user && _user.email === ADMIN){ show(); return; }
+    if(_user){
+      try{
+        const {data:p} = await _db.from('profiles').select('is_admin').eq('user_id',_user.id).maybeSingle();
+        if(p && p.is_admin) show();
+      }catch(e){}
+    }
+  })();
   } catch(e) {
     showMsg('nicknameMsg', e.message || '오류가 발생했습니다', 'error');
   }
