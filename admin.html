@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>분양톡 관리자</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;background:#f4f5f7;color:#1a1a1a;}
+
+    /* Layout */
+    .admin-wrap{display:flex;min-height:100vh;}
+
+    /* Sidebar */
+    .sidebar{width:220px;background:#1E1E1E;color:#fff;flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;}
+    .sidebar-logo{padding:22px 20px;border-bottom:1px solid #2c2c2c;}
+    .sidebar-logo .logo-main{font-size:19px;font-weight:800;color:#FF6B2B;letter-spacing:-0.5px;}
+    .sidebar-logo .admin-badge{font-size:11px;color:#777;margin-top:3px;}
+    .sidebar-nav{flex:1;padding:12px 0;overflow-y:auto;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:13px 20px;cursor:pointer;color:#aaa;font-size:14px;transition:all 0.15s;border-left:3px solid transparent;user-select:none;}
+    .nav-item:hover{background:#252525;color:#fff;}
+    .nav-item.active{background:#252525;color:#FF6B2B;border-left-color:#FF6B2B;font-weight:600;}
+    .nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+    .sidebar-footer{padding:14px 18px;border-top:1px solid #2c2c2c;}
+    .admin-email-label{font-size:11px;color:#555;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .logout-btn{display:block;width:100%;padding:8px 0;background:#2c2c2c;color:#aaa;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;transition:background 0.15s;}
+    .logout-btn:hover{background:#383838;color:#fff;}
+
+    /* Main */
+    .main-content{margin-left:220px;flex:1;padding:28px 30px;min-height:100vh;}
+    .section{display:none;}
+    .section.active{display:block;}
+    .page-title{font-size:19px;font-weight:700;color:#1E1E1E;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid #FF6B2B;display:inline-block;}
+
+    /* Stats cards */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+    .stat-card{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+    .stat-label{font-size:12px;color:#999;margin-bottom:6px;}
+    .stat-value{font-size:26px;font-weight:800;color:#1E1E1E;}
+    .stat-unit{font-size:13px;font-weight:400;color:#bbb;margin-left:3px;}
+    .stat-card.highlight .stat-value{color:#FF6B2B;}
+
+    /* Card wrap (table) */
+    .card-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,0.07);overflow:hidden;margin-bottom:20px;}
+    .card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0f0f0;}
+    .card-head-title{font-size:14px;font-weight:700;color:#222;}
+    .card-head-sub{font-size:12px;color:#aaa;}
+
+    /* Table */
+    table{width:100%;border-collapse:collapse;}
+    th{background:#fafafa;padding:11px 16px;text-align:left;font-size:11px;color:#999;font-weight:600;letter-spacing:0.3px;border-bottom:1px solid #f0f0f0;}
+    td{padding:11px 16px;font-size:13px;border-bottom:1px solid #f9f9f9;color:#333;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:#fafafa;}
+    .loading-row td,.empty-row td{text-align:center;padding:32px;color:#bbb;font-size:13px;}
+
+    /* Badge */
+    .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+    .badge-green{background:#e8f5e9;color:#2e7d32;}
+    .badge-gray{background:#f0f0f0;color:#888;}
+    .badge-red{background:#fce4ec;color:#c62828;}
+    .badge-orange{background:#fff3e0;color:#e65100;}
+
+    /* Buttons */
+    .btn{padding:7px 16px;border-radius:7px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:opacity 0.15s;}
+    .btn:hover{opacity:0.82;}
+    .btn-xs{padding:4px 10px;font-size:11px;border-radius:5px;}
+    .btn-primary{background:#FF6B2B;color:#fff;}
+    .btn-secondary{background:#f0f0f0;color:#555;}
+    .btn-danger{background:#fce4ec;color:#c62828;}
+
+    /* Notice form */
+    .form-card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,0.07);margin-bottom:20px;}
+    .form-card-title{font-size:14px;font-weight:700;margin-bottom:16px;color:#222;}
+    .form-row{margin-bottom:14px;}
+    .form-label{display:block;font-size:12px;font-weight:600;color:#666;margin-bottom:5px;}
+    .form-input,.form-textarea{width:100%;padding:10px 13px;border:1.5px solid #e5e5e5;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;background:#fff;color:#1a1a1a;}
+    .form-input:focus,.form-textarea:focus{border-color:#FF6B2B;}
+    .form-textarea{height:150px;resize:vertical;}
+    .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+
+    /* Charts */
+    .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:0;}
+    .chart-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+    .chart-title{font-size:13px;font-weight:700;color:#333;margin-bottom:14px;}
+    .bar-item{margin-bottom:11px;}
+    .bar-label{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;}
+    .bar-track{background:#f0f0f0;border-radius:4px;height:7px;}
+    .bar-fill{background:#FF6B2B;border-radius:4px;height:7px;transition:width 0.7s ease;}
+
+    /* Code block */
+    .sql-block{display:block;background:#f8f8f8;border:1px solid #e8e8e8;padding:12px;margin-top:10px;font-size:11px;border-radius:7px;text-align:left;white-space:pre-wrap;font-family:'Courier New',monospace;color:#444;line-height:1.6;}
+
+    /* Auth overlay */
+    .auth-overlay{position:fixed;inset:0;background:#1E1E1E;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:10px;}
+    .auth-overlay .ao-logo{font-size:22px;font-weight:800;color:#FF6B2B;}
+    .auth-overlay .ao-msg{color:#777;font-size:13px;}
+    .auth-overlay .ao-box{text-align:center;}
+    .auth-overlay h2{color:#FF6B2B;margin-bottom:8px;font-size:18px;}
+    .auth-overlay p{color:#777;font-size:13px;margin-bottom:18px;}
+    .auth-overlay a.ao-btn{display:inline-block;background:#FF6B2B;color:#fff;padding:10px 26px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;}
+    .auth-overlay a.ao-link{color:#666;font-size:12px;text-decoration:none;display:block;margin-top:12px;}
+
+    @media(max-width:900px){
+      .sidebar{width:60px;}
+      .nav-item span:not(.nav-icon){display:none;}
+      .sidebar-logo .logo-main{font-size:14px;}
+      .sidebar-logo .admin-badge{display:none;}
+      .admin-email-label,.logout-btn{display:none;}
+      .main-content{margin-left:60px;padding:20px 16px;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .chart-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth overlay -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="ao-logo">분양톡</div>
+  <div class="ao-msg">관리자 권한 확인 중...</div>
+</div>
+
+<div class="admin-wrap" id="adminWrap" style="display:none">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-main">분양톡</div>
+      <div class="admin-badge">관리자 패널</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-sec="dashboard">
+        <span class="nav-icon">&#9632;</span><span>대시보드</span>
+      </div>
+      <div class="nav-item" data-sec="listings">
+        <span class="nav-icon">&#9776;</span><span>현장 관리</span>
+      </div>
+      <div class="nav-item" data-sec="users">
+        <span class="nav-icon">&#9786;</span><span>회원 관리</span>
+      </div>
+      <div class="nav-item" data-sec="notices">
+        <span class="nav-icon">&#9998;</span><span>공지사항</span>
+      </div>
+      <div class="nav-item" data-sec="stats">
+        <span class="nav-icon">&#9641;</span><span>통계</span>
+      </div>
+      <div class="nav-item" onclick="location.href='index.html'" style="margin-top:8px;border-top:1px solid #2c2c2c;padding-top:16px;">
+        <span class="nav-icon">&#8599;</span><span>사이트 보기</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-email-label" id="adminEmailLabel"></div>
+      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- 대시보드 -->
+    <section class="section active" id="sec-dashboard">
+      <div class="page-title">대시보드</div>
+      <div class="stats-grid">
+        <div class="stat-card highlight">
+          <div class="stat-label">전체 현장</div>
+          <div class="stat-value" id="d-total">-<span class="stat-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">활성 현장</div>
+          <div class="stat-value" id="d-active">-<span class="stat-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">전체 회원</div>
+          <div class="stat-value" id="d-users">-<span class="stat-unit">명</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">즐겨찾기</div>
+          <div class="stat-value" id="d-favs">-<span class="stat-unit">건</span></div>
+        </div>
+      </div>
+      <div class="card-wrap">
+        <div class="card-head">
+          <span class="card-head-title">최근 등록 현장</span>
+          <a href="listings.html" style="font-size:12px;color:#FF6B2B;text-decoration:none;">전체보기 ›</a>
+        </div>
+        <table>
+          <thead><tr><th>현장명</th><th>지역</th><th>수수료</th><th>등록일</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="dash-listings"><tr class="loading-row"><td colspan="6">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 현장 관리 -->
+    <section class="section" id="sec-listings">
+      <div class="page-title">현장 관리</div>
+      <div class="card-wrap">
+        <div class="card-head">
+          <span class="card-head-title">전체 현장</span>
+          <span class="card-head-sub" id="listings-count"></span>
+        </div>
+        <table>
+          <thead><tr><th>현장명</th><th>지역</th><th>수수료</th><th>유형</th><th>등록일</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="all-listings"><tr class="loading-row"><td colspan="7">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 회원 관리 -->
+    <section class="section" id="sec-users">
+      <div class="page-title">회원 관리</div>
+      <div class="card-wrap">
+        <div class="card-head">
+          <span class="card-head-title">전체 회원</span>
+          <span class="card-head-sub" id="users-count"></span>
+        </div>
+        <table>
+          <thead><tr><th>이메일</th><th>가입일</th><th>등록 현장</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="users-body"><tr class="loading-row"><td colspan="5">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 공지사항 -->
+    <section class="section" id="sec-notices">
+      <div class="page-title">공지사항 관리</div>
+      <div class="form-card">
+        <div class="form-card-title" id="notice-form-title">새 공지사항 작성</div>
+        <input type="hidden" id="edit-notice-id">
+        <div class="form-row">
+          <label class="form-label">제목</label>
+          <input class="form-input" type="text" id="notice-title" placeholder="공지 제목을 입력하세요">
+        </div>
+        <div class="form-row">
+          <label class="form-label">내용</label>
+          <textarea class="form-textarea" id="notice-content" placeholder="공지 내용을 입력하세요"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="resetNoticeForm()">취소</button>
+          <button class="btn btn-primary" onclick="submitNotice()">등록하기</button>
+        </div>
+      </div>
+      <div class="card-wrap">
+        <div class="card-head"><span class="card-head-title">공지 목록</span></div>
+        <table>
+          <thead><tr><th>제목</th><th>작성일</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="notices-body"><tr class="loading-row"><td colspan="4">불러오는 중...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 통계 -->
+    <section class="section" id="sec-stats">
+      <div class="page-title">사이트 통계</div>
+      <div class="stats-grid" style="margin-bottom:20px;">
+        <div class="stat-card highlight">
+          <div class="stat-label">전체 현장</div>
+          <div class="stat-value" id="st-total">-<span class="stat-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">활성 현장</div>
+          <div class="stat-value" id="st-active">-<span class="stat-unit">개</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">수수료 평균</div>
+          <div class="stat-value" id="st-fee">-<span class="stat-unit">만원</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">즐겨찾기 합계</div>
+          <div class="stat-value" id="st-favs">-<span class="stat-unit">건</span></div>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-title">지역별 현장 수</div>
+          <div id="chart-region"><div style="color:#bbb;font-size:13px;text-align:center;padding:20px;">불러오는 중...</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">현장 유형별 현황</div>
+          <div id="chart-type"><div style="color:#bbb;font-size:13px;text-align:center;padding:20px;">불러오는 중...</div></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const ADMIN_EMAIL = 'love2455v@gmail.com';
+const SB_URL = 'https://prjmiekiehvveklbqxjt.supabase.co';
+const SB_KEY = 'sb_publishable__4jfHSNP9Cifbtyvt-dI6Q_uiHjjZEo';
+const db = supabase.createClient(SB_URL, SB_KEY);
+
+// ── Auth check ──────────────────────────────────────────────────────────────
+async function initAdmin() {
+  const overlay = document.getElementById('authOverlay');
+  const { data: { user } } = await db.auth.getUser();
+
+  if (!user) {
+    overlay.innerHTML = `<div class="ao-box">
+      <div class="ao-logo" style="margin-bottom:12px;">분양톡</div>
+      <h2>로그인 필요</h2>
+      <p>관리자 페이지에 접근하려면 로그인하세요.</p>
+      <a class="ao-btn" href="login.html">로그인하기</a>
+      <a class="ao-link" href="index.html">← 홈으로 돌아가기</a>
+    </div>`;
+    return;
+  }
+  if (user.email !== ADMIN_EMAIL) {
+    overlay.innerHTML = `<div class="ao-box">
+      <div class="ao-logo" style="margin-bottom:12px;">분양톡</div>
+      <h2>접근 권한 없음</h2>
+      <p>관리자 계정으로만 접근할 수 있습니다.<br><small style="color:#555">(현재: ${user.email})</small></p>
+      <a class="ao-btn" href="index.html">홈으로 돌아가기</a>
+    </div>`;
+    return;
+  }
+
+  overlay.style.display = 'none';
+  document.getElementById('adminWrap').style.display = 'flex';
+  document.getElementById('adminEmailLabel').textContent = user.email;
+  loadDashboard();
+}
+
+// ── Nav ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item[data-sec]').forEach(el => {
+  el.addEventListener('click', () => {
+    const sec = el.dataset.sec;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('sec-' + sec).classList.add('active');
+    if (sec === 'listings') loadAllListings();
+    if (sec === 'users') loadUsers();
+    if (sec === 'notices') loadNotices();
+    if (sec === 'stats') loadStatsSection();
+  });
+});
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  const [
+    { count: total }, { count: active },
+    { count: favs }
+  ] = await Promise.all([
+    db.from('listings').select('*', {count:'exact',head:true}),
+    db.from('listings').select('*', {count:'exact',head:true}).eq('is_active', true),
+    db.from('favorites').select('*', {count:'exact',head:true})
+  ]);
+
+  setVal('d-total', total, '개');
+  setVal('d-active', active, '개');
+  setVal('d-favs', favs, '건');
+
+  try {
+    const { count: users } = await db.from('profiles').select('*', {count:'exact',head:true});
+    setVal('d-users', users, '명');
+  } catch(e) { setVal('d-users', '-', '명'); }
+
+  // Recent listings
+  const { data } = await db.from('listings').select('*').order('created_at', {ascending:false}).limit(8);
+  const tbody = document.getElementById('dash-listings');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">등록된 현장이 없습니다</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(l => listingRow(l, 6)).join('');
+}
+
+// ── All Listings ──────────────────────────────────────────────────────────────
+async function loadAllListings() {
+  const tbody = document.getElementById('all-listings');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="7">불러오는 중...</td></tr>';
+  const { data, count } = await db.from('listings').select('*', {count:'exact'}).order('created_at', {ascending:false});
+  document.getElementById('listings-count').textContent = (count || 0) + '개';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">등록된 현장이 없습니다</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(l => `<tr>
+    <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.title||'-'}</td>
+    <td>${l.region||'-'}</td>
+    <td>${l.fee||'-'}</td>
+    <td>${l.type||'-'}</td>
+    <td>${fmtDate(l.created_at)}</td>
+    <td><span class="badge ${l.is_active?'badge-green':'badge-gray'}">${l.is_active?'활성':'비활성'}</span></td>
+    <td style="display:flex;gap:4px;flex-wrap:nowrap;">
+      <button class="btn btn-xs btn-secondary" onclick="location.href='detail.html?id=${l.id}'">보기</button>
+      <button class="btn btn-xs ${l.is_active?'badge-gray':'badge-green'}" style="background:${l.is_active?'#f0f0f0':'#e8f5e9'};color:${l.is_active?'#666':'#2e7d32'};border:none;cursor:pointer;padding:4px 8px;border-radius:5px;font-size:11px;font-weight:600;" onclick="toggleListing('${l.id}',${l.is_active})">${l.is_active?'숨기기':'공개'}</button>
+      <button class="btn btn-xs btn-danger" onclick="deleteListing('${l.id}')">삭제</button>
+    </td>
+  </tr>`).join('');
+}
+
+function listingRow(l, colspan) {
+  return `<tr>
+    <td style="font-weight:600;">${l.title||'-'}</td>
+    <td>${l.region||'-'}</td>
+    <td>${l.fee||'-'}</td>
+    <td>${fmtDate(l.created_at)}</td>
+    <td><span class="badge ${l.is_active?'badge-green':'badge-gray'}">${l.is_active?'활성':'비활성'}</span></td>
+    <td style="display:flex;gap:4px;">
+      <button class="btn btn-xs btn-secondary" onclick="location.href='detail.html?id=${l.id}'">보기</button>
+      <button class="btn btn-xs btn-danger" onclick="deleteListing('${l.id}')">삭제</button>
+    </td>
+  </tr>`;
+}
+
+aping function toggleListing(id, current) {
+  await db.from('listings').update({is_active: !current}).eq('id', id);
+  loadAllListings();
+}
+
+async function deleteListing(id) {
+  if (!confirm('이 현장을 삭제하시겠습니까?')) return;
+  const { error } = await db.from('listings').delete().eq('id', id);
+  if (error) { alert('삭제 실패: ' + error.message); return; }
+  loadDashboard();
+  loadAllListings();
+}
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  const tbody = document.getElementById('users-body');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="5">불러오는 중...</td></tr>';
+
+  try {
+    const { data: profiles, error } = await db.from('profiles').select('*').order('created_at', {ascending:false});
+    if (error) throw error;
+
+    if (!profiles || profiles.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">등록된 회원이 없습니다</td></tr>';
+      return;
+    }
+    document.getElementById('users-count').textContent = profiles.length + '명';
+
+    const { data: lData } = await db.from('listings').select('user_id');
+    const cntMap = {};
+    (lData||[]).forEach(l => { cntMap[l.user_id] = (cntMap[l.user_id]||0) + 1; });
+
+    tbody.innerHTML = profiles.map(p => `<tr>
+      <td>${p.email||'-'}</td>
+      <td>${fmtDate(p.created_at)}</td>
+      <td>${cntMap[p.id]||0}개</td>
+      <td><span class="badge ${p.is_suspended?'badge-red':'badge-green'}">${p.is_suspended?'정지':'정상'}</span></td>
+      <td><button class="btn btn-xs ${p.is_suspended?'btn-secondary':'btn-danger'}" onclick="toggleSuspend('${p.id}',${!!p.is_suspended})">${p.is_suspended?'정지해제':'정지'}</button></td>
+    </tr>`).join('');
+
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:24px 16px;">
+      <div style="color:#bbb;font-size:13px;margin-bottom:10px;">profiles 테이블이 없습니다. Supabase SQL 에디터에서 아래 SQL을 실행하세요.</div>
+      <code class="sql-block">-- 1. profiles 테이블 생성
+CREATE TABLE profiles (
+  id uuid REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email text,
+  created_at timestamptz DEFAULT now(),
+  is_suspended boolean DEFAULT false
+);
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "admin_all" ON profiles FOR ALL USING (auth.email() = 'love2455v@gmail.com');
+CREATE POLICY "users_insert" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);</code>
+    </td></tr>`;
+  }
+}
+
+async function toggleSuspend(id, current) {
+  const { error } = await db.from('profiles').update({is_suspended: !current}).eq('id', id);
+  if (error) { alert('처리 실패: ' + error.message); return; }
+  loadUsers();
+}
+
+// ── Notices ───────────────────────────────────────────────────────────────────
+async function loadNotices() {
+  const tbody = document.getElementById('notices-body');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="4">불러오는 중...</td></tr>';
+  try {
+    const { data, error } = await db.from('notices').select('*').order('created_at', {ascending:false});
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">등록된 공지가 없습니다</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(n => `<tr>
+      <td style="font-weight:600;">${n.title}</td>
+      <td>${fmtDate(n.created_at)}</td>
+      <td><span class="badge ${n.is_active?'badge-green':'badge-gray'}">${n.is_active?'공개':'숨김'}</span></td>
+      <td style="display:flex;gap:4px;">
+        <button class="btn btn-xs btn-secondary" onclick="editNotice(${JSON.stringify(n).replace(/"/g,'&quot;')})">수정</button>
+        <button class="btn btn-xs ${n.is_active?'btn-secondary':'btn-primary'}" onclick="toggleNotice('${n.id}',${n.is_active})">${n.is_active?'숨기기':'공개'}</button>
+        <button class="btn btn-xs btn-danger" onclick="deleteNotice('${n.id}')">삭제</button>
+      </td>
+    </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="padding:24px 16px;">
+      <div style="color:#bbb;font-size:13px;margin-bottom:10px;">notices 테이블이 없습니다. Supabase SQL 에디터에서 아래 SQL을 실행하세요.</div>
+      <code class="sql-block">-- 2. notices 테이블 생성
+CREATE TABLE notices (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  title text NOT NULL,
+  content text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  is_active boolean DEFAULT true,
+  author_email text
+);
+ALTER TABLE notices ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_read" ON notices FOR SELECT USING (is_active = true);
+CREATE POLICY "admin_all" ON notices FOR ALL USING (auth.email() = 'love2455v@gmail.com');</code>
+    </td></tr>`;
+  }
+}
+
+async function submitNotice() {
+  const editId = document.getElementById('edit-notice-id').value;
+  const title = document.getElementById('notice-title').value.trim();
+  const content = document.getElementById('notice-content').value.trim();
+  if (!title || !content) { alert('제목과 내용을 모두 입력하세요.'); return; }
+  const { data: { user } } = await db.auth.getUser();
+  let error;
+  if (editId) {
+    ({ error } = await db.from('notices').update({title, content, updated_at: new Date().toISOString()}).eq('id', editId));
+  } else {
+    ({ error } = await db.from('notices').insert({title, content, author_email: user?.email}));
+  }
+  if (error) { alert('저장 실패: ' + error.message); return; }
+  resetNoticeForm();
+  loadNotices();
+  alert(editId ? '수정되었습니다.' : '공지가 등록되었습니다.');
+}
+
+function editNotice(n) {
+  document.getElementById('edit-notice-id').value = n.id;
+  document.getElementById('notice-title').value = n.title;
+  document.getElementById('notice-content').value = n.content;
+  document.getElementById('notice-form-title').textContent = '공지사항 수정';
+  window.scrollTo(0, 0);
+  document.getElementById('notice-title').focus();
+}
+
+function resetNoticeForm() {
+  document.getElementById('edit-notice-id').value = '';
+  document.getElementById('notice-title').value = '';
+  document.getElementById('notice-content').value = '';
+  document.getElementById('notice-form-title').textContent = '새 공지사항 작성';
+}
+
+async function toggleNotice(id, current) {
+  await db.from('notices').update({is_active: !current}).eq('id', id);
+  loadNotices();
+}
+
+async function deleteNotice(id) {
+  if (!confirm('공지를 삭제하시겠습니까?')) return;
+  await db.from('notices').delete().eq('id', id);
+  loadNotices();
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+async function loadStatsSection() {
+  const [
+    { count: total }, { count: active }, { count: favs }
+  ] = await Promise.all([
+    db.from('listings').select('*', {count:'exact',head:true}),
+    db.from('listings').select('*', {count:'exact',head:true}).eq('is_active', true),
+    db.from('favorites').select('*', {count:'exact',head:true})
+  ]);
+  setVal('st-total', total, '개');
+  setVal('st-active', active, '개');
+  setVal('st-favs', favs, '건');
+
+  const { data: all } = await db.from('listings').select('region, type, fee').eq('is_active', true);
+  if (!all) return;
+
+  // Region chart
+  const rMap = {};
+  all.forEach(l => { const k = l.region||'기타'; rMap[k] = (rMap[k]||0)+1; });
+  renderBarChart('chart-region', rMap);
+
+  // Type chart
+  const tMap = {};
+  all.forEach(l => { const k = l.type||'기타'; tMap[k] = (tMap[k]||0)+1; });
+  renderBarChart('chart-type', tMap);
+
+  // Avg fee
+  const fees = all.map(l => {
+    if (!l.fee) return null;
+    const n = parseInt(l.fee.replace(/[^0-9]/g,''));
+    return isNaN(n) ? null : n;
+  }).filter(Boolean);
+  const avg = fees.length ? Math.round(fees.reduce((a,b)=>a+b,0)/fees.length) : null;
+  document.getElementById('st-fee').innerHTML = (avg ? avg.toLocaleString() : '-') + '<span class="stat-unit">만원</span>';
+}
+
+function renderBarChart(elId, dataMap) {
+  const el = document.getElementById(elId);
+  const sorted = Object.entries(dataMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max = sorted[0]?.[1] || 1;
+  el.innerHTML = sorted.map(([k,v]) => `
+    <div class="bar-item">
+      <div class="bar-label"><span>${k}</span><span>${v}개</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+    </div>
+  `).join('') || '<div style="color:#bbb;font-size:13px;text-align:center;padding:20px;">데이터 없음</div>';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setVal(id, val, unit) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = (val === null || val === undefined ? '-' : val) + `<span class="stat-unit">${unit}</span>`;
+}
+
+function fmtDate(dt) {
+  if (!dt) return '-';
+  return new Date(dt).toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'});
+}
+
+function doLogout() {
+  db.auth.signOut().then(() => location.href = 'login.html');
+}
+
+// init
+initAdmin();
+</script>
+</body>
+</html>
