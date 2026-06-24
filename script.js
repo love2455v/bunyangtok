@@ -20,50 +20,50 @@ var LISTINGS_FALLBACK = [
   {
     id: 1, region: "서울", type: "아파트", badges: ["HOT", "AD"],
     img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70",
-    title: "노원역 효성해링턴 센트럴 (신규)",
+    title: "강동구 고덕동 신규 아파트 팀장/팀원 모집",
     description: "팀 수수료 1,800만원, 광고비지원 50%, 일반분양아파트 신규현장 콜 무수히 뜹니다.",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "6개월이상", company: "지승", fee: "1,800만원"
+    career: "6개월이상", company: "예시부동산", fee: "1,800만원"
   },
   {
     id: 2, region: "인천", type: "아파트", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
-    title: "힐스테이트 구월 아트파크",
+    title: "인천 송도 신도시 랜드마크 아파트 분양",
     description: "1호선 예술공원역 직통연결, 랜드마크 498세대 4개동, 롯데백화점 자리 최고의 입지",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["경력무관"],
-    career: "12개월이상", company: "지우알엔씨", fee: "1,200만원"
+    career: "12개월이상", company: "예시부동산", fee: "1,200만원"
   },
   {
     id: 3, region: "부산", type: "아파트", badges: ["NEW", "AD"],
     img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70",
-    title: "알티에로 광안 팀장/팀원/사이드 모집",
+    title: "부산 해운대 오션뷰 하이엔드 팀장/팀원 모집",
     description: "부산 민락동 광안대교 파노라마 뷰, MBC자리, 부산최초 하이퍼엔드 아파트 분양",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["일비", "경력무관"],
-    career: "경력무관", company: "(주)루트플래닝", fee: "협의"
+    career: "경력무관", company: "예시부동산", fee: "협의"
   },
   {
     id: 4, region: "경기남부", type: "아파트", badges: ["HOT", "대박"],
     img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=70",
-    title: "수지자이 에디시온 (대행사 직영)",
+    title: "수원 영통구 대형 단지 대행사 직영 모집",
     description: "일비 7만원 (방문시 상담), 대행사 직영으로 빠른 계약 진행",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비"],
-    career: "3개월이상", company: "주식회사 유성", fee: "800만원"
+    career: "3개월이상", company: "예시부동산", fee: "800만원"
   },
   {
     id: 5, region: "충청도", type: "아파트", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70",
-    title: "천안 성성호수공원 파격 조건 변경",
+    title: "천안 신규 아파트 파격 조건 변경",
     description: "경쟁 상대 없는 독점 현장, 이보다 계약 쓰기 편한 곳은 없습니다.",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "경력무관", company: "씨아이앤드플러스", fee: "970만원"
+    career: "경력무관", company: "예시부동산", fee: "970만원"
   },
   {
     id: 6, region: "경기남부", type: "아파트", badges: ["NEW"],
     img: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?w=600&q=70",
-    title: "경기광주역 롯데캐슬 시그니처 2,326세대",
+    title: "경기 광주 2,300세대 대단지 본부장/팀장 모집",
     description: "매주 총괄 광고 집행, 압도적 혜택! 대형 단지 안정적 현장",
     role: ["본부장", "팀장"], pay: "계약수수료", welfare: ["광고비지원"],
-    career: "경력무관", company: "도우씨앤디", fee: "협의"
+    career: "경력무관", company: "예시부동산", fee: "협의"
   }
 ];
 
@@ -164,7 +164,7 @@ function renderListings(data) {
         '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company">' + item.company + '</span>' +
+        '<span class="card-company" style="visibility:hidden"></span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
       '</div>' +
@@ -205,11 +205,11 @@ async function renderBest() {
   // 폴백
   var BEST = [
     { rank: 1, title: "거제 하이엔드 일반분양 아파트", region: "경상도", type: "아파트", views: "4,821" },
-    { rank: 2, title: "힐스테이트 가야 조건변경", region: "경기남부", type: "아파트", views: "3,962" },
-    { rank: 3, title: "힐스테이트 구월 아트파크", region: "인천", type: "아파트", views: "3,541" },
-    { rank: 4, title: "노원역 효성해링턴 센트럴", region: "서울", type: "아파트", views: "3,204" },
-    { rank: 5, title: "경기광주역 롯데캐슬 시그니처", region: "경기남부", type: "아파트", views: "2,987" },
-    { rank: 6, title: "수지자이 에디시온", region: "경기남부", type: "아파트", views: "2,744" },
+    { rank: 2, title: "수원 영통구 대단지 팀원 모집", region: "경기남부", type: "아파트", views: "3,962" },
+    { rank: 3, title: "인천 송도 신도시 랜드마크 아파트 분양", region: "인천", type: "아파트", views: "3,541" },
+    { rank: 4, title: "강동구 고덕동 신규 아파트 모집", region: "서울", type: "아파트", views: "3,204" },
+    { rank: 5, title: "경기 광주 2,300세대 대단지 모집", region: "경기남부", type: "아파트", views: "2,987" },
+    { rank: 6, title: "천안 신규 아파트 파격 조건 변경", region: "경기남부", type: "아파트", views: "2,744" },
   ];
   grid.innerHTML = BEST.map(function(item, i) {
     return '<div class="best-card" onclick="location.href=\'listings.html\'">' +
