@@ -406,7 +406,7 @@ function listingRow(l, colspan) {
   </tr>`;
 }
 
-aping function toggleListing(id, current) {
+async function toggleListing(id, current) {
   await db.from('listings').update({is_active: !current}).eq('id', id);
   loadAllListings();
 }
