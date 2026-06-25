@@ -68,7 +68,7 @@
 <header class="header">
   <div class="header-inner">
     <a href="index.html" class="logo">
-      <img src="logo-icon.svg" width="36" height="36" alt="" style="border-radius:8px;">
+      <img src="assets/logo-icon.svg" width="36" height="36" alt="" style="border-radius:8px;">
       <span class="logo-text">분양<span class="logo-accent">톡</span></span>
     </a>
   </div>
@@ -231,8 +231,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
   document.getElementById('profileWrap').style.display = 'block';
 
-  const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : (_user.email || '').split('@')(user.email || '').split('@')[0];
-  const userId = _user.email ? (_user.email || '').split('@')(user.email || '').split('@')[0] : '-';
+  const nickname = (_user.user_metadata && _user.user_metadata.nickname) ? _user.user_metadata.nickname : (_user.email || '').split('@')[0];
+  const userId = _user.email ? (_user.email || '').split('@')[0] : '-';
 
   document.getElementById('displayNickname').textContent = nickname;
   document.getElementById('displayUserId').textContent = '아이디: ' + userId;
