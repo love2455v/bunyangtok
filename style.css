@@ -464,3 +464,55 @@ img, svg, video, iframe { max-width: 100%; height: auto; }
   .region-tab { font-size: 12.5px; padding: 7px 14px; }
   .search-btn { padding: 9px 14px; }
 }
+
+/* ============================================================
+   모바일 글자 크기 조절 버튼 + 단계별 글자 크기 (2026-06-25 추가)
+   ============================================================ */
+.font-size-btn { display: none; }   /* 데스크톱에서는 숨김 */
+
+@media (max-width: 600px) {
+  /* 좌측 하단 동그란 버튼 */
+  .font-size-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: fixed; left: 14px; bottom: 18px; z-index: 200;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--charcoal-mid); color: #fff; border: 2px solid #444;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3); cursor: pointer;
+    font-family: inherit; line-height: 1; padding: 0;
+  }
+  .font-size-btn:active { transform: scale(0.92); }
+  .font-size-btn .fsb-icon { font-size: 17px; font-weight: 800; }
+  .font-size-btn .fsb-label { font-size: 8.5px; color: #bbb; margin-top: 2px; }
+
+  /* ----- 크게 ----- */
+  body.fs-lg { font-size: 15.5px; }
+  body.fs-lg .hero-title { font-size: 29px; }
+  body.fs-lg .hero-sub { font-size: 16px; }
+  body.fs-lg .section-title { font-size: 20px; }
+  body.fs-lg .card-title { font-size: 17px; }
+  body.fs-lg .card-desc { font-size: 14.5px; }
+  body.fs-lg .card-fee { font-size: 19px; }
+  body.fs-lg .info-tag { font-size: 13px; }
+  body.fs-lg .nav-link, body.fs-lg .mobile-menu a { font-size: 17.5px; }
+  body.fs-lg .news-title { font-size: 16px; }
+  body.fs-lg .best-title { font-size: 15.5px; }
+  body.fs-lg .form-label { font-size: 15px; }
+  body.fs-lg .footer-col a, body.fs-lg .footer-desc { font-size: 14.5px; }
+  body.fs-lg .banner-text p, body.fs-lg .cta-box p { font-size: 15.5px; }
+
+  /* ----- 더크게 ----- */
+  body.fs-xl { font-size: 17px; }
+  body.fs-xl .hero-title { font-size: 32px; }
+  body.fs-xl .hero-sub { font-size: 17.5px; }
+  body.fs-xl .section-title { font-size: 22px; }
+  body.fs-xl .card-title { font-size: 18.5px; }
+  body.fs-xl .card-desc { font-size: 16px; }
+  body.fs-xl .card-fee { font-size: 21px; }
+  body.fs-xl .info-tag { font-size: 14.5px; }
+  body.fs-xl .nav-link, body.fs-xl .mobile-menu a { font-size: 19px; }
+  body.fs-xl .news-title { font-size: 17.5px; }
+  body.fs-xl .best-title { font-size: 17px; }
+  body.fs-xl .form-label { font-size: 16.5px; }
+  body.fs-xl .footer-col a, body.fs-xl .footer-desc { font-size: 15.5px; }
+  body.fs-xl .banner-text p, body.fs-xl .cta-box p { font-size: 17px; }
+}

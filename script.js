@@ -426,3 +426,42 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
   initScrollAnimations();
 });
+
+/* ===== 모바일 글자 크기 조절 버튼 (좌측 하단) ===== */
+(function () {
+  var LEVELS = ['', 'fs-lg', 'fs-xl'];   // 0:보통 1:크게 2:더크게
+  var NAMES  = ['보통', '크게', '더크게'];
+  var idx = 0;
+  try { idx = parseInt(localStorage.getItem('fontScale') || '0', 10) || 0; } catch (e) {}
+  if (idx < 0 || idx > 2) idx = 0;
+
+  function apply() {
+    document.body.classList.remove('fs-lg', 'fs-xl');
+    if (LEVELS[idx]) document.body.classList.add(LEVELS[idx]);
+    var lbl = document.querySelector('#fontSizeBtn .fsb-label');
+    if (lbl) lbl.textContent = NAMES[idx];
+    try { localStorage.setItem('fontScale', String(idx)); } catch (e) {}
+  }
+
+  function build() {
+    if (document.getElementById('fontSizeBtn')) return;
+    var b = document.createElement('button');
+    b.id = 'fontSizeBtn';
+    b.className = 'font-size-btn';
+    b.type = 'button';
+    b.setAttribute('aria-label', '글자 크기 조절');
+    b.innerHTML = '<span class="fsb-icon">가</span><span class="fsb-label">보통</span>';
+    b.addEventListener('click', function () {
+      idx = (idx + 1) % LEVELS.length;
+      apply();
+    });
+    document.body.appendChild(b);
+    apply();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', build);
+  } else {
+    build();
+  }
+})();
