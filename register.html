@@ -5,26 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현장 등록 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    .img-upload-area {
+      border: 2px dashed #CBD5E1;
+      border-radius: 10px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+    .img-upload-area:hover, .img-upload-area.drag-over {
+      border-color: #FF6B2B;
+      background: #FFF7F3;
+    }
+    .upload-icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; color: #475569; font-weight: 600; }
+    .upload-sub { font-size: 12px; color: #94A3B8; margin-top: 4px; }
+    .img-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .img-preview-item {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #E2E8F0;
+    }
+    .img-preview-item.main-img { border-color: #FF6B2B; }
+    .img-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+    .img-del {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: rgba(0,0,0,0.6); color: #fff;
+      border: none; border-radius: 50%;
+      width: 24px; height: 24px;
+      font-size: 13px; cursor: pointer; line-height: 24px; text-align: center;
+      padding: 0;
+    }
+    .img-main-badge {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(255,107,43,0.88);
+      color: #fff; font-size: 11px; text-align: center; padding: 3px 0; font-weight: 700;
+    }
+    .upload-progress {
+      height: 5px; background: #E2E8F0; border-radius: 3px; margin-top: 10px; display: none; overflow: hidden;
+    }
+    .upload-progress-bar { height: 100%; background: #FF6B2B; border-radius: 3px; transition: width 0.3s; }
+    .img-count-badge {
+      display: inline-block; background: #FF6B2B; color: #fff;
+      border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 700; margin-left: 8px;
+    }
+  </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="container topbar-inner">
     <div class="topbar-stats">
-      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
-      <span>📋 신규현장 <strong>93</strong>건</span>
+      <span>📋 전체현장 <strong id="topbarTotal">-</strong>건</span>
+      <span>🆕 오늘신규 <strong id="topbarNewSite">-</strong>건</span>
     </div>
-    <div class="topbar-links">
+    <div class="topbar-links" id="topbarLinks">
       <a href="login.html">로그인</a>
       <a href="signup.html" class="btn-join">회원가입</a>
     </div>
   </div>
 </div>
 
+<!-- HEADER -->
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <img src="assets/logo-icon.svg" alt="분양톡" class="logo-icon" />
+      <img src="assets/logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
       <span class="logo-text">분양<span class="logo-accent">톡</span></span>
     </a>
     <nav class="nav-desktop">
@@ -39,7 +96,9 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.html">HOME</a>
     <a href="listings.html">지역현장</a>
-    <a href="register.html">현장등록</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html" onclick="goRegister();return false;">현장등록</a>
   </div>
 </header>
 
@@ -52,18 +111,18 @@
       <form id="registerForm" onsubmit="submitForm(event)">
 
         <!-- 기본정보 -->
-        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📌 기본 정보</div>
+        <div class="section-wrap">
+          <div class="section-title">📌 기본 정보</div>
 
           <div class="form-group">
             <label class="form-label">현장명 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 힐스테이트 구월 아트파크" required />
+            <input type="text" id="title" class="form-input" placeholder="예: 힐스테이트 구월 아트파크" required />
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">지역 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select id="region" class="form-select" required>
                 <option value="">지역 선택</option>
                 <option>서울</option><option>경기남부</option><option>경기북부</option>
                 <option>인천</option><option>부산</option><option>울산</option>
@@ -74,7 +133,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">업종 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select id="type" class="form-select" required>
                 <option value="">업종 선택</option>
                 <option>아파트</option><option>오피스텔</option><option>상가</option>
                 <option>도시형생활주택</option><option>타운하우스</option><option>기타</option>
@@ -83,153 +142,139 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">현장 주소 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 인천광역시 남동구 구월동 000번지" required />
-          </div>
-
-          <div class="form-group">
             <label class="form-label">회사명 (대행사/시행사) <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: (주)크리사온" required />
+            <input type="text" id="company" class="form-input" placeholder="예: (주)크리사온" required />
           </div>
         </div>
 
+        <!-- 현장 사진 -->
+        <div class="section-wrap">
+          <div class="section-title">
+            📸 현장 사진
+            <span style="font-size:13px;font-weight:500;color:#EF4444;">* 필수 (최소 1장)</span>
+            <span class="img-count-badge" id="imgCountBadge">0/5</span>
+          </div>
+          <div style="font-size:12px;color:#64748B;margin-bottom:12px;">사진이 많을수록 지원율이 높아집니다! 최대 5장, 파일당 최대 5MB</div>
+
+          <div class="img-upload-area" id="uploadArea"
+            onclick="document.getElementById('imgInput').click()"
+            ondrop="handleDrop(event)"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)">
+            <input type="file" id="imgInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)" />
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">클릭하거나 사진을 여기에 드래그하세요</div>
+            <div class="upload-sub">JPG, PNG, WEBP 지원 · 최대 5장</div>
+          </div>
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar" id="uploadBar" style="width:0%"></div>
+          </div>
+          <div class="img-preview-grid" id="previewGrid"></div>
+        </div>
+
         <!-- 모집 조건 -->
-        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">💼 모집 조건</div>
+        <div class="section-wrap">
+          <div class="section-title">💼 모집 조건</div>
 
           <div class="form-group">
             <label class="form-label">모집 직종 <span class="required">*</span></label>
             <div class="checkbox-group">
-              <label class="checkbox-item"><input type="checkbox" value="본부장" /> 본부장</label>
-              <label class="checkbox-item"><input type="checkbox" value="팀장" /> 팀장</label>
-              <label class="checkbox-item"><input type="checkbox" value="팀원" /> 팀원</label>
-              <label class="checkbox-item"><input type="checkbox" value="사이드" /> 사이드</label>
-              <label class="checkbox-item"><input type="checkbox" value="각개" /> 각개</label>
+              <label class="checkbox-item"><input type="checkbox" name="role" value="본부장" /> 본부장</label>
+              <label class="checkbox-item"><input type="checkbox" name="role" value="팀장" /> 팀장</label>
+              <label class="checkbox-item"><input type="checkbox" name="role" value="팀원" /> 팀원</label>
+              <label class="checkbox-item"><input type="checkbox" name="role" value="사이드" /> 사이드</label>
+              <label class="checkbox-item"><input type="checkbox" name="role" value="각개" /> 각개</label>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">급여 형태 <span class="required">*</span></label>
-              <select class="form-select" required>
+              <select id="pay" class="form-select" required>
                 <option value="">선택</option>
                 <option>계약수수료</option>
-                <option>기본급+인센티브</option>
+                <option>기본급+인센</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label">팀 수수료</label>
-              <input type="text" class="form-input" placeholder="예: 1,200만원, 협의" />
+              <input type="text" id="fee" class="form-input" placeholder="예: 1,200만원, 협의" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">경력 조건</label>
-              <select class="form-select">
+              <select id="career" class="form-select">
                 <option>경력무관</option>
                 <option>3개월이상</option>
                 <option>6개월이상</option>
                 <option>12개월이상</option>
               </select>
             </div>
-            <div class="form-group">
-              <label class="form-label">일비</label>
-              <input type="text" class="form-input" placeholder="예: 5만원, 없음" />
-            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">복리후생 (해당 항목 선택)</label>
+            <label class="form-label">복리후생</label>
             <div class="checkbox-group">
-              <label class="checkbox-item"><input type="checkbox" /> 숙소제공</label>
-              <label class="checkbox-item"><input type="checkbox" /> 숙소비지원</label>
-              <label class="checkbox-item"><input type="checkbox" /> 광고비지원</label>
-              <label class="checkbox-item"><input type="checkbox" /> 팀정착금</label>
-              <label class="checkbox-item"><input type="checkbox" /> 잔금유예</label>
-              <label class="checkbox-item"><input type="checkbox" /> 선납할인</label>
-              <label class="checkbox-item"><input type="checkbox" /> 페이백</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="일비" /> 일비</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="숙소제공" /> 숙소제공</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="숙소비지원" /> 숙소비지원</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="광고비지원" /> 광고비지원</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="팀정착금" /> 팀정착금</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="잔금유예" /> 잔금유예</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="선납할인" /> 선납할인</label>
+              <label class="checkbox-item"><input type="checkbox" name="welfare" value="페이백" /> 페이백</label>
             </div>
           </div>
         </div>
 
         <!-- 상세 내용 -->
-        <div style="margin-bottom:32px; padding-bottom:24px; border-bottom:2px solid #E2E8F0;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📝 상세 내용</div>
+        <div class="section-wrap">
+          <div class="section-title">📝 상세 내용</div>
 
           <div class="form-group">
             <label class="form-label">현장 소개 제목 <span class="required">*</span></label>
-            <input type="text" class="form-input" placeholder="예: 팀수수료 1800만원! 광고비 50% 지원, 신규현장" required />
+            <input type="text" id="title_display" class="form-input" placeholder="예: 팀수수료 1800만원! 광고비 50% 지원, 신규현장" required />
           </div>
 
           <div class="form-group">
             <label class="form-label">상세 내용 <span class="required">*</span></label>
-            <textarea class="form-textarea" style="height:180px" placeholder="현장 특징, 분양가, 세대수, 수수료 상세, 지원 혜택, 현장 분위기 등을 자세히 작성해주세요." required></textarea>
+            <textarea id="description" class="form-textarea" style="height:180px"
+              placeholder="현장 특징, 분양가, 세대수, 수수료 상세, 지원 혜택, 현장 분위기 등을 자세히 작성해주세요." required></textarea>
           </div>
         </div>
 
         <!-- 연락처 -->
-        <div style="margin-bottom:32px;">
-          <div style="font-size:16px; font-weight:700; color:#2563EB; margin-bottom:20px;">📞 연락처</div>
+        <div class="section-wrap">
+          <div class="section-title">📞 연락처</div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">담당자명 <span class="required">*</span></label>
-              <input type="text" class="form-input" placeholder="담당자 이름" required />
+              <label class="form-label">연락처 <span class="required">*</span></label>
+              <input type="tel" id="phone" class="form-input" placeholder="010-0000-0000" required />
             </div>
             <div class="form-group">
-              <label class="form-label">연락처 <span class="required">*</span></label>
-              <input type="tel" class="form-input" placeholder="010-0000-0000" required />
+              <label class="form-label">카카오 오픈채팅 링크</label>
+              <input type="text" id="kakao_url" class="form-input" placeholder="https://open.kakao.com/..." />
             </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">카카오톡 오픈채팅 또는 링크</label>
-            <input type="text" class="form-input" placeholder="https://open.kakao.com/..." />
           </div>
         </div>
 
-        <!-- 광고 상품 선택 -->
+        <!-- 광고 상품 -->
         <div style="margin-bottom:32px; padding:24px; background:#F0F9FF; border-radius:10px; border:1px solid #BAE6FD;">
-          <div style="font-size:16px; font-weight:700; color:#0369A1; margin-bottom:16px;">⚡ 광고 상품 선택 (선택사항)</div>
-          <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:12px;">
-            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#fff; border-radius:8px; border:1.5px solid #E2E8F0; cursor:pointer;">
-              <input type="radio" name="adPlan" value="free" checked />
-              <div><div style="font-weight:700; margin-bottom:4px;">무료 등록</div><div style="font-size:12px; color:#64748B;">기본 노출</div></div>
-            </label>
-            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#F8F8F8; border-radius:8px; border:1.5px solid #E2E8F0; opacity:0.6; cursor:not-allowed;">
-              <input type="radio" name="adPlan" value="premium" disabled />
-              <div>
-                <div style="font-weight:700; margin-bottom:4px;">프리미엄 <span style="color:#D97706">★</span></div>
-                <div style="font-size:12px; color:#64748B;">상위 노출 + 강조 표시</div>
-                <div style="font-size:11px; color:#94A3B8; margin-top:4px;">⏳ 준비 중 (서비스 예정)</div>
-              </div>
-            </label>
-            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#F8F8F8; border-radius:8px; border:1.5px solid #E2E8F0; opacity:0.6; cursor:not-allowed;">
-              <input type="radio" name="adPlan" value="ad" disabled />
-              <div>
-                <div style="font-weight:700; margin-bottom:4px;">AD 배너 <span style="color:#D97706">🔥</span></div>
-                <div style="font-size:12px; color:#92400E;">메인 광고 배너 노출</div>
-                <div style="font-size:11px; color:#94A3B8; margin-top:4px;">⏳ 준비 중 (서비스 예정)</div>
-              </div>
-            </label>
-            <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#F8F8F8; border-radius:8px; border:1.5px solid #E2E8F0; opacity:0.6; cursor:not-allowed;">
-              <input type="radio" name="adPlan" value="unique" disabled />
-              <div>
-                <div style="font-weight:700; margin-bottom:4px;">유니크 <span style="color:#7C3AED">👑</span></div>
-                <div style="font-size:12px; color:#5B21B6;">최상단 고정 노출</div>
-                <div style="font-size:11px; color:#94A3B8; margin-top:4px;">⏳ 준비 중 (서비스 예정)</div>
-              </div>
-            </label>
-          </div>
+          <div style="font-size:15px; font-weight:700; color:#0369A1; margin-bottom:14px;">⚡ 광고 상품 (선택사항)</div>
+          <label style="display:flex; align-items:flex-start; gap:10px; padding:14px; background:#fff; border-radius:8px; border:1.5px solid #E2E8F0; cursor:pointer; max-width:220px;">
+            <input type="radio" name="adPlan" value="free" checked />
+            <div><div style="font-weight:700; margin-bottom:4px;">무료 등록</div><div style="font-size:12px; color:#64748B;">기본 노출</div></div>
+          </label>
         </div>
 
         <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:16px; margin-bottom:24px; font-size:13px; color:#DC2626; line-height:1.6;">
-          ⚠️ 허위 정보 기재 시 계정 정지 및 법적 조치가 취해질 수 있습니다.<br/>
-          등록된 현장 정보는 검토 후 게시됩니다 (영업일 기준 24시간 이내).
+          ⚠️ 허위 정보 기재 시 계정 정지 및 법적 조치가 취해질 수 있습니다.
         </div>
 
-        <button type="submit" class="form-submit">✅ 현장 등록 신청하기</button>
+        <button type="submit" id="submitBtn" class="form-submit">✅ 현장 등록하기</button>
       </form>
     </div>
   </div>
@@ -238,42 +283,188 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-col">
-      <div class="footer-logo"><img src="assets/logo-icon.svg" alt="분양톡" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;border-radius:6px;" />분양<span>톡</span></div>
-      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+      <div class="footer-logo"><img src="assets/logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼<br/>전국 모든 현장 정보를 한눈에</p>
     </div>
     <div class="footer-col">
       <h4>서비스</h4>
       <a href="listings.html">지역현장</a>
+      <a href="map.html">지도현장</a>
       <a href="supporters.html">서포터즈</a>
-      <a href="register.html">현장등록</a>
+      <a href="register.html" onclick="goRegister();return false;">현장등록</a>
     </div>
     <div class="footer-col">
       <h4>고객지원</h4>
-      <a href="#">공지사항</a>
-      <a href="#">고객센터</a>
+      <a href="notice.html">공지사항</a>
+      <a href="faq.html">자주묻는질문</a>
+      <a href="contact.html">고객센터</a>
     </div>
     <div class="footer-col">
       <h4>고객센터</h4>
-      <div class="footer-tel">📞 1800-XXXX</div>
-      <div class="footer-hours">월~금 09:00~18:00</div>
+      <div class="footer-hours">카카오채널: @분양톡</div>
+      <div class="footer-hours">운영시간: 평일 09:00~18:00</div>
     </div>
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <a href="#">개인정보 처리방침</a>
-      <a href="#">이용약관</a>
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="terms.html">이용약관</a>
       <span class="footer-copy">© 2026 분양톡</span>
     </div>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-function submitForm(e) {
+// ===== 이미지 선택/미리보기 =====
+var selectedFiles = [];
+
+function handleDragOver(e) {
   e.preventDefault();
-  alert('✅ 현장 등록 신청이 완료되었습니다!\n\n검토 후 영업일 24시간 이내에 게시됩니다.\n문의: 1800-XXXX');
-  location.href = 'index.html';
+  document.getElementById('uploadArea').classList.add('drag-over');
 }
+function handleDragLeave(e) {
+  document.getElementById('uploadArea').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+}
+function handleFiles(files) {
+  Array.from(files).forEach(function(f) {
+    if (selectedFiles.length >= 5) { alert('사진은 최대 5장까지 등록 가능합니다.'); return; }
+    if (f.size > 5 * 1024 * 1024) { alert(f.name + '\n파일 크기가 5MB를 초과합니다.'); return; }
+    if (!f.type.startsWith('image/')) { alert(f.name + '\n이미지 파일만 업로드 가능합니다.'); return; }
+    selectedFiles.push(f);
+  });
+  document.getElementById('imgInput').value = '';
+  renderPreviews();
+}
+function renderPreviews() {
+  var grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  selectedFiles.forEach(function(f, i) {
+    var url = URL.createObjectURL(f);
+    var div = document.createElement('div');
+    div.className = 'img-preview-item' + (i === 0 ? ' main-img' : '');
+    div.innerHTML =
+      '<img src="' + url + '" alt="사진' + (i+1) + '">' +
+      '<button type="button" class="img-del" onclick="removeImg(' + i + ')">✕</button>' +
+      (i === 0 ? '<div class="img-main-badge">대표사진</div>' : '');
+    grid.appendChild(div);
+  });
+  document.getElementById('imgCountBadge').textContent = selectedFiles.length + '/5';
+  document.getElementById('uploadArea').style.display = selectedFiles.length >= 5 ? 'none' : '';
+}
+function removeImg(idx) {
+  selectedFiles.splice(idx, 1);
+  renderPreviews();
+}
+
+// ===== 폼 제출 =====
+async function submitForm(e) {
+  e.preventDefault();
+
+  // 사진 필수 검증
+  if (selectedFiles.length === 0) {
+    alert('📷 사진을 최소 1장 이상 등록해주세요.');
+    document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+  // 직종 필수 검증
+  var roles = Array.from(document.querySelectorAll('input[name="role"]:checked')).map(function(el) { return el.value; });
+  if (roles.length === 0) { alert('모집 직종을 1개 이상 선택해주세요.'); return; }
+
+  var db = getSupabase();
+  if (!db) { alert('잠시 후 다시 시도해주세요.'); return; }
+
+  var btn = document.getElementById('submitBtn');
+  btn.textContent = '등록 중...'; btn.disabled = true;
+
+  try {
+    // 1. 로그인 확인
+    var sess = await db.auth.getSession();
+    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      window.location.href = 'login.html?next=register.html';
+      return;
+    }
+
+    // 2. Supabase Storage 이미지 업로드
+    var uploadedUrls = [];
+    var prog = document.getElementById('uploadProgress');
+    var bar = document.getElementById('uploadBar');
+    prog.style.display = 'block';
+
+    for (var i = 0; i < selectedFiles.length; i++) {
+      bar.style.width = Math.round((i / selectedFiles.length) * 85) + '%';
+      var f = selectedFiles[i];
+      var ext = f.name.split('.').pop().toLowerCase() || 'jpg';
+      var path = user.id + '/' + Date.now() + '_' + i + '.' + ext;
+      var upResult = await db.storage.from('listing-images').upload(path, f, { cacheControl: '3600', upsert: false });
+      if (upResult.error) throw new Error('이미지 업로드 실패: ' + upResult.error.message);
+      var pubData = db.storage.from('listing-images').getPublicUrl(path);
+      uploadedUrls.push(pubData.data.publicUrl);
+    }
+    bar.style.width = '90%';
+
+    // 3. 데이터 수집
+    var welfare = Array.from(document.querySelectorAll('input[name="welfare"]:checked')).map(function(el) { return el.value; });
+    var titleDisplay = document.getElementById('title_display').value;
+
+    var formData = {
+      title: titleDisplay || document.getElementById('title').value,
+      region: document.getElementById('region').value,
+      type: document.getElementById('type').value,
+      company: document.getElementById('company').value,
+      pay: document.getElementById('pay').value,
+      fee: document.getElementById('fee').value,
+      career: document.getElementById('career').value,
+      description: document.getElementById('description').value,
+      phone: document.getElementById('phone').value,
+      kakao_url: document.getElementById('kakao_url').value,
+      role: roles,
+      welfare: welfare,
+      images: uploadedUrls,
+      img: uploadedUrls[0] || '',
+      badges: [],
+      is_active: true,
+      user_id: user.id
+    };
+
+    // 4. DB 저장
+    var result = await db.from('listings').insert([formData]);
+    if (result.error) throw result.error;
+
+    bar.style.width = '100%';
+    setTimeout(function() {
+      alert('✅ 현장이 성공적으로 등록되었습니다!');
+      window.location.href = 'listings.html';
+    }, 300);
+
+  } catch(err) {
+    console.error(err);
+    alert('등록 오류: ' + (err.message || err));
+    btn.textContent = '✅ 현장 등록하기'; btn.disabled = false;
+    document.getElementById('uploadProgress').style.display = 'none';
+  }
+}
+
+// ===== topbar 통계 =====
+(function() {
+  var db = getSupabase();
+  if (!db) return;
+  var today = new Date().toISOString().split('T')[0];
+  db.from('listings').select('id', {count:'exact', head:true}).eq('is_active', true).then(function(r) {
+    var el = document.getElementById('topbarTotal'); if (el) el.textContent = r.count || 0;
+  });
+  db.from('listings').select('id', {count:'exact', head:true}).eq('is_active', true).gte('created_at', today).then(function(r) {
+    var el = document.getElementById('topbarNewSite'); if (el) el.textContent = r.count || 0;
+  });
+})();
 </script>
 </body>
 </html>
