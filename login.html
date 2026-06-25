@@ -4,55 +4,136 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>로그인 - 분양톡</title>
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; display: flex; background: #0f1117; }
+    .auth-left { flex: 1; position: relative; display: none; background: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1400&q=90') center/cover no-repeat; }
+    @media (min-width: 900px) { .auth-left { display: block; } }
+    .auth-left-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(15,17,23,0.88) 0%, rgba(255,107,43,0.25) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 52px; }
+    .left-logo { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+    .left-logo span { color: #FF6B2B; }
+    .left-copy h2 { font-size: 38px; font-weight: 800; color: #fff; line-height: 1.25; letter-spacing: -1px; margin-bottom: 14px; }
+    .left-copy p { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.7; }
+    .auth-right { width: 100%; max-width: 460px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 52px 44px; background: #fff; overflow-y: auto; }
+    @media (max-width: 899px) { .auth-right { max-width: 100%; padding: 40px 24px; } }
+    .logo-mobile { display: none; font-size: 24px; font-weight: 800; color: #1E1E1E; margin-bottom: 36px; align-items: center; gap: 8px; }
+    .logo-mobile span { color: #FF6B2B; }
+    @media (max-width: 899px) { .logo-mobile { display: flex; } }
+    .auth-title { font-size: 28px; font-weight: 800; color: #1E1E1E; letter-spacing: -0.8px; margin-bottom: 6px; }
+    .auth-sub { font-size: 15px; color: #94A3B8; margin-bottom: 36px; }
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; pointer-events: none; }
+    .form-input { width: 100%; height: 50px; padding: 0 16px 0 44px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 15px; font-family: inherit; color: #1E1E1E; background: #F8FAFC; transition: all 0.2s; outline: none; }
+    .form-input:focus { border-color: #FF6B2B; background: #fff; box-shadow: 0 0 0 3px rgba(255,107,43,0.1); }
+    .form-input::placeholder { color: #CBD5E1; }
+    .form-options { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 24px; }
+    .remember-me { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #64748B; cursor: pointer; }
+    .remember-me input { width: 15px; height: 15px; accent-color: #FF6B2B; }
+    .forgot-link { font-size: 13px; color: #FF6B2B; text-decoration: none; font-weight: 600; }
+    .forgot-link:hover { text-decoration: underline; }
+    .btn-submit { width: 100%; height: 52px; background: linear-gradient(135deg, #FF6B2B 0%, #FF8C42 100%); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; letter-spacing: 0.3px; transition: all 0.2s; box-shadow: 0 4px 18px rgba(255,107,43,0.38); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(255,107,43,0.48); }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .auth-footer { text-align: center; margin-top: 28px; font-size: 14px; color: #94A3B8; }
+    .auth-footer a { color: #FF6B2B; font-weight: 700; text-decoration: none; }
+    .back-home { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 16px; font-size: 13px; color: #CBD5E1; text-decoration: none; transition: color 0.2s; }
+    .back-home:hover { color: #FF6B2B; }
+    .error-msg { display: none; background: #FEF2F2; border: 1.5px solid #FECACA; color: #DC2626; border-radius: 10px; padding: 12px 16px; font-size: 13px; margin-bottom: 16px; font-weight: 500; }
+    .error-msg.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .spinner { display: block; }
+  </style>
 </head>
 <body>
-<div class="auth-page">
-  <div class="auth-card">
-    <div class="auth-logo"><img src="assets/logo-icon.svg" alt="분양톡" style="width:38px;height:38px;vertical-align:middle;margin-right:6px;border-radius:9px;">분양<span>톡</span></div>
-    <div class="auth-title">로그인</div>
-
-    <form onsubmit="doLogin(event)">
-      <div class="form-group">
-        <label class="form-label">이메일 / 아이디</label>
-        <input type="text" class="form-input" placeholder="이메일 또는 아이디 입력" required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">비밀번호</label>
-        <input type="password" class="form-input" placeholder="비밀번호 입력" required />
-      </div>
-      <div class="auth-options">
-        <label class="auth-remember">
-          <input type="checkbox" /> 로그인 상태 유지
-        </label>
-        <a href="#" class="auth-forgot">비밀번호 찾기</a>
-      </div>
-      <button type="submit" class="form-submit" style="margin-top:0;">로그인</button>
-    </form>
-
-    <div class="auth-divider"><span>또는 SNS 로그인</span></div>
-
-    <button class="social-btn" style="background:#FEE500; border-color:#FEE500; color:#000;">
-      💬 카카오로 로그인
-    </button>
-    <button class="social-btn" style="background:#03C75A; border-color:#03C75A; color:#fff;">
-      N 네이버로 로그인
-    </button>
-
-    <div class="auth-switch">
-      아직 회원이 아니신가요? <a href="signup.html">회원가입</a>
+<div class="auth-left">
+  <div class="auth-left-overlay">
+    <div class="left-logo">
+      <img src="assets/logo-icon.svg" width="34" height="34" alt="" style="border-radius:8px;">
+      분양<span>톡</span>
     </div>
-    <div style="text-align:center; margin-top:16px;">
-      <a href="index.html" style="font-size:13px; color:#94A3B8;">← 메인으로 돌아가기</a>
+    <div class="left-copy">
+      <h2>분양현장 구인구직<br/>No.1 플랫폼</h2>
+      <p>전국 분양 종사자가 선택한<br/>가장 빠른 현장 정보를 지금 확인하세요</p>
     </div>
+    <div></div>
   </div>
 </div>
+
+<div class="auth-right">
+  <div class="logo-mobile">
+    <img src="assets/logo-icon.svg" width="30" height="30" alt="" style="border-radius:7px;">
+    분양<span>톡</span>
+  </div>
+  <h1 class="auth-title">다시 만나서 반가워요 👋</h1>
+  <p class="auth-sub">로그인하고 최신 현장 정보를 확인하세요</p>
+
+  <form id="loginForm">
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="form-group">
+      <label class="form-label">이메일 / 아이디</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="loginId" class="form-input" placeholder="아이디 또는 이메일 입력" required autocomplete="username" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">비밀번호</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password" />
+      </div>
+    </div>
+    <div class="form-options">
+      <label class="remember-me"><input type="checkbox" /> 로그인 상태 유지</label>
+      <a href="#" class="forgot-link">비밀번호 찾기</a>
+    </div>
+    <button type="submit" id="submitBtn" class="btn-submit">
+      <span class="btn-text">로그인</span>
+      <div class="spinner"></div>
+    </button>
+  </form>
+
+  <div class="auth-footer">아직 회원이 아니신가요? <a href="signup.html">무료 회원가입</a></div>
+  <a href="index.html" class="back-home">← 메인으로 돌아가기</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
 <script>
-function doLogin(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  alert('✅ 로그인되었습니다!');
-  location.href = 'index.html';
-}
+  var idVal = document.getElementById('loginId').value.trim();
+  var pw = document.getElementById('loginPw').value;
+  var errEl = document.getElementById('errorMsg');
+  var btn = document.getElementById('submitBtn');
+  errEl.classList.remove('show');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  // 아이디 입력이면 @bunyangtok.com 붙이기
+  var email = idVal.includes('@') ? idVal : idVal + '@bunyangtok.com';
+
+  try {
+    var db = getSupabase();
+    var res = await db.auth.signInWithPassword({ email: email, password: pw });
+    if (res.error) throw res.error;
+    var next = new URLSearchParams(window.location.search).get('next');
+    window.location.href = next || 'index.html';
+  } catch(err) {
+    var m = err.message || '';
+    if (m.includes('Invalid login') || m.includes('invalid') || m.includes('credentials')) {
+      errEl.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+    } else {
+      errEl.textContent = m || '로그인 중 오류가 발생했습니다.';
+    }
+    errEl.classList.add('show');
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
