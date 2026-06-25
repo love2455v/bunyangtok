@@ -94,7 +94,6 @@ async function loadListings(region, keyword) {
     window._cachedData = allResult.data || [];
     var fcEl = document.getElementById('filterCount');
     if (fcEl) fcEl.textContent = '전체 ' + window._cachedData.length + '개 현장';
-    // listings.html에 applyFilters가 있으면 keyword/region 포함 필터 적용
     if (typeof applyFilters === 'function') {
       applyFilters();
     } else {
@@ -120,14 +119,14 @@ function buildCardImage(item) {
     return '<span class="sl-dot' + (i === 0 ? ' active' : '') + '" onclick="event.stopPropagation();slGo(\'' + uid + '\',' + i + ')"></span>';
   }).join('');
   var imgTags = imgs.map(function(url, i) {
-    return '<img class="sl-img" src="' + url + '" alt="사진' + (i+1) + '" loading="lazy" style="display:' + (i === 0 ? 'block' : 'none') + ';width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'">';
+    return '<img class="sl-img" src="' + url + '" alt="사진' + (i+1) + '" loading="lazy" style="display:' + (i === 0 ? 'block' : 'none') + ';" onerror="this.style.display=\'none\'">';
   }).join('');
   return '<div class="card-slider" id="' + uid + '" data-idx="0" data-total="' + imgs.length + '">' +
     imgTags +
-    '<button class="sl-btn sl-prev" onclick="event.stopPropagation();slMove(\'' + uid + '\',-1)">&#8249;</button>' +
-    '<button class="sl-btn sl-next" onclick="event.stopPropagation();slMove(\'' + uid + '\',1)">&#8250;</button>' +
+    '<button class="sl-btn sl-prev" onclick="event.stopPropagation();slMove(\'' + uid + '\',-1)">&#10094;</button>' +
+    '<button class="sl-btn sl-next" onclick="event.stopPropagation();slMove(\'' + uid + '\',1)">&#10095;</button>' +
     '<div class="sl-dots">' + dots + '</div>' +
-    '<div class="sl-counter">' + imgs.length + '장</div>' +
+    '<div class="sl-counter">1 / ' + imgs.length + '</div>' +
   '</div>';
 }
 function slGo(uid, idx) {
@@ -135,10 +134,12 @@ function slGo(uid, idx) {
   if (!slider) return;
   var imgs = slider.querySelectorAll('.sl-img');
   var dots = slider.querySelectorAll('.sl-dot');
+  var counter = slider.querySelector('.sl-counter');
   var cur = parseInt(slider.dataset.idx) || 0;
   imgs[cur].style.display = 'none'; dots[cur].classList.remove('active');
   imgs[idx].style.display = 'block'; dots[idx].classList.add('active');
   slider.dataset.idx = idx;
+  if (counter) counter.textContent = (idx + 1) + ' / ' + imgs.length;
 }
 function slMove(uid, dir) {
   var slider = document.getElementById(uid);
@@ -385,13 +386,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch(e) {}
   }
 
-  // register.html은 로그인 필수 (db 연결된 경우에만 체크)
   if (window.location.pathname.includes('register.html') && db && !currentUser) {
     window.location.href = 'login.html?next=register.html';
     return;
   }
 
-  // 헤더 UI 업데이트
   updateAuthUI(currentUser);
 
   var urlRegion = getUrlParam('region');
@@ -404,7 +403,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   initTicker();
 
-  // Supabase 실제 현장수 표시 (hero-stats + topbar)
   if (db) {
     var today = new Date().toISOString().split('T')[0];
     db.from('listings').select('id', {count: 'exact', head: true}).then(function(r) {
@@ -427,6 +425,4 @@ document.addEventListener('DOMContentLoaded', async function() {
     el.classList.add('section-reveal');
   });
   initScrollAnimations();
-
-  // registerForm submit은 register.html 인라인 submitForm()이 처리 (중복 방지)
 });
