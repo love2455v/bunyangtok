@@ -252,10 +252,20 @@ function doSearch() {
   window.location.href = 'listings.html?' + params.toString();
 }
 
-if (document.getElementById('searchInput')) {
-  document.getElementById('searchInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doSearch();
-  });
+function bindSearchEnter() {
+  var si = document.getElementById('searchInput');
+  if (si && !si._enterBound) {
+    si._enterBound = true;
+    si.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+    });
+  }
+}
+// DOM 준비 후 검색창에 엔터키 리스너 연결 (head에서 로드돼도 동작하도록)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bindSearchEnter);
+} else {
+  bindSearchEnter();
 }
 
 // ===== 모바일 메뉴 =====
