@@ -4,345 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현장 상세 - 분양톡</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-  <link rel="stylesheet" href="style.css?v=4" />
-  <style>
-    /* ===== 상세페이지 전용 스타일 ===== */
-    :root {
-      --orange: #FF6B2B;
-      --orange-light: #fff3ee;
-      --orange-dark: #e85a1b;
-      --dark: #1E1E1E;
-      --gray: #64748B;
-      --light: #F8FyFA;
-      --border: #E2E8F0;
-      --white: #fff;
-    }
-
-    body { background: var(--light); font-family: 'Pretendard', sans-serif; }
-
-    /* 브레드크럼 */
-    .breadcrumb {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 11px 0;
-    }
-    .breadcrumb-inner { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray); }
-    .breadcrumb-inner a { color: var(--orange); text-decoration: none; }
-    .breadcrumb-inner a:hover { text-decoration: underline; }
-    .breadcrumb-inner .sep { color: #CBD5E1; }
-    .breadcrumb-inner .current { color: #334155; font-weight: 600; }
-
-    /* 상단 히어로 섹션 */
-    .detail-hero {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 32px 0 0;
-    }
-    .detail-hero-inner {
-      display: grid;
-      grid-template-columns: 480px 1fr;
-      gap: 36px;
-      align-items: flex-start;
-    }
-    .detail-hero-img {
-      border-radius: 12px;
-      overflow: hidden;
-      aspect-ratio: 16/10;
-      background: #EEE;
-    }
-    .detail-hero-img img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .detail-hero-info { padding-bottom: 32px; }
-    .detail-meta-row {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 12px; color: var(--gray); margin-bottom: 14px;
-    }
-    .detail-meta-row .date { color: #94A3B8; }
-    .detail-meta-row .views { color: #94A3B8; }
-    .detail-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .dbadge {
-      display: inline-block; padding: 4px 10px; border-radius: 20px;
-      font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
-    }
-    .dbadge-hot { background: #FF6B2B; color: #fff; }
-    .dbadge-new { background: #10B981; color: #fff; }
-    .dbadge-ad  { background: #7C3AED; color: #fff; }
-    .dbadge-best { background: #F59E0B; color: #fff; }
-    .dbadge-type { background: #F1F5F9; color: #475569; border: 1px solid var(--border); }
-    .detail-title {
-      font-size: 22px; font-weight: 800; color: var(--dark);
-      line-height: 1.45; margin-bottom: 10px;
-    }
-    .detail-desc-short {
-      font-size: 14px; color: var(--gray); line-height: 1.7;
-      margin-bottom: 18px;
-      border-left: 3px solid var(--orange); padding-left: 12px;
-    }
-    .detail-quick-tags {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;
-    }
-    .dq-tag {
-      background: var(--light); border: 1px solid var(--border);
-      border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #334155; font-weight: 500;
-    }
-    .dq-tag.highlight { background: var(--orange-light); border-color: #FED7AA; color: var(--orange); font-weight: 700; }
-    .detail-cta-row { display: flex; gap: 10px; }
-    .btn-call {
-      flex: 1; padding: 14px; background: var(--orange); color: #fff;
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      cursor: pointer; text-align: center; text-decoration: none; display: block;
-      transition: background 0.2s;
-    }
-    .btn-call:hover { background: var(--orange-dark); }
-    .btn-kakao {
-      flex: 1; padding: 14px; background: #FEE500; color: #000;
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      cursor: pointer; text-align: center; text-decoration: none; display: block;
-    }
-    .btn-save {
-      padding: 14px 18px; background: #fff; border: 1.5px solid var(--border);
-      border-radius: 10px; font-size: 15px; cursor: pointer; color: var(--gray);
-    }
-    .btn-save:hover { border-color: var(--orange); color: var(--orange); }
-
-    /* 본문 레이아웃 */
-    .detail-body {
-      padding: 32px 0 60px;
-    }
-    .detail-body-inner {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 24px;
-    }
-    .detail-main { min-width: 0; }
-    .detail-sidebar { }
-
-    /* 섹션 카드 */
-    .detail-section {
-      background: var(--white);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-    .section-heading {
-      font-size: 16px; font-weight: 800; color: var(--dark);
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--border);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .section-heading .sh-bar {
-      width: 4px; height: 18px; background: var(--orange); border-radius: 2px; flex-shrink: 0;
-    }
-
-    /* 정보 테이블 */
-    .info-table { width: 100%; border-collapse: collapse; }
-    .info-table tr { border-bottom: 1px solid var(--border); }
-    .info-table tr:last-child { border-bottom: none; }
-    .info-table th {
-      width: 120px; padding: 14px 16px; font-size: 13px; font-weight: 600;
-      color: var(--gray); background: var(--light); text-align: left;
-      white-space: nowrap;
-    }
-    .info-table td {
-      padding: 14px 16px; font-size: 14px; color: #1E293B; font-weight: 500;
-    }
-    .info-table td.fee-val {
-      font-size: 20px; font-weight: 800; color: var(--orange);
-    }
-    .info-table-2col { }
-    .info-table-2col .info-table th { width: 100px; }
-
-    /* 복리후생 태그 */
-    .welfare-tags { display: flex; flex-wrap: wrap; gap: 10px; }
-    .welfare-tag {
-      background: var(--orange-light); color: var(--orange);
-      border: 1px solid #FED7AA; border-radius: 20px;
-      padding: 7px 16px; font-size: 13px; font-weight: 600;
-    }
-    .welfare-tag-empty { color: #CBD5E1; font-size: 14px; }
-
-    /* 상세 텍스트 */
-    .detail-desc-body {
-      font-size: 15px; line-height: 1.9; color: #334155;
-      white-space: pre-wrap; word-break: break-word;
-    }
-
-    /* 경고 배너 */
-    .warning-banner {
-      background: #FFFBEB; border: 1px solid #FDE68A;
-      border-radius: 10px; padding: 14px 18px;
-      font-size: 13px; color: #92400E; line-height: 1.6;
-      margin-top: 20px;
-    }
-
-    /* 사이드바 스티키 카드 */
-    .sidebar-card {
-      background: var(--white); border-radius: 12px;
-      border: 1px solid var(--border); padding: 22px;
-      position: sticky; top: 80px;
-    }
-    .sidebar-company-name {
-      font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 4px;
-    }
-    .sidebar-fee {
-      font-size: 24px; font-weight: 900; color: var(--orange);
-      margin-bottom: 16px;
-    }
-    .sidebar-fee small { font-size: 13px; color: var(--gray); font-weight: 500; }
-    .sidebar-divider { height: 1px; background: var(--border); margin: 16px 0; }
-    .sidebar-info-row {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 13px; padding: 5px 0;
-    }
-    .sidebar-info-row .label { color: var(--gray); }
-    .sidebar-info-row .value { font-weight: 600; color: #1E293B; }
-    .sidebar-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
-    .sidebar-btn-call {
-      padding: 14px; background: var(--orange); color: #fff;
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      cursor: pointer; text-align: center; text-decoration: none; display: block;
-      transition: background 0.2s;
-    }
-    .sidebar-btn-call:hover { background: var(--orange-dark); }
-    .sidebar-btn-kakao {
-      padding: 14px; background: #FEE500; color: #000;
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      cursor: pointer; text-align: center; text-decoration: none; display: block;
-    }
-    .sidebar-btn-save {
-      padding: 11px; background: #fff; border: 1.5px solid var(--border);
-      border-radius: 10px; font-size: 14px; cursor: pointer;
-      color: var(--gray); font-weight: 600;
-    }
-    .sidebar-btn-save:hover { border-color: var(--orange); color: var(--orange); }
-    .sidebar-views {
-      text-align: center; font-size: 12px; color: #CBD5E1; margin-top: 14px;
-    }
-
-    /* 관련현장 */
-    .related-section { margin-top: 24px; }
-    .related-heading {
-      font-size: 16px; font-weight: 800; color: var(--dark);
-      margin-bottom: 16px; display: flex; align-items: center;
-      justify-content: space-between;
-    }
-    .related-heading a { font-size: 13px; color: var(--orange); font-weight: 500; }
-
-    /* 로딩 / 에러 */
-    .loading-wrap {
-      display: flex; align-items: center; justify-content: center;
-      padding: 80px 20px; flex-direction: column; gap: 16px;
-    }
-    .spinner {
-      width: 40px; height: 40px; border: 4px solid var(--border);
-      border-top-color: var(--orange); border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-txt { color: var(--gray); font-size: 14px; }
-
-    .error-wrap {
-      text-align: center; padding: 80px 20px; color: var(--gray);
-    }
-    .error-wrap strong { display: block; font-size: 18px; color: var(--dark); margin-bottom: 8px; }
-    .error-wrap a { color: var(--orange); font-weight: 600; }
-
-    /* 반응형 */
-    @media (max-width: 960px) {
-      .detail-hero-inner { grid-template-columns: 1fr; gap: 20px; }
-      .detail-hero-img { aspect-ratio: 16/9; }
-      .detail-body-inner { grid-template-columns: 1fr; }
-      .sidebar-card { position: static; }
-    }
-    @media (max-width: 640px) {
-      .detail-section { padding: 18px 16px; }
-      .detail-title { font-size: 18px; }
-      .detail-cta-row { flex-wrap: wrap; }
-      .btn-call, .btn-kakao { flex: 1 1 calc(50% - 5px); }
-      .btn-save { width: 100%; }
-      .info-table, .info-table tbody { display: block; }
-      .info-table tr { display: grid !important; grid-template-columns: 76px 1fr; }
-      .info-table th, .info-table td { display: block !important; width: auto !important; padding: 9px 10px; white-space: normal; word-break: break-word; border-bottom: none; }
-      .info-table th { font-size: 12px; background: #f8fafc; }
-      .info-table td { font-size: 13px; }
-      .info-table td.fee-val { font-size: 16px; }
-    }
-
-    /* ===== 갤러리 슬라이드쇼 ===== */
-    .gallery-wrap {
-      border-radius: 12px; overflow: hidden;
-      background: #111; position: relative;
-      aspect-ratio: 16/10;
-    }
-    .gallery-main {
-      width: 100%; height: 100%; position: relative; overflow: hidden;
-    }
-    .gallery-main img {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; transition: opacity 0.3s;
-    }
-    .gallery-arrow {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.5); color: #fff; border: none;
-      width: 40px; height: 40px; border-radius: 50%;
-      font-size: 18px; cursor: pointer; z-index: 10;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .gallery-arrow:hover { background: rgba(0,0,0,0.8); }
-    .gallery-arrow.prev { left: 10px; }
-    .gallery-arrow.next { right: 10px; }
-    .gallery-counter {
-      position: absolute; bottom: 10px; right: 12px;
-      background: rgba(0,0,0,0.55); color: #fff;
-      font-size: 12px; font-weight: 600; border-radius: 20px;
-      padding: 3px 10px; z-index: 10;
-    }
-    .gallery-thumbs {
-      display: flex; gap: 6px; margin-top: 8px; overflow-x: auto;
-      scrollbar-width: none; padding-bottom: 2px;
-    }
-    .gallery-thumbs::-webkit-scrollbar { display: none; }
-    .gallery-thumb {
-      flex-shrink: 0; width: 60px; height: 44px; border-radius: 6px;
-      overflow: hidden; cursor: pointer; border: 2px solid transparent;
-      opacity: 0.6; transition: all 0.2s;
-    }
-    .gallery-thumb.active { border-color: #FF6B2B; opacity: 1; }
-    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .gallery-no-img {
-      display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 100%; background: #E2E8F0; color: #94A3B8;
-      font-size: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="container topbar-inner">
     <div class="topbar-stats">
-      <span> 오늘 방문 <strong id="topVisit">2,847</strong>명</span>
-      <span> 신규현장 <strong>93</strong>건</span>
+      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
+      <span>📋 신규현장 <strong>93</strong>건</span>
     </div>
-    <div class="topbar-links" id="topbarLinks">
+    <div class="topbar-links">
       <a href="login.html">로그인</a>
       <a href="signup.html" class="btn-join">회원가입</a>
     </div>
   </div>
 </div>
 
-<!-- HEADER -->
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
+      <img src="assets/logo-icon.png" alt="분양톡" class="logo-icon" />
       <span class="logo-text">분양<span class="logo-accent">톡</span></span>
     </a>
     <nav class="nav-desktop">
@@ -357,186 +39,54 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.html">HOME</a>
     <a href="listings.html">지역현장</a>
-    <a href="map.html">지도현장</a>
-    <a href="supporters.html">서포터즈</a>
     <a href="register.html">현장등록</a>
   </div>
 </header>
 
 <!-- BREADCRUMB -->
-<div class="breadcrumb">
-  <div class="container breadcrumb-inner">
-    <a href="index.html">홈</a>
-    <span class="sep">›</span>
-    <a href="listings.html">지역현장</a>
-    <span class="sep">›</span>
-    <span class="current" id="breadTitle">현장 상세</span>
+<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:12px 0;">
+  <div class="container" style="font-size:13px; color:#64748B;">
+    <a href="index.html" style="color:#2563EB;">홈</a> &gt;
+    <a href="listings.html" style="color:#2563EB;">지역현장</a> &gt;
+    <span id="breadTitle">현장 상세</span>
   </div>
 </div>
 
-<!-- ===== 로딩 상태 ===== -->
-<div id="pageLoading">
-  <div class="loading-wrap">
-    <div class="spinner"></div>
-    <div class="loading-txt">현장 정보를 불러오는 중...</div>
-  </div>
-</div>
+<div style="padding:32px 0 60px;">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 340px; gap:28px;" id="detailLayout">
 
-<!-- ===== 에러 상태 ===== -->
-<div id="pageError" style="display:none;">
-  <div class="error-wrap">
-    <strong>현장을 찾을 수 없습니다</strong>
-    삭제되었거나 존재하지 않는 현장입니다.
-    <br><br><a href="listings.html">← 현장 목록으로</a>
-  </div>
-</div>
+      <!-- 메인 콘텐츠 -->
+      <div>
+        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:32px;" id="detailMain">
+          <!-- JS로 채워짐 -->
+        </div>
 
-<!-- ===== 메인 콘텐츠 (JS로 채워짐) ===== -->
-<div id="pageContent" style="display:none;">
-
-  <!-- 히어로 -->
-  <div class="detail-hero">
-    <div class="container detail-hero-inner">
-      <div id="galleryContainer">
-        <div class="gallery-wrap" id="galleryWrap">
-          <div class="gallery-main" id="galleryMain">
-            <img id="galleryCurrentImg" src="" alt="" style="display:none">
-            <div class="gallery-no-img" id="galleryNoImg"> 사진 없음</div>
+        <!-- 관련 현장 -->
+        <div style="margin-top:24px;">
+          <div class="section-header">
+            <div class="section-title">📋 비슷한 현장</div>
+            <a href="listings.html" class="view-all">전체보기 →</a>
           </div>
-          <button class="gallery-arrow prev" id="galleryPrev" onclick="galleryMove(-1)" style="display:none">&#8249;</button>
-          <button class="gallery-arrow next" id="galleryNext" onclick="galleryMove(1)" style="display:none">&#8250;</button>
-          <div class="gallery-counter" id="galleryCounter" style="display:none"></div>
+          <div class="listings-grid" id="relatedGrid"></div>
         </div>
-        <div class="gallery-thumbs" id="galleryThumbs"></div>
-      </div>
-      <div class="detail-hero-info">
-        <div class="detail-meta-row">
-          <span class="date" id="metaDate">등록일 -</span>
-          <span>·</span>
-          <span class="views" id="metaViews">조회 0</span>
-        </div>
-        <div class="detail-badges" id="heroBadges"></div>
-        <div class="detail-title" id="heroTitle"></div>
-        <div class="detail-desc-short" id="heroDescShort"></div>
-        <div class="detail-quick-tags" id="heroTags"></div>
-        <div class="detail-cta-row">
-          <a id="heroCallBtn" href="#" class="btn-call"> 전화 문의</a>
-          <a id="heroKakaoBtn" href="#" target="_blank" class="btn-kakao"> 카카오 문의</a>
-          <button onclick="saveFavorite()" class="btn-save"></button>
-        </div>
-        <div id="heroPhoneNum" style="display:none;margin-top:10px;font-size:15px;font-weight:700;color:#334155;letter-spacing:0.5px;"> <span id="heroPhoneText"></span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 본문 -->
-  <div class="detail-body">
-    <div class="container detail-body-inner">
-
-      <!-- 메인 -->
-      <div class="detail-main">
-
-        <!-- 기본요강 -->
-        <div class="detail-section">
-          <div class="section-heading"><span class="sh-bar"></span> 기본요강</div>
-          <table class="info-table">
-            <tr>
-              <th>업종</th>
-              <td id="infoType"></td>
-              <th>직종</th>
-              <td id="infoRole"></td>
-            </tr>
-            <tr>
-              <th>경력조건</th>
-              <td id="infoCareer"></td>
-              <th>투입일</th>
-              <td id="infoJoinDate">즉시 투입</td>
-            </tr>
-            <tr>
-              <th>지역</th>
-              <td id="infoRegion"></td>
-              <th>업체명</th>
-              <td id="infoCompany"></td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- 급여정보 -->
-        <div class="detail-section">
-          <div class="section-heading"><span class="sh-bar"></span> 급여정보</div>
-          <table class="info-table">
-            <tr>
-              <th>형태</th>
-              <td id="infoPay"></td>
-            </tr>
-            <tr>
-              <th>팀 수수료</th>
-              <td class="fee-val" id="infoFee"></td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- 복리후생 -->
-        <div class="detail-section">
-          <div class="section-heading"><span class="sh-bar"></span> 근무후생 / 복리후생</div>
-          <div class="welfare-tags" id="welfareTagsWrap"></div>
-        </div>
-
-        <!-- 상세정보 -->
-        <div class="detail-section">
-          <div class="section-heading"><span class="sh-bar"></span> 상세정보</div>
-          <div class="detail-desc-body" id="detailDescFull"></div>
-
-          <!-- 경고 -->
-          <div class="warning-banner">
-             본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 직접 확인하세요.<br>
-            분양톡은 구인·구직 정보 중개 플랫폼으로, 실제 고용관계는 해당 업체와 협의하시기 바랍니다.
-          </div>
-        </div>
-
       </div>
 
       <!-- 사이드바 -->
-      <div class="detail-sidebar">
-        <div class="sidebar-card">
-          <div class="sidebar-company-name" id="sideCompany"></div>
-          <div class="sidebar-fee" id="sideFee"></div>
-          <div class="sidebar-divider"></div>
-          <div class="sidebar-info-row"><span class="label">업종</span><span class="value" id="sideType"></span></div>
-          <div class="sidebar-info-row"><span class="label">지역</span><span class="value" id="sideRegion"></span></div>
-          <div class="sidebar-info-row"><span class="label">직종</span><span class="value" id="sideRole"></span></div>
-          <div class="sidebar-info-row"><span class="label">경력</span><span class="value" id="sideCareer"></span></div>
-          <div class="sidebar-divider"></div>
-          <div id="sidePhoneNum" style="display:none;text-align:center;font-size:17px;font-weight:800;color:#1E293B;letter-spacing:1px;padding:10px 0 6px;"><span id="sidePhoneText"></span></div>
-          <div class="sidebar-btns">
-            <a id="sideCallBtn" href="#" class="sidebar-btn-call"> 전화 문의하기</a>
-            <a id="sideKakaoBtn" href="#" target="_blank" class="sidebar-btn-kakao"> 카카오 문의</a>
-            <button onclick="saveFavorite()" class="sidebar-btn-save"> 관심현장 저장</button>
-          </div>
-          <div class="sidebar-views" id="sideViews"></div>
+      <div>
+        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:24px; position:sticky; top:80px;" id="contactCard">
+          <!-- JS로 채워짐 -->
         </div>
       </div>
 
-    </div><!-- /.detail-body-inner -->
-
-    <!-- 관련현장 -->
-    <div class="container related-section">
-      <div class="related-heading">
-         비슷한 현장
-        <a href="listings.html">전체보기 →</a>
-      </div>
-      <div class="listings-grid" id="relatedGrid"></div>
     </div>
+  </div>
+</div>
 
-  </div><!-- /.detail-body -->
-
-</div><!-- /#pageContent -->
-
-<!-- FOOTER -->
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-col">
-      <div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div>
+      <div class="footer-logo"><img src="assets/logo-icon.png" alt="분양톡" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;border-radius:6px;" />분양<span>톡</span></div>
       <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
     </div>
     <div class="footer-col">
@@ -547,366 +97,102 @@
     </div>
     <div class="footer-col">
       <h4>고객지원</h4>
-      <a href="notice.html">공지사항</a>
-      <a href="contact.html">고객센터</a>
-      <a href="faq.html">FAQ</a>
+      <a href="#">공지사항</a>
+      <a href="#">고객센터</a>
     </div>
     <div class="footer-col">
       <h4>고객센터</h4>
-      <div class="footer-tel"> 1668-3473</div>
+      <div class="footer-tel">📞 1800-XXXX</div>
       <div class="footer-hours">월~금 09:00~18:00</div>
     </div>
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <a href="privacy.html">개인정보 처리방침</a>
-      <a href="terms.html">이용약관</a>
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">이용약관</a>
       <span class="footer-copy">© 2026 분양톡</span>
     </div>
   </div>
 </footer>
 
 <div class="float-btns">
-  <a href="register.html" class="float-btn float-register"> 등록</a>
+  <a href="register.html" class="float-btn float-register">✏️ 등록</a>
   <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
+const params = new URLSearchParams(location.search);
+const id = parseInt(params.get('id')) || 1;
+const item = LISTINGS.find(l => l.id === id) || LISTINGS[0];
 
-/* ===== 갤러리 슬라이드쇼 ===== */
-var _galleryImages = [];
-var _galleryIdx = 0;
+document.title = item.title + ' - 분양톡';
+document.getElementById('breadTitle').textContent = item.title;
 
-function renderGallery(images, title) {
-  _galleryImages = images || [];
-  _galleryIdx = 0;
-  const wrap = document.getElementById('galleryWrap');
-  const noImg = document.getElementById('galleryNoImg');
-  const mainImg = document.getElementById('galleryCurrentImg');
-  const prev = document.getElementById('galleryPrev');
-  const next = document.getElementById('galleryNext');
-  const counter = document.getElementById('galleryCounter');
-  const thumbsEl = document.getElementById('galleryThumbs');
+document.getElementById('detailMain').innerHTML = `
+  <div class="card-badges" style="margin-bottom:16px;">
+    ${item.badges.map(b => `<span class="badge badge-${b==='HOT'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best'}">${b}</span>`).join('')}
+    <span class="badge badge-type">${item.type}</span>
+  </div>
+  <h1 style="font-size:22px; font-weight:800; margin-bottom:14px; line-height:1.4;">${item.title}</h1>
+  <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #E2E8F0;">
+    <span class="info-tag">📍 ${item.region}</span>
+    <span class="info-tag">${item.type}</span>
+    <span class="info-tag">🏢 ${item.company}</span>
+    <span class="info-tag">📅 등록일: 2026.06.21</span>
+  </div>
 
-  if (_galleryImages.length === 0) {
-    if (noImg) noImg.style.display = 'flex';
-    if (mainImg) mainImg.style.display = 'none';
-    return;
-  }
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">💼 모집 조건</h3>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:14px;">
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">직종</div><div style="font-weight:600;">${item.role.join(' / ')}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">급여형태</div><div style="font-weight:600;">${item.pay}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">팀 수수료</div><div style="font-weight:700; color:#2563EB; font-size:16px;">${item.fee}</div></div>
+      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">경력조건</div><div style="font-weight:600;">${item.career}</div></div>
+    </div>
+  </div>
 
-  if (noImg) noImg.style.display = 'none';
-  if (mainImg) { mainImg.style.display = 'block'; mainImg.src = _galleryImages[0]; mainImg.alt = title || ''; }
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">🎁 복리후생</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      ${item.welfare.map(w => `<span style="background:#F0F9FF; color:#0369A1; border:1px solid #BAE6FD; border-radius:20px; padding:6px 14px; font-size:13px; font-weight:500;">✓ ${w}</span>`).join('')}
+    </div>
+  </div>
 
-  if (_galleryImages.length > 1) {
-    if (prev) prev.style.display = 'flex';
-    if (next) next.style.display = 'flex';
-    if (counter) { counter.style.display = 'block'; counter.textContent = '1 / ' + _galleryImages.length; }
-    // 썸네일
-    if (thumbsEl) {
-      thumbsEl.innerHTML = _galleryImages.map(function(url, i) {
-        return '<div class="gallery-thumb' + (i===0?' active':'') + '" onclick="galleryGoTo(' + i + ')">' +
-          '<img src="' + url + '" alt="사진 ' + (i+1) + '" loading="lazy">' +
-          '</div>';
-      }).join('');
-    }
-  } else {
-    if (thumbsEl) thumbsEl.style.display = 'none';
-  }
+  <div style="margin-bottom:28px;">
+    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">📋 현장 소개</h3>
+    <div style="font-size:15px; line-height:1.8; color:#334155;">${item.desc}</div>
+  </div>
 
-  // 터치 스와이프 지원
-  var startX = 0;
-  var mainEl = document.getElementById('galleryMain');
-  if (mainEl) {
-    mainEl.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; });
-    mainEl.addEventListener('touchend', function(e) {
-      var diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) galleryMove(diff > 0 ? 1 : -1);
-    });
-  }
+  <div style="background:#FEF3C7; border-radius:8px; padding:16px; font-size:13px; color:#92400E;">
+    ⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 확인하세요.
+  </div>
+`;
+
+document.getElementById('contactCard').innerHTML = `
+  <h3 style="font-size:16px; font-weight:700; margin-bottom:16px;">📞 지원 / 문의</h3>
+  <div style="background:#F0F9FF; border-radius:8px; padding:14px; margin-bottom:16px; font-size:13px; color:#0369A1;">
+    <strong>${item.company}</strong><br/>팀 수수료 <strong style="font-size:16px;">${item.fee}</strong>
+  </div>
+  <a href="tel:010-0000-0000" class="contact-btn contact-call" style="display:block; background:#2563EB; color:#fff; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">📞 전화 문의</a>
+  <a href="#" onclick="alert('카카오톡 오픈채팅으로 연결됩니다.')" class="contact-btn contact-msg" style="display:block; background:#FEE500; color:#000; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">💬 카카오 문의</a>
+  <button onclick="alert('관심현장에 추가되었습니다!')" style="width:100%; padding:11px; border:1.5px solid #E2E8F0; border-radius:8px; font-size:14px; font-weight:600; color:#64748B; cursor:pointer; background:#fff;">🔖 관심현장 저장</button>
+
+  <div style="margin-top:20px; padding-top:20px; border-top:1px solid #E2E8F0; font-size:12px; color:#94A3B8; line-height:1.7;">
+    <div>📅 등록일: 2026.06.21</div>
+    <div>👁️ 조회수: 1,234회</div>
+    <div>🏢 업체: ${item.company}</div>
+  </div>
+`;
+
+// 관련 현장
+const related = LISTINGS.filter(l => l.id !== item.id && (l.region === item.region || l.type === item.type)).slice(0, 3);
+renderListings(related.length ? related : LISTINGS.slice(0,3));
+
+// 모바일에서 레이아웃 조정
+if (window.innerWidth < 900) {
+  document.getElementById('detailLayout').style.gridTemplateColumns = '1fr';
 }
-
-function galleryMove(dir) {
-  if (_galleryImages.length <= 1) return;
-  _galleryIdx = (_galleryIdx + dir + _galleryImages.length) % _galleryImages.length;
-  galleryGoTo(_galleryIdx);
-}
-
-function galleryGoTo(idx) {
-  _galleryIdx = idx;
-  const mainImg = document.getElementById('galleryCurrentImg');
-  const counter = document.getElementById('galleryCounter');
-  const thumbs = document.querySelectorAll('.gallery-thumb');
-  if (mainImg) { mainImg.style.opacity = '0'; setTimeout(function() { mainImg.src = _galleryImages[idx]; mainImg.style.opacity = '1'; }, 150); }
-  if (counter) counter.textContent = (idx + 1) + ' / ' + _galleryImages.length;
-  thumbs.forEach(function(t, i) { t.classList.toggle('active', i === idx); });
-  // 썸네일 스크롤
-  if (thumbs[idx]) thumbs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-}
-
-/* ===== 상세페이지 전용 스크립트 ===== */
-
-const LISTING_ID = new URLSearchParams(location.search).get('id');
-
-// 날짜 포맷
-function formatDate(str) {
-  if (!str) return '-';
-  try { return new Date(str).toLocaleDateString('ko-KR', {year:'numeric',month:'2-digit',day:'2-digit'}); }
-  catch(e) { return str.slice(0,10); }
-}
-
-// 배지 HTML 생성
-function makeBadge(b) {
-  const map = { 'HOT':'hot', 'NEW':'new', 'AD':'ad', '대박':'best', 'BEST':'best' };
-  const cls = map[b] || 'type';
-  return `<span class="dbadge dbadge-${cls}">${b}</span>`;
-}
-
-// 관심현장 저장
-function saveFavorite() {
-  const saved = JSON.parse(localStorage.getItem('favorites') || '[]');
-  if (LISTING_ID && !saved.includes(LISTING_ID)) {
-    saved.push(LISTING_ID);
-    localStorage.setItem('favorites', JSON.stringify(saved));
-    alert('관심현장에 저장되었습니다! ');
-  } else {
-    alert('이미 저장된 현장입니다.');
-  }
-}
-
-// 메인 데이터 렌더링
-function renderDetail(item) {
-  const badges = item.badges || [];
-  const role   = Array.isArray(item.role) ? item.role : (item.role ? [item.role] : []);
-  const welfare= Array.isArray(item.welfare) ? item.welfare : [];
-  const desc   = item.description || item.desc || '';
-
-  document.title = item.title + ' - 분양톡';
-  document.getElementById('breadTitle').textContent = item.title;
-
-  // 갤러리
-  const allImages = [];
-  if (Array.isArray(item.images) && item.images.length > 0) {
-    item.images.forEach(u => { if (u) allImages.push(u); });
-  } else if (item.img) {
-    allImages.push(item.img);
-  }
-  renderGallery(allImages, item.title);
-
-  document.getElementById('metaDate').textContent = '등록일 ' + formatDate(item.created_at);
-  document.getElementById('metaViews').textContent = '조회 ' + (item.views || 0).toLocaleString() + '회';
-
-  document.getElementById('heroBadges').innerHTML =
-    badges.map(makeBadge).join('') +
-    `<span class="dbadge dbadge-type">${item.type || '아파트'}</span>`;
-
-  document.getElementById('heroTitle').textContent = item.title;
-
-  // 간단 소개 (description 첫 2줄)
-  const shortDesc = desc.split('\n').filter(l => l.trim()).slice(0, 2).join(' ');
-  document.getElementById('heroDescShort').textContent = shortDesc || desc.slice(0, 80);
-
-  // 빠른 태그
-  document.getElementById('heroTags').innerHTML = [
-    `<span class="dq-tag"> ${item.region}</span>`,
-    `<span class="dq-tag">${item.type || '아파트'}</span>`,
-    `<span class="dq-tag highlight"> 팀수수료 ${item.fee || '협의'}</span>`,
-    role.length ? `<span class="dq-tag"> ${role.join(' / ')}</span>` : '',
-    `<span class="dq-tag"> ${item.career || '경력무관'}</span>`,
-  ].join('');
-
-  // 전화 버튼
-  if (item.phone) {
-    document.getElementById('heroCallBtn').href = 'tel:' + item.phone;
-    document.getElementById('sideCallBtn').href = 'tel:' + item.phone;
-    // 전화번호 텍스트 표시
-    const heroPhone = document.getElementById('heroPhoneNum');
-    const sidePhone = document.getElementById('sidePhoneNum');
-    const heroPhoneText = document.getElementById('heroPhoneText');
-    const sidePhoneText = document.getElementById('sidePhoneText');
-    if (heroPhone) { heroPhoneText.textContent = item.phone; heroPhone.style.display = 'block'; }
-    if (sidePhone) { sidePhoneText.textContent = item.phone; sidePhone.style.display = 'block'; }
-  } else {
-    document.getElementById('heroCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
-    document.getElementById('sideCallBtn').onclick = function(e){ e.preventDefault(); alert('연락처가 등록되지 않은 현장입니다.'); };
-  }
-  // 카카오 버튼
-  if (item.kakao_url) {
-    document.getElementById('heroKakaoBtn').href = item.kakao_url;
-    document.getElementById('sideKakaoBtn').href = item.kakao_url;
-  } else {
-    document.getElementById('heroKakaoBtn').onclick = function(e){ e.preventDefault(); alert('카카오 오픈채팅이 등록되지 않은 현장입니다.'); };
-    document.getElementById('sideKakaoBtn').onclick = function(e){ e.preventDefault(); alert('카카오 오픈채팅이 등록되지 않은 현장입니다.'); };
-  }
-
-  // 기본요강
-  document.getElementById('infoType').textContent    = item.type || '-';
-  document.getElementById('infoRole').textContent    = role.join(' / ') || '-';
-  document.getElementById('infoCareer').textContent  = item.career || '경력무관';
-  document.getElementById('infoRegion').textContent  = item.region || '-';
-  document.getElementById('infoCompany').textContent = item.company || '-';
-
-  // 급여정보
-  document.getElementById('infoPay').textContent  = item.pay || '-';
-  document.getElementById('infoFee').textContent  = item.fee || '협의';
-
-  // 복리후생
-  const welfareWrap = document.getElementById('welfareTagsWrap');
-  if (welfare.length) {
-    welfareWrap.innerHTML = welfare.map(w => `<span class="welfare-tag"> ${w}</span>`).join('');
-  } else {
-    welfareWrap.innerHTML = '<span class="welfare-tag-empty">복리후생 정보가 없습니다.</span>';
-  }
-
-  // 상세정보
-  document.getElementById('detailDescFull').textContent = desc;
-
-  // 사이드바
-  document.getElementById('sideCompany').textContent = item.company || '-';
-  document.getElementById('sideFee').innerHTML =
-    `<small>팀 수수료</small><br>${item.fee || '협의'}`;
-  document.getElementById('sideType').textContent   = item.type || '-';
-  document.getElementById('sideRegion').textContent = item.region || '-';
-  document.getElementById('sideRole').textContent   = role.join('/') || '-';
-  document.getElementById('sideCareer').textContent = item.career || '경력무관';
-  document.getElementById('sideViews').textContent  =
-    ` 조회 ${(item.views || 0).toLocaleString()}회`;
-}
-
-// 관련현장 렌더링
-function renderRelated(items) {
-  const grid = document.getElementById('relatedGrid');
-  if (!items || !items.length) { grid.style.display = 'none'; return; }
-  grid.innerHTML = items.slice(0, 3).map(item => {
-    const badges = item.badges || [];
-    const role   = Array.isArray(item.role) ? item.role : [];
-    const desc   = item.description || item.desc || '';
-    return `<div class="listing-card fade-up" onclick="location.href='detail.html?id=${item.id}'">
-      ${item.img ? `<img class="card-img" src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
-      <div class="card-body">
-        <div class="card-badges">
-          ${badges.map(b => `<span class="badge badge-${b.toLowerCase()==='hot'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best'}">${b}</span>`).join('')}
-          <span class="badge badge-type">${item.type || '아파트'}</span>
-        </div>
-        <div class="card-title">${item.title}</div>
-        <div class="card-desc">${desc.slice(0,60)}...</div>
-        <div class="card-info">
-          <span class="info-tag"> ${item.region}</span>
-          <span class="info-tag highlight"> ${item.fee || '협의'}</span>
-          ${role.length ? `<span class="info-tag">${role.join('/')}</span>` : ''}
-        </div>
-        <div class="card-footer">
-          <span class="card-company"> ${item.company}</span>
-          <span class="card-btn">상세보기</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  initScrollAnimations();
-}
-
-// 뷰 카운트 증가
-async function incrementViews(db, id) {
-  try {
-    const { data } = await db.from('listings').select('views').eq('id', id).single();
-    const newViews = (data?.views || 0) + 1;
-    await db.from('listings').update({ views: newViews }).eq('id', id);
-    // UI 업데이트
-    document.getElementById('metaViews').textContent = '조회 ' + newViews.toLocaleString() + '회';
-    document.getElementById('sideViews').textContent = ` 조회 ${newViews.toLocaleString()}회`;
-  } catch(e) {}
-}
-
-// 페이지 초기화
-async function initDetailPage() {
-  const db = getSupabase();
-
-  // ID 없으면 에러
-  if (!LISTING_ID) {
-    document.getElementById('pageLoading').style.display = 'none';
-    document.getElementById('pageError').style.display = 'block';
-    return;
-  }
-
-  // 로그인 상태 체크
-  let currentUser = null;
-  if (db) {
-    try {
-      const { data: userData } = await db.auth.getUser();
-      currentUser = userData?.user || null;
-      updateAuthUI(currentUser);
-    } catch(e) {}
-  }
-
-  // Supabase에서 현장 데이터 조회
-  if (db) {
-    try {
-      const { data, error } = await db
-        .from('listings')
-        .select('*')
-        .eq('id', LISTING_ID)
-        .single();
-
-      if (error || !data) throw new Error('not found');
-
-      renderDetail(data);
-
-      // 수정 버튼 (작성자 또는 관리자)
-      if (currentUser && (currentUser.id === data.user_id || currentUser.email === 'love2455v@bunyangtok.com')) {
-        const sidebtns = document.querySelector('.sidebar-btns');
-        if (sidebtns) {
-          const editLink = document.createElement('a');
-          editLink.href = 'edit.html?id=' + LISTING_ID;
-          editLink.className = 'sidebar-btn-save';
-          editLink.style.cssText = 'background:#eff6ff;border-color:#3b82f6;color:#2563eb;display:block;text-align:center;text-decoration:none;font-weight:700;';
-          editLink.textContent = ' 이 현장 수정하기';
-          sidebtns.appendChild(editLink);
-        }
-      }
-
-      document.getElementById('pageLoading').style.display = 'none';
-      document.getElementById('pageContent').style.display = 'block';
-
-      // 조회수 증가 (비동기, UI와 무관하게)
-      incrementViews(db, LISTING_ID);
-
-      // 관련현장 (같은 지역 or 같은 업종)
-      const { data: relData } = await db
-        .from('listings')
-        .select('*')
-        .eq('is_active', true)
-        .neq('id', LISTING_ID)
-        .or(`region.eq.${data.region},type.eq.${data.type}`)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      renderRelated(relData || []);
-
-      initScrollAnimations();
-      return;
-
-    } catch(e) {
-      console.warn('Supabase 조회 실패, 폴백 시도:', e);
-    }
-  }
-
-  // 폴백: LISTINGS_FALLBACK에서 찾기
-  const fallback = (window.LISTINGS_FALLBACK || []).find(l => String(l.id) === String(LISTING_ID));
-  if (fallback) {
-    renderDetail(fallback);
-    document.getElementById('pageLoading').style.display = 'none';
-    document.getElementById('pageContent').style.display = 'block';
-    const related = (window.LISTINGS_FALLBACK || []).filter(l => l.id !== fallback.id).slice(0, 3);
-    renderRelated(related);
-    initScrollAnimations();
-  } else {
-    document.getElementById('pageLoading').style.display = 'none';
-    document.getElementById('pageError').style.display = 'block';
-  }
-}
-
-// 시작
-document.addEventListener('DOMContentLoaded', initDetailPage);
 </script>
 </body>
 </html>

@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-    <meta name="naver-site-verification" content="d0f7015ccb5f3c5a0ee55e8bfecb1a04ae18df58" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>분양톡 - 분양현장 구인구직 No.1</title>
   <meta name="description" content="분양현장 구인구직 정보를 한눈에! 분양톡에서 내게 맞는 현장을 찾으세요." />
@@ -16,8 +15,6 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://www.bunyangtok.com/og-image.png" />
   <link rel="stylesheet" href="style.css?v=2" />
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
 </head>
 <body>
 
@@ -25,9 +22,9 @@
 <div class="topbar">
   <div class="container topbar-inner">
     <div class="topbar-stats">
-      <span>오늘 방문 <strong id="todayVisit">47</strong>명</span>
-      <span>신규현장 <strong id="todaySite">5</strong>건</span>
-      <span>전체회원 <strong>128</strong>명</span>
+      <span>👥 오늘 방문 <strong id="todayVisit">2,847</strong>명</span>
+      <span>📋 신규현장 <strong id="todaySite">93</strong>건</span>
+      <span>🏢 전체회원 <strong>312,441</strong>명</span>
     </div>
     <div class="topbar-links">
       <a href="login.html">로그인</a>
@@ -40,7 +37,7 @@
 <header class="header" id="mainHeader">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <img src="logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
+      <img src="assets/logo-icon.png" alt="분양톡" class="logo-icon" />
       <span class="logo-text">분양<span class="logo-accent">톡</span></span>
     </a>
 
@@ -65,7 +62,7 @@
         <option value="제주도">제주도</option>
       </select>
       <input type="text" class="search-input" id="searchInput" placeholder="현장명, 업체명, 지역 검색..." />
-      <button class="search-btn" onclick="doSearch()">검색</button>
+      <button class="search-btn" onclick="doSearch()">🔍 검색</button>
     </div>
 
     <nav class="nav-desktop">
@@ -91,14 +88,17 @@
   </div>
 </header>
 
-<!-- ===== 공지 TICKER ===== -->
+<!-- ===== AD TICKER ===== -->
 <div class="ad-ticker">
   <div class="container">
-    <a href="notice.html" style="text-decoration:none"><span class="ad-label" style="background:#334155;">📢 공지</span></a>
+    <span class="ad-label">AD</span>
     <div class="ticker-wrap">
       <div class="ticker-content" id="tickerContent">
-        <span>분양톡에 오신 것을 환영합니다. 공지사항을 확인해주세요.</span>
-        <span>현장 등록은 상단 메뉴의 '현장등록'을 이용해주세요.</span>
+        <span>🔥 노원역 효성해링턴 센트럴 - 팀수수료 1,800만원 / 광고비 50% 지원</span>
+        <span>⭐ 힐스테이트 구월아트파크 - 1호선 직결 / 팀·팀원·사이드 모집</span>
+        <span>🏆 경기광주역 롯데캐슬 시그니처 - 2,326세대 / 매주 광고집행</span>
+        <span>💰 부산 알티에로 광안 - 부산최초 하이퍼엔드 / 수수료 파격</span>
+        <span>🔥 수지자이 에디시온 - 일비 7만원 / 대행사 직영</span>
       </div>
     </div>
   </div>
@@ -113,6 +113,24 @@
       <div class="hero-btns">
         <a href="listings.html" class="btn-primary">현장 둘러보기</a>
         <a href="register.html" class="btn-outline">무료 현장등록</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-num">93<span>건</span></div>
+        <div class="stat-label">오늘 신규현장</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2,847<span>명</span></div>
+        <div class="stat-label">실시간 방문자</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">312,441<span>명</span></div>
+        <div class="stat-label">전체 회원</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">328,000<span>+</span></div>
+        <div class="stat-label">누적 현장수</div>
       </div>
     </div>
   </div>
@@ -153,8 +171,8 @@
   </div>
 </section>
 
-<!-- ===== BEST 현장 (유료화 준비 - 비활성) ===== -->
-<section class="best-section" style="display:none">
+<!-- ===== BEST 현장 ===== -->
+<section class="best-section">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">베스트 현장 <small>최근 10일 인기순</small></h2>
@@ -172,7 +190,7 @@
     <div class="banner-content">
       <div class="banner-text">
         <h3>분양 관련 업체라면 <span>서포터즈</span>로 등록하세요</h3>
-        <p>현수막·명함 제작 · 렌탈업체 · 대출기관 · 시행사·대행사<br/>전국 분양 종사자에게 내 업체를 알리는 가장 빠른 방법</p>
+        <p>현수막·명함 제작 · 렌탈업체 · 대출기관 · 시행사·대행사<br/>전국 30만 분양 종사자에게 내 업체를 알리는 가장 빠른 방법</p>
       </div>
       <a href="supporters.html" class="btn-banner">무료로 업체 등록</a>
     </div>
@@ -180,7 +198,7 @@
 </section>
 
 <!-- ===== 뉴스 섹션 ===== -->
-<section class="news-section" style="display:none">
+<section class="news-section">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">부동산 뉴스</h2>
@@ -221,7 +239,7 @@
   <div class="container">
     <div class="cta-box">
       <h3>구인 광고를 <span>효과적으로</span> 게재하세요!</h3>
-      <p>전국 분양 종사자에게 내 현장을 알리는 가장 스마트한 방법<br/>무료 등록부터 프리미엄 노출까지 — 지금 바로 시작하세요</p>
+      <p>전국 30만 분양 종사자에게 내 현장을 알리는 가장 스마트한 방법<br/>무료 등록부터 프리미엄 노출까지 — 지금 바로 시작하세요</p>
       <div class="cta-btns">
         <a href="register.html" class="btn-primary">현장 구인 등록</a>
         <a href="ad-info.html" class="btn-outline-white">광고 상품 안내</a>
@@ -234,12 +252,12 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-col">
-      <div class="footer-logo"><img src="logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div>
+      <div class="footer-logo"><img src="assets/logo-icon.png" alt="분양톡" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;border-radius:6px;" />분양<span>톡</span></div>
       <p class="footer-desc">분양현장 구인구직 No.1 플랫폼<br/>전국 모든 현장 정보를 한눈에</p>
       <div class="footer-social">
-        <a href="#" title="네이버 밴드" style="display:none">밴드</a>
-        <a href="#" title="유튜브" style="display:none">유튜브</a>
-        <a href="#" title="블로그" style="display:none">블로그</a>
+        <a href="#" title="네이버 밴드">📣</a>
+        <a href="#" title="유튜브">▶️</a>
+        <a href="#" title="블로그">✍️</a>
       </div>
     </div>
     <div class="footer-col">
@@ -247,7 +265,7 @@
       <a href="listings.html">지역현장</a>
       <a href="map.html">지도현장</a>
       <a href="supporters.html">서포터즈</a>
-      <a href="#" onclick="goRegister();return false;">현장등록</a>
+      <a href="register.html">현장등록</a>
     </div>
     <div class="footer-col">
       <h4>고객지원</h4>
@@ -258,7 +276,7 @@
     </div>
     <div class="footer-col">
       <h4>고객센터</h4>
-      <div class="footer-tel">1668-3473</div>
+      <div class="footer-tel">📞 1800-XXXX</div>
       <div class="footer-hours">월~금 09:00~18:00<br/>주말·공휴일 휴무</div>
     </div>
   </div>
@@ -270,6 +288,7 @@
       <span class="footer-copy">© 2026 분양톡. All rights reserved.</span>
     </div>
     </div>
+  </div>
 </footer>
 
 <!-- 플로팅 버튼 -->
@@ -278,20 +297,8 @@
     <span>현장</span><span>등록</span>
   </button>
   <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
-
 </div>
 
-<script>
-(async function() {
-  try {
-    const db = getSupabase();
-    const { data } = await db.from('notices').select('title').eq('is_active', true).order('created_at', {ascending: false}).limit(8);
-    if (data && data.length > 0) {
-      const el = document.getElementById('tickerContent');
-      if (el) el.innerHTML = data.map(n => '<span>' + n.title + '</span>').join('');
-    }
-  } catch(e) {}
-})();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
