@@ -383,6 +383,5 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
   initScrollAnimations();
 
-  var registerForm = document.getElementById('registerForm');
-  if (registerForm) registerForm.addEventListener('submit', submitListing);
+  // registerForm submit은 register.html 인라인 submitForm()이 처리 (중복 방지)
 });
