@@ -29,7 +29,7 @@ var LISTINGS_FALLBACK = [
     id: 2, region: "인천", type: "아파트", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
     title: "인천 송도 신도시 랜드마크 아파트 분양",
-    description: "1호선 예술공원역 직통연결, 랜드마크 498세대 4개동, 롯데백화점 자리 최고의 입지",
+    description: "지하철 직통연결, 랜드마크 500세대 4개동, 쇼핑몰 바로 앞 최고의 입지",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["경력무관"],
     career: "12개월이상", company: "예시부동산", fee: "1,200만원"
   },
@@ -37,7 +37,7 @@ var LISTINGS_FALLBACK = [
     id: 3, region: "부산", type: "아파트", badges: ["NEW", "AD"],
     img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70",
     title: "부산 해운대 오션뷰 하이엔드 팀장/팀원 모집",
-    description: "부산 민락동 광안대교 파노라마 뷰, MBC자리, 부산최초 하이퍼엔드 아파트 분양",
+    description: "부산 해운대 오션뷰 파노라마, 부산 최초 하이엔드 아파트 분양",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["일비", "경력무관"],
     career: "경력무관", company: "예시부동산", fee: "협의"
   },
@@ -87,38 +87,26 @@ async function loadListings(region, keyword) {
     return;
   }
 
-  // 캐시가 있으면 Supabase 재요청 없이 클라이언트 필터만
-  if (window._cachedData) {
-    var cf = window._cachedData;
-    if (region && region !== '전체') cf = cf.filter(function(l){ return l.region === region; });
-    if (keyword) { var kw2 = keyword.toLowerCase(); cf = cf.filter(function(l){ return (l.title||'').toLowerCase().includes(kw2)||(l.description||'').toLowerCase().includes(kw2)||(l.company||'').toLowerCase().includes(kw2); }); }
-    var fcEl2 = document.getElementById('filterCount');
-    if (fcEl2) fcEl2.textContent = '전체 ' + cf.length + '개 현장';
-    renderListings(cf);
-    return;
-  }
-
   try {
-    // 전체 데이터 캐시 후 클라이언트 필터
+    // 전체 데이터를 먼저 캐시에 저장 (필터는 클라이언트에서)
     var allResult = await db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
     if (allResult.error) throw allResult.error;
     window._cachedData = allResult.data || [];
-    var fcEl = document.getElementById('filterCount');
-    if (fcEl) fcEl.textContent = '전체 ' + window._cachedData.length + '개 현장';
-    // 키워드/지역 필터 적용
-    var filtered = window._cachedData;
-    if (region && region !== '전체') {
-      filtered = filtered.filter(function(l) { return l.region === region; });
-    }
+
+    var data = window._cachedData.slice();
+    if (region && region !== '전체') data = data.filter(function(l) { return l.region === region; });
     if (keyword) {
       var kw = keyword.toLowerCase();
-      filtered = filtered.filter(function(l) {
-        return l.title.toLowerCase().includes(kw) ||
+      data = data.filter(function(l) {
+        return (l.title || '').toLowerCase().includes(kw) ||
                (l.description || '').toLowerCase().includes(kw) ||
                (l.company || '').toLowerCase().includes(kw);
       });
     }
-    renderListings(filtered);
+
+    var fc = document.getElementById('filterCount');
+    if (fc) fc.textContent = '전체 ' + data.length + '개 현장';
+    renderListings(data);
   } catch (err) {
     console.error('Supabase 오류:', err);
     window._cachedData = LISTINGS_FALLBACK;
@@ -145,8 +133,6 @@ function renderListings(data) {
       '" onclick="location.href=\'detail.html?id=' + item.id + '\'">' +
       (item.img ? '<img class="card-img" src="' + item.img + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
       '<div class="card-body">' +
-      '<div class="card-chat-name">' + item.title + '</div>' +
-      '<div class="card-chat-preview"><span class="card-chat-region">' + item.region + '</span><span class="card-chat-fee">' + (item.fee || '협의') + '</span></div>' +
       '<div class="card-badges">' +
         badges.map(function(b) {
           var cls = b.toLowerCase() === 'hot' ? 'hot' : b === 'NEW' ? 'new' : b === 'AD' ? 'ad' : b === '대박' ? 'best' : 'type';
@@ -157,20 +143,16 @@ function renderListings(data) {
       '<div class="card-title">' + item.title + '</div>' +
       '<div class="card-desc">' + desc + '</div>' +
       '<div class="card-info">' +
-        '<span class="info-tag">' + item.region + '</span>' +
+        '<span class="info-tag">📍 ' + item.region + '</span>' +
         '<span class="info-tag highlight">💰 팀수수료 ' + (item.fee || '협의') + '</span>' +
         '<span class="info-tag">' + role.join('/') + '</span>' +
         welfare.map(function(w) { return '<span class="info-tag">' + w + '</span>'; }).join('') +
         '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company" style="visibility:hidden"></span>' +
+        '<span class="card-company" style="visibility:hidden">📋 </span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
-      '</div>' +
-      '<div class="card-chat-right">' +
-        '<span class="card-chat-region">' + item.region + '</span>' +
-        '<span class="card-chat-fee">' + (item.fee || '협의') + '</span>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -193,7 +175,7 @@ async function renderBest() {
             '<div class="best-rank ' + (rankClass[i] || '') + '">' + (i + 1) + '</div>' +
             '<div class="best-info">' +
               '<div class="best-title">' + item.title + '</div>' +
-              '<div class="best-meta">' + item.region + ' · ' + (item.type || '아파트') + ' · 조회 ' + (item.views || 0).toLocaleString() + '</div>' +
+              '<div class="best-meta">📍 ' + item.region + ' · ' + (item.type || '아파트') + ' · 조회 ' + (item.views || 0).toLocaleString() + '</div>' +
             '</div>' +
           '</div>';
         }).join('');
@@ -206,10 +188,10 @@ async function renderBest() {
   var BEST = [
     { rank: 1, title: "거제 하이엔드 일반분양 아파트", region: "경상도", type: "아파트", views: "4,821" },
     { rank: 2, title: "수원 영통구 대단지 팀원 모집", region: "경기남부", type: "아파트", views: "3,962" },
-    { rank: 3, title: "인천 송도 신도시 랜드마크 아파트 분양", region: "인천", type: "아파트", views: "3,541" },
+    { rank: 3, title: "인천 송도 신도시 랜드마크 분양", region: "인천", type: "아파트", views: "3,541" },
     { rank: 4, title: "강동구 고덕동 신규 아파트 모집", region: "서울", type: "아파트", views: "3,204" },
     { rank: 5, title: "경기 광주 2,300세대 대단지 모집", region: "경기남부", type: "아파트", views: "2,987" },
-    { rank: 6, title: "천안 신규 아파트 파격 조건 변경", region: "경기남부", type: "아파트", views: "2,744" },
+    { rank: 6, title: "천안 신규 아파트 파격 조건 변경", region: "충청도", type: "아파트", views: "2,744" },
   ];
   grid.innerHTML = BEST.map(function(item, i) {
     return '<div class="best-card" onclick="location.href=\'listings.html\'">' +
@@ -288,6 +270,7 @@ function animateNumber(el, target) {
 
 // ===== 스크롤 애니메이션 =====
 function initScrollAnimations() {
+  // 두 번의 rAF로 레이아웃 완료 후 IntersectionObserver 실행
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       var targets = document.querySelectorAll('.fade-up, .section-reveal');
@@ -299,7 +282,7 @@ function initScrollAnimations() {
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0, rootMargin: '0px' });
+      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
       targets.forEach(function(el) { observer.observe(el); });
     });
   });
@@ -379,18 +362,20 @@ async function submitLogin(e) {
   e.preventDefault();
   var db = getSupabase();
   if (!db) { alert('연결 오류'); return; }
-  var loginId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
-  var email = loginId.includes('@') ? loginId : loginId + '@bunyangtok.com';
+  // userId 필드(아이디 방식) 또는 email 필드 둘 다 지원
+  var userId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
+  var emailRaw = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
+  var email = userId ? (userId + '@bunyangtok.com') : emailRaw;
   var password = document.getElementById('password') ? document.getElementById('password').value : '';
   var btn = document.getElementById('submitBtn');
+  if (!email) { alert('아이디를 입력해주세요.'); return; }
   if (btn) { btn.textContent = '로그인 중...'; btn.disabled = true; }
   try {
     var result = await db.auth.signInWithPassword({ email: email, password: password });
     if (result.error) throw result.error;
-    alert('로그인 성공!');
     window.location.href = 'index.html';
   } catch (err) {
-    alert('로그인 실패: ' + (err.message || err));
+    alert('아이디 또는 비밀번호가 올바르지 않습니다.');
     if (btn) { btn.textContent = '로그인'; btn.disabled = false; }
   }
 }
@@ -406,8 +391,8 @@ async function logout() {
 function goRegister() {
   var db = getSupabase();
   if (!db) { window.location.href = 'login.html?next=register.html'; return; }
-  db.auth.getUser().then(function(result) {
-    var user = result && result.data && result.data.user ? result.data.user : null;
+  db.auth.getSession().then(function(sess) {
+    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
     if (!user) {
       alert('현장 등록은 로그인 후 이용 가능합니다.');
       window.location.href = 'login.html?next=register.html';
@@ -430,41 +415,6 @@ function updateAuthUI(user) {
   }
 }
 
-// ===== 폰트 크기 토글 (모바일 전용) =====
-function initFontToggle() {
-  if (window.innerWidth > 600) return;
-  var sizes = ['sm', 'md', 'lg'];
-  var icons = { sm: '가', md: '가', lg: '가' };
-  var labels = { sm: '소', md: '중', lg: '대' };
-
-  // 저장된 설정 적용 (기본: md)
-  var saved = localStorage.getItem('btFontSize') || 'md';
-  document.body.classList.add('fs-' + saved);
-
-  // 버튼 생성
-  var btn = document.createElement('button');
-  btn.className = 'font-toggle-btn';
-  btn.setAttribute('aria-label', '폰트 크기 조절');
-
-  function updateBtn(size) {
-    btn.innerHTML =
-      '<span class="ft-icon">' + (size === 'sm' ? '가↓' : size === 'lg' ? '가↑' : '가') + '</span>' +
-      '<span class="ft-label">' + labels[size] + '</span>';
-  }
-  updateBtn(saved);
-
-  btn.addEventListener('click', function() {
-    var cur = sizes.find(function(s){ return document.body.classList.contains('fs-' + s); }) || 'md';
-    var next = sizes[(sizes.indexOf(cur) + 1) % sizes.length];
-    sizes.forEach(function(s){ document.body.classList.remove('fs-' + s); });
-    document.body.classList.add('fs-' + next);
-    localStorage.setItem('btFontSize', next);
-    updateBtn(next);
-  });
-
-  document.body.appendChild(btn);
-}
-
 // ===== 초기화 =====
 document.addEventListener('DOMContentLoaded', async function() {
   // 로그인 상태 확인
@@ -472,8 +422,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   var currentUser = null;
   if (db) {
     try {
-      var { data: { user: _u }, error: _e } = await db.auth.getUser();
-      currentUser = _u || null;
+      var sess = await db.auth.getSession();
+      currentUser = sess && sess.data && sess.data.session ? sess.data.session.user : null;
     } catch(e) {}
   }
 
@@ -496,8 +446,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   await renderBest();
 
   initTicker();
-  animateNumber(document.getElementById('todayVisit'), 47);
-  animateNumber(document.getElementById('todaySite'), 5);
+
+  // Supabase 실제 현장수 표시
+  if (db) {
+    var today = new Date().toISOString().split('T')[0];
+    db.from('listings').select('id', {count: 'exact', head: true}).then(function(r) {
+      var el = document.getElementById('totalListings');
+      if (el) el.innerHTML = (r.count || 0) + '<span>건</span>';
+    });
+    db.from('listings').select('id', {count: 'exact', head: true}).gte('created_at', today).then(function(r) {
+      var el = document.getElementById('todaySite');
+      if (el) el.innerHTML = (r.count || 0) + '<span>건</span>';
+    });
+  }
 
   document.querySelectorAll('.section-header, .best-card, .news-item, .stat-card, .banner-content, .cta-box').forEach(function(el) {
     el.classList.add('section-reveal');
@@ -507,81 +468,5 @@ document.addEventListener('DOMContentLoaded', async function() {
   var registerForm = document.getElementById('registerForm');
   if (registerForm) registerForm.addEventListener('submit', submitListing);
 
-  var signupForm = document.getElementById('signupForm');
-  if (signupForm) signupForm.addEventListener('submit', submitSignup);
-
-  var loginForm = document.getElementById('loginForm');
-  if (loginForm) loginForm.addEventListener('submit', submitLogin);
-
-  // 폰트 크기 토글 버튼 (모바일 전용)
-  initFontToggle();
-});
-
-
-/* ===== 관심현장 Supabase 연동 ===== */
-document.addEventListener('DOMContentLoaded', function() {
-  if (!new URLSearchParams(location.search).get('id')) return;
-  var FAVE_ID = new URLSearchParams(location.search).get('id');
-
-  function showFavToast(msg, ok) {
-    var el = document.createElement('div');
-    el.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:'+(ok===false?'#444':'#ff6b2b')+';color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.2);transition:opacity 0.3s;';
-    el.textContent = msg;
-    document.body.appendChild(el);
-    setTimeout(function(){ el.style.opacity='0'; }, 2000);
-    setTimeout(function(){ el.remove(); }, 2400);
-  }
-
-  function updateFavUI(isFav) {
-    document.querySelectorAll('.btn-save').forEach(function(b){
-      b.textContent = isFav ? '❤️' : '🔖';
-      b.style.borderColor = isFav ? '#ff6b2b' : '';
-      b.style.color = isFav ? '#ff6b2b' : '';
-    });
-    document.querySelectorAll('.sidebar-btn-save').forEach(function(b){
-      b.innerHTML = isFav ? '❤️ 관심현장 저장됨' : '🔖 관심현장 저장';
-      b.style.borderColor = isFav ? '#ff6b2b' : '';
-      b.style.color = isFav ? '#ff6b2b' : '';
-    });
-  }
-
-  function localFavToggle() {
-    var s = JSON.parse(localStorage.getItem('favorites')||'[]');
-    var i = s.indexOf(String(FAVE_ID));
-    if (i === -1) { s.push(String(FAVE_ID)); localStorage.setItem('favorites',JSON.stringify(s)); updateFavUI(true); showFavToast('❤️ 관심현장에 저장되었습니다!'); }
-    else { s.splice(i,1); localStorage.setItem('favorites',JSON.stringify(s)); updateFavUI(false); showFavToast('관심현장에서 제거되었습니다.', false); }
-  }
-
-  window.saveFavorite = async function() {
-    var db = getSupabase();
-    if (!db) { localFavToggle(); return; }
-    var sess, user;
-    try { sess = await db.auth.getSession(); user = sess&&sess.data&&sess.data.session?sess.data.session.user:null; } catch(e){}
-    if (!user) {
-      if (confirm('로그인 후 관심현장을 저장할 수 있습니다.\n로그인 하시겠습니까?'))
-        location.href = 'login.html?next=' + encodeURIComponent('detail.html?id='+FAVE_ID);
-      return;
-    }
-    try {
-      var chk = await db.from('favorites').select('id').eq('user_id',user.id).eq('listing_id',String(FAVE_ID)).maybeSingle();
-      if (chk.data) { await db.from('favorites').delete().eq('user_id',user.id).eq('listing_id',String(FAVE_ID)); updateFavUI(false); showFavToast('관심현장에서 제거되었습니다.', false); }
-      else { var ins=await db.from('favorites').insert({user_id:user.id,listing_id:String(FAVE_ID)}); if(ins.error)throw ins.error; updateFavUI(true); showFavToast('❤️ 관심현장에 저장되었습니다!'); }
-    } catch(e) { localFavToggle(); }
-  };
-
-  (async function() {
-    var db = getSupabase();
-    if (db) {
-      try {
-        var sess=await db.auth.getSession();
-        var user=sess&&sess.data&&sess.data.session?sess.data.session.user:null;
-        if(user){
-          var res=await db.from('favorites').select('id').eq('user_id',user.id).eq('listing_id',String(FAVE_ID)).maybeSingle();
-          if(res.data){updateFavUI(true);return;}
-        }
-      } catch(e){}
-    }
-    var saved=JSON.parse(localStorage.getItem('favorites')||'[]');
-    if(saved.includes(String(FAVE_ID)))updateFavUI(true);
-  })();
-});
+  // signup.html / login.html은 각 파일의 인라인 스크립트가 직접 처리
+  // (중복 이벤트 방
