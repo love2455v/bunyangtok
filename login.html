@@ -26,7 +26,7 @@
     .form-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 7px; }
     .input-wrap { position: relative; }
     .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; pointer-events: none; }
-    .form-input { width: 100%; height: 50px; padding: 0 16px 0 44px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 15px; font-family: inherit; color: #1E1E1E; background: #F8FAFC; transition: all 0.2s; outline: none; }
+    .form-input { width: 100%; height: 50px; padding: 0 16px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 15px; font-family: inherit; color: #1E1E1E; background: #F8FAFC; transition: all 0.2s; outline: none; }
     .form-input:focus { border-color: #FF6B2B; background: #fff; box-shadow: 0 0 0 3px rgba(255,107,43,0.1); }
     .form-input::placeholder { color: #CBD5E1; }
     .form-options { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 24px; }
@@ -69,23 +69,21 @@
     <img src="assets/logo-icon.svg" width="30" height="30" alt="" style="border-radius:7px;">
     분양<span>톡</span>
   </div>
-  <h1 class="auth-title">다시 만나서 반가워요 👋</h1>
+  <h1 class="auth-title">다시 만나서 반가워요</h1>
   <p class="auth-sub">로그인하고 최신 현장 정보를 확인하세요</p>
 
   <form id="loginForm">
     <div class="error-msg" id="errorMsg"></div>
     <div class="form-group">
-      <label class="form-label">이메일 / 아이디</label>
+      <label class="form-label">아이디</label>
       <div class="input-wrap">
-        <span class="input-icon">👤</span>
-        <input type="text" id="loginId" class="form-input" placeholder="아이디 또는 이메일 입력" required autocomplete="username" />
+        <input type="text" id="loginId" class="form-input" placeholder="아이디 입력" required autocomplete="username" />
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">비밀번호</label>
       <div class="input-wrap">
-        <span class="input-icon">🔒</span>
-        <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password" />
+        <input type="password" id="loginPw" class="form-input" placeholder="비밀번호 입력" required autocomplete="current-password" />
       </div>
     </div>
     <div class="form-options">
@@ -114,8 +112,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   errEl.classList.remove('show');
   btn.classList.add('loading'); btn.disabled = true;
 
-  // 아이디 입력이면 @bunyangtok.com 붙이기
-  var email = idVal.includes('@') ? idVal : idVal + '@bunyangtok.com';
+  // 아이디 → 내부 이메일 변환 (항상 고정)
+  var email = idVal + '@bunyangtok.com';
 
   try {
     var db = getSupabase();
