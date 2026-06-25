@@ -107,6 +107,47 @@ async function loadListings(region, keyword) {
   }
 }
 
+// ===== 카드 이미지 슬라이더 =====
+function buildCardImage(item) {
+  var imgs = (item.images && item.images.length > 0) ? item.images : (item.img ? [item.img] : []);
+  if (imgs.length === 0) return '';
+  if (imgs.length === 1) {
+    return '<img class="card-img" src="' + imgs[0] + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">';
+  }
+  // 2장 이상: 슬라이더
+  var uid = 'sl_' + item.id;
+  var dots = imgs.map(function(_, i) {
+    return '<span class="sl-dot' + (i === 0 ? ' active' : '') + '" onclick="event.stopPropagation();slGo(\'' + uid + '\',' + i + ')"></span>';
+  }).join('');
+  var imgTags = imgs.map(function(url, i) {
+    return '<img class="sl-img" src="' + url + '" alt="사진' + (i+1) + '" loading="lazy" style="display:' + (i === 0 ? 'block' : 'none') + ';width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'">';
+  }).join('');
+  return '<div class="card-slider" id="' + uid + '" data-idx="0" data-total="' + imgs.length + '">' +
+    imgTags +
+    '<button class="sl-btn sl-prev" onclick="event.stopPropagation();slMove(\'' + uid + '\',-1)">&#8249;</button>' +
+    '<button class="sl-btn sl-next" onclick="event.stopPropagation();slMove(\'' + uid + '\',1)">&#8250;</button>' +
+    '<div class="sl-dots">' + dots + '</div>' +
+    '<div class="sl-counter">' + imgs.length + '장</div>' +
+  '</div>';
+}
+function slGo(uid, idx) {
+  var slider = document.getElementById(uid);
+  if (!slider) return;
+  var imgs = slider.querySelectorAll('.sl-img');
+  var dots = slider.querySelectorAll('.sl-dot');
+  var cur = parseInt(slider.dataset.idx) || 0;
+  imgs[cur].style.display = 'none'; dots[cur].classList.remove('active');
+  imgs[idx].style.display = 'block'; dots[idx].classList.add('active');
+  slider.dataset.idx = idx;
+}
+function slMove(uid, dir) {
+  var slider = document.getElementById(uid);
+  if (!slider) return;
+  var total = parseInt(slider.dataset.total) || 1;
+  var cur = parseInt(slider.dataset.idx) || 0;
+  slGo(uid, (cur + dir + total) % total);
+}
+
 // ===== 현장 카드 렌더링 =====
 function renderListings(data) {
   var grid = document.getElementById('listingsGrid');
@@ -124,7 +165,7 @@ function renderListings(data) {
       (badges.includes('HOT') ? 'hot-card' : '') + ' ' +
       (badges.includes('AD') ? 'ad-card' : '') +
       '" onclick="location.href=\'detail.html?id=' + item.id + '\'">' +
-      (item.img ? '<img class="card-img" src="' + item.img + '" alt="' + item.title + '" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
+      buildCardImage(item) +
       '<div class="card-body">' +
       '<div class="card-badges">' +
         badges.map(function(b) {
