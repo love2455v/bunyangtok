@@ -1,8 +1,8 @@
 /* ============================
-   분양톡 - 리뉴얼 스타일 (차콜블랙+오렌지)
+   ë¶ìí¡ - ë¦¬ë´ì¼ ì¤íì¼ (ì°¨ì½ë¸ë+ì¤ë ì§)
    ============================ */
 
-/* Pretendard 제거 - 카카오톡 시스템 폰트 사용 */
+/* Pretendard ì ê±° - ì¹´ì¹´ì¤í¡ ìì¤í í°í¸ ì¬ì© */
 
 :root {
   --primary: #FF6B2B;
@@ -52,7 +52,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .header-inner { display: flex; align-items: center; gap: 20px; padding: 13px 20px; flex-wrap: wrap; }
 
 .logo { display: flex; align-items: center; gap: 8px; font-size: 26px; font-weight: 800; color: #FFFFFF; white-space: nowrap; }
-.logo-icon { font-size: 26px; }
+.logo-icon { width:34px; height:34px; border-radius:9px; vertical-align:middle; }
 .logo-text { color: #FFFFFF; }
 .logo-accent { color: var(--primary); }
 
@@ -128,7 +128,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .region-tab:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 .region-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
 
-/* ===== SECTION 공통 ===== */
+/* ===== SECTION ê³µíµ ===== */
 .listings-section, .best-section, .news-section { padding: 50px 0; }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 2px solid var(--charcoal); }
 .section-title { font-size: 20px; font-weight: 800; color: var(--charcoal); display: flex; align-items: center; gap: 8px; }
@@ -166,7 +166,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .card-btn { font-size: 13px; font-weight: 700; color: var(--primary); padding: 6px 16px; border: 2px solid var(--primary); border-radius: 6px; transition: all .2s; }
 .card-btn:hover { background: var(--primary); color: #fff; }
 
-/* ===== 수수료 강조 ===== */
+/* ===== ììë£ ê°ì¡° ===== */
 .card-fee { font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
 
 /* ===== BEST GRID ===== */
@@ -181,7 +181,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .best-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
 .best-meta { font-size: 12px; color: var(--text-sub); }
 
-/* ===== 서포터즈 배너 ===== */
+/* ===== ìí¬í°ì¦ ë°°ë ===== */
 .supporters-banner { background: var(--charcoal); color: #fff; padding: 44px 0; border-top: 3px solid var(--primary); }
 .banner-content { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .banner-text h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
@@ -240,7 +240,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .float-register:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255,107,43,.5); }
 .float-top { display: none !important; }
 
-/* ===== 현장 등록 페이지 ===== */
+/* ===== íì¥ ë±ë¡ íì´ì§ ===== */
 .register-page { padding: 44px 0; }
 .register-form { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 44px; max-width: 800px; margin: 0 auto; }
 .form-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
@@ -257,7 +257,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .form-submit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border-radius: 10px; font-size: 16px; font-weight: 700; border: none; cursor: pointer; transition: all .2s; margin-top: 8px; }
 .form-submit:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,43,.4); }
 
-/* ===== 로그인 ===== */
+/* ===== ë¡ê·¸ì¸ ===== */
 .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--charcoal); padding: 40px 16px; }
 .auth-card { background: #fff; border-radius: var(--radius-lg); padding: 44px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
 .auth-logo { text-align: center; margin-bottom: 28px; font-size: 32px; font-weight: 800; color: var(--charcoal); }
@@ -268,7 +268,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .social-btn { width: 100%; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 10px; border: 2px solid transparent; transition: opacity .2s; }
 .social-btn:hover { opacity: .88; }
 
-/* ===== 서포터즈 페이지 ===== */
+/* ===== ìí¬í°ì¦ íì´ì§ ===== */
 .supporters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
 .supporter-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 22px; transition: all .2s; }
 .supporter-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
@@ -277,7 +277,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .supporter-desc { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; margin-bottom: 10px; }
 .supporter-region { font-size: 12px; color: var(--text-light); }
 
-/* ===== 지역현장 페이지 ===== */
+/* ===== ì§ì­íì¥ íì´ì§ ===== */
 .filter-bar { background: #fff; border-bottom: 1px solid var(--border); padding: 12px 0; }
 .filter-inner { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .filter-select { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 7px; font-size: 13.5px; font-family: inherit; color: var(--text); background: #fff; outline: none; transition: border-color .2s; }
@@ -311,37 +311,37 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .form-row { grid-template-columns: 1fr; }
 }
 
-/* ===== 모바일 추가 (390px 기준) ===== */
+/* ===== ëª¨ë°ì¼ ì¶ê° (390px ê¸°ì¤) ===== */
 @media (max-width: 600px) {
-  /* topbar: 통계 숨기고 로그인/회원가입만 */
+  /* topbar: íµê³ ì¨ê¸°ê³  ë¡ê·¸ì¸/íìê°ìë§ */
   .topbar-stats { display: none; }
   .topbar-inner { justify-content: flex-end; }
 
-  /* listings 필터바: 2열 그리드 */
+  /* listings íí°ë°: 2ì´ ê·¸ë¦¬ë */
   .filter-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .filter-select { width: 100%; }
   .filter-reset { grid-column: 1 / -1; }
   .filter-count { grid-column: 1 / -1; margin-left: 0; text-align: right; }
 }
 
-/* ===== 카드 품질 개선 (PC 포함 전체) ===== */
+/* ===== ì¹´ë íì§ ê°ì  (PC í¬í¨ ì ì²´) ===== */
 .card-title { font-size: 17px; }
 .info-tag.highlight { font-size: 13.5px; font-weight: 800; padding: 5px 14px; }
 
-/* 태블릿 (601~1020px): 2열 그리드 */
+/* íë¸ë¦¿ (601~1020px): 2ì´ ê·¸ë¦¬ë */
 @media (min-width: 601px) and (max-width: 1020px) {
   .listings-grid { grid-template-columns: repeat(2, 1fr); }
   .best-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* 모바일 추가 최적화 */
+/* ëª¨ë°ì¼ ì¶ê° ìµì í */
 @media (max-width: 600px) {
-  /* 현장등록 폼 여백 축소 */
+  /* íì¥ë±ë¡ í¼ ì¬ë°± ì¶ì */
   .register-form { padding: 20px 14px; }
   .form-title { font-size: 20px; }
   .form-sub { font-size: 12px; }
 
-  /* 현장 카드: 가로형 레이아웃 */
+  /* íì¥ ì¹´ë: ê°ë¡í ë ì´ìì */
   .listing-card { display: flex; flex-direction: row; }
   .card-img { width: 110px; height: 110px; flex-shrink: 0; object-fit: cover; }
   .card-body { flex: 1; min-width: 0; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; }
@@ -356,25 +356,25 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .card-company { font-size: 11px; }
   .card-btn { font-size: 12px; padding: 5px 12px; }
 
-  /* 회원가입 아이디 확인 버튼 세로 배치 */
+  /* íìê°ì ìì´ë íì¸ ë²í¼ ì¸ë¡ ë°°ì¹ */
   .id-check-wrap { flex-direction: column; }
   .id-check-wrap .btn-check { width: 100%; height: 46px; border-radius: 10px; }
   .id-check-wrap .input-wrap { width: 100%; }
 }
 
 
-/* ===== 카카오톡 채팅창 스타일 (분양톡 모바일 UI) ===== */
+/* ===== ì¹´ì¹´ì¤í¡ ì±íì°½ ì¤íì¼ (ë¶ìí¡ ëª¨ë°ì¼ UI) ===== */
 
-/* 데스크탑: chat 전용 요소 숨기기 */
+/* ë°ì¤í¬í: chat ì ì© ìì ì¨ê¸°ê¸° */
 .card-chat-name { display: none; }
 .card-chat-preview { display: none; }
 .card-chat-right { display: none; }
 
 @media (max-width: 600px) {
-  /* 히어로 섹션 숨기기 */
+  /* íì´ë¡ ì¹ì ì¨ê¸°ê¸° */
   .hero { display: none; }
 
-  /* 리스트 그리드 → 카카오톡 채팅목록처럼 */
+  /* ë¦¬ì¤í¸ ê·¸ë¦¬ë â ì¹´ì¹´ì¤í¡ ì±íëª©ë¡ì²ë¼ */
   .listings-grid {
     grid-template-columns: 1fr;
     gap: 0;
@@ -383,7 +383,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     overflow: hidden;
   }
 
-  /* 카드: 채팅 행 스타일 */
+  /* ì¹´ë: ì±í í ì¤íì¼ */
   .listing-card {
     display: flex !important;
     flex-direction: row !important;
@@ -402,7 +402,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .listing-card.hot-card,
   .listing-card.ad-card { border-left: none !important; }
 
-  /* 이미지: 작은 프로필 아이콘 */
+  /* ì´ë¯¸ì§: ìì íë¡í ìì´ì½ */
   .card-img {
     width: 54px !important;
     height: 54px !important;
@@ -411,7 +411,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     object-fit: cover;
   }
 
-  /* 카드 바디: 중앙 텍스트 영역 */
+  /* ì¹´ë ë°ë: ì¤ì íì¤í¸ ìì­ */
   .card-body {
     flex: 1;
     min-width: 0;
@@ -422,13 +422,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     justify-content: center;
   }
 
-  /* 숨기기 */
+  /* ì¨ê¸°ê¸° */
   .card-badges { display: none !important; }
   .card-desc   { display: none !important; }
   .card-info   { display: none !important; }
   .card-footer { display: none !important; }
 
-  /* 회사명 (카톡의 대화상대 이름) */
+  /* íì¬ëª (ì¹´í¡ì ëíìë ì´ë¦) */
   .card-chat-name {
     display: block;
     font-size: 15px;
@@ -439,10 +439,10 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     text-overflow: ellipsis;
   }
 
-  /* 현장명은 card-chat-name으로 표시, 원본 숨기기 */
+  /* íì¥ëªì card-chat-nameì¼ë¡ íì, ìë³¸ ì¨ê¸°ê¸° */
   .card-title { display: none !important; }
 
-  /* 키워드 미리보기 (직종·복리후생) */
+  /* í¤ìë ë¯¸ë¦¬ë³´ê¸° (ì§ì¢Â·ë³µë¦¬íì) */
   .card-chat-preview {
     display: block;
     font-size: 13px;
@@ -452,7 +452,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     text-overflow: ellipsis;
   }
 
-  /* 우측: 지역 + 수수료 뱃지 */
+  /* ì°ì¸¡: ì§ì­ + ììë£ ë±ì§ */
   .card-chat-right {
     display: flex !important;
     flex-direction: column;
@@ -477,15 +477,15 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     white-space: nowrap;
   }
 
-  /* register-form, id-check-wrap은 이전 @media 블록에서 처리됨 */
+  /* register-form, id-check-wrapì ì´ì  @media ë¸ë¡ìì ì²ë¦¬ë¨ */
 }
 
 
-/* ===== 모바일 폰트 축소 + 3단계 크기 토글 ===== */
+/* ===== ëª¨ë°ì¼ í°í¸ ì¶ì + 3ë¨ê³ í¬ê¸° í ê¸ ===== */
 .font-toggle-btn { display: none; }
 
 @media (max-width: 600px) {
-  /* 기본 모바일: 정보밀도 우선 (중간 크기) */
+  /* ê¸°ë³¸ ëª¨ë°ì¼: ì ë³´ë°ë ì°ì  (ì¤ê° í¬ê¸°) */
   .card-chat-name    { font-size: 13.5px !important; }
   .card-chat-preview { font-size: 11.5px !important; }
   .card-chat-region  { font-size: 10px   !important; }
@@ -495,7 +495,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .region-tab        { font-size: 12.5px; padding: 7px 14px; }
   .filter-select     { font-size: 12.5px; padding: 7px 10px; }
 
-  /* 폰트 토글 FAB 버튼 */
+  /* í°í¸ í ê¸ FAB ë²í¼ */
   .font-toggle-btn {
     display: flex;
     flex-direction: column;
@@ -520,7 +520,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .font-toggle-btn .ft-icon { font-size: 17px; font-weight: 800; }
   .font-toggle-btn .ft-label { font-size: 8px; color: #aaa; margin-top: 1px; }
 
-  /* ── 소 (sm): 최대 정보밀도 ── */
+  /* ââ ì (sm): ìµë ì ë³´ë°ë ââ */
   body.fs-sm .card-chat-name    { font-size: 12px    !important; }
   body.fs-sm .card-chat-preview { font-size: 10.5px  !important; }
   body.fs-sm .card-img          { width: 40px !important; height: 40px !important; }
@@ -529,7 +529,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   body.fs-sm .card-chat-region  { font-size: 9px     !important; }
   body.fs-sm .card-chat-right   { gap: 4px !important; }
 
-  /* ── 중 (md): 기본 ── */
+  /* ââ ì¤ (md): ê¸°ë³¸ ââ */
   body.fs-md .card-chat-name    { font-size: 14px    !important; }
   body.fs-md .card-chat-preview { font-size: 12px    !important; }
   body.fs-md .card-img          { width: 48px !important; height: 48px !important; }
@@ -537,7 +537,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   body.fs-md .card-chat-fee     { font-size: 11px    !important; padding: 3px 9px !important; }
   body.fs-md .card-chat-region  { font-size: 11px    !important; }
 
-  /* ── 대 (lg): 읽기 편한 ── */
+  /* ââ ë (lg): ì½ê¸° í¸í ââ */
   body.fs-lg .card-chat-name    { font-size: 16px    !important; }
   body.fs-lg .card-chat-preview { font-size: 13.5px  !important; }
   body.fs-lg .card-img          { width: 56px !important; height: 56px !important; }
@@ -547,12 +547,12 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 
-/* ===== 카드 3요소 레이아웃 (현장명 / 지역+수수료) ===== */
+/* ===== ì¹´ë 3ìì ë ì´ìì (íì¥ëª / ì§ì­+ììë£) ===== */
 @media (max-width: 600px) {
-  /* 우측 컬럼 완전 숨기기 */
+  /* ì°ì¸¡ ì»¬ë¼ ìì  ì¨ê¸°ê¸° */
   .card-chat-right { display: none !important; }
 
-  /* 현장명: 전체 너비 활용, 굵게 */
+  /* íì¥ëª: ì ì²´ ëë¹ íì©, êµµê² */
   .card-chat-name {
     font-size: 14px !important;
     font-weight: 700 !important;
@@ -563,7 +563,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     margin-bottom: 4px;
   }
 
-  /* 2번째 줄: 📍지역(왼쪽) + 수수료뱃지(오른쪽) */
+  /* 2ë²ì§¸ ì¤: ðì§ì­(ì¼ìª½) + ììë£ë±ì§(ì¤ë¥¸ìª½) */
   .card-chat-preview {
     display: flex !important;
     justify-content: space-between;
@@ -589,7 +589,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     flex-shrink: 0;
   }
 
-  /* 폰트 크기별 조정 */
+  /* í°í¸ í¬ê¸°ë³ ì¡°ì  */
   body.fs-sm .card-chat-name                      { font-size: 12.5px !important; }
   body.fs-sm .card-chat-preview .card-chat-region  { font-size: 10px; }
   body.fs-sm .card-chat-preview .card-chat-fee     { font-size: 9.5px; padding: 2px 7px; }
