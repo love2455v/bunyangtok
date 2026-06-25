@@ -108,6 +108,18 @@
       <button class="btn-save" onclick="saveNickname()">별명 저장</button>
     </div>
 
+    <!-- 카카오 오픈톡방 -->
+    <div class="profile-card">
+      <div class="card-title">💬 카카오 오픈톡방</div>
+      <div class="msg" id="kakaoMsg"></div>
+      <div class="form-group">
+        <label class="form-label">오픈채팅 링크</label>
+        <input type="text" id="myKakaoUrl" class="form-input" placeholder="https://open.kakao.com/..." />
+        <div class="hint">한 번 저장해두면 현장 등록할 때 자동으로 채워집니다</div>
+      </div>
+      <button class="btn-save" onclick="saveKakao()">오픈톡방 저장</button>
+    </div>
+
     <!-- 비밀번호 변경 -->
     <div class="profile-card">
       <div class="card-title">🔒 비밀번호 변경</div>
@@ -180,6 +192,17 @@ async function saveNickname() {
   }
 }
 
+async function saveKakao() {
+  const kakao_url = document.getElementById('myKakaoUrl').value.trim();
+  try {
+    const { error } = await _db.auth.updateUser({ data: { kakao_url } });
+    if (error) throw error;
+    showMsg('kakaoMsg', '✓ 오픈톡방 링크가 저장되었습니다', 'success');
+  } catch(e) {
+    showMsg('kakaoMsg', e.message || '오류가 발생했습니다', 'error');
+  }
+}
+
 async function savePassword() {
   const pw = document.getElementById('newPw').value;
   const pw2 = document.getElementById('newPwConfirm').value;
@@ -222,6 +245,12 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
 
   updateAuthUI(_user);
+  // 저장된 카카오 오픈톡방 링크 불러오기
+  try {
+    const _kk = document.getElementById('myKakaoUrl');
+    const _saved = _user.user_metadata && _user.user_metadata.kakao_url;
+    if (_kk && _saved) _kk.value = _saved;
+  } catch(e) {}
   // 관리자 버튼 표시 (페이지 로드 시)
   if (_user) {
     const _ADMIN = ['love2455v','bunyangtok.com'].join('@');

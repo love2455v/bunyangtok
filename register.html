@@ -465,6 +465,18 @@ async function submitForm(e) {
     var el = document.getElementById('topbarNewSite'); if (el) el.textContent = r.count || 0;
   });
 })();
+
+// ===== 저장된 카카오 오픈톡방 링크 자동 채우기 (내 정보에서 저장한 값) =====
+(function() {
+  var db = getSupabase();
+  if (!db) return;
+  db.auth.getUser().then(function(res) {
+    var u = res && res.data && res.data.user;
+    var saved = u && u.user_metadata && u.user_metadata.kakao_url;
+    var input = document.getElementById('kakao_url');
+    if (saved && input && !input.value) input.value = saved;
+  });
+})();
 </script>
 </body>
 </html>
