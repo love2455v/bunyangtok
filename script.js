@@ -339,9 +339,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch(e) {}
   }
 
-  // register.html은 로그인 필수
-  if (window.location.pathname.includes('register.html') && !currentUser) {
-    alert('현장 등록은 로그인 후 이용 가능합니다.');
+  // register.html은 로그인 필수 (db 연결된 경우에만 체크)
+  if (window.location.pathname.includes('register.html') && db && !currentUser) {
     window.location.href = 'login.html?next=register.html';
     return;
   }
