@@ -138,7 +138,6 @@ function renderListings(data) {
         '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company">📋 ' + item.company + '</span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
       '</div>' +
