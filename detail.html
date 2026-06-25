@@ -5,26 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현장 상세 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    /* ===== 이미지 갤러리 ===== */
+    .detail-gallery { margin-bottom: 24px; border-radius: 12px; overflow: hidden; }
+    .gallery-main { position: relative; width: 100%; background: #0F172A; }
+    .gallery-main img {
+      width: 100%; max-height: 420px; object-fit: cover; display: block;
+    }
+    .gallery-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.5); color: #fff; border: none;
+      width: 44px; height: 44px; border-radius: 50%; font-size: 26px;
+      cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .gallery-btn:hover { background: rgba(0,0,0,0.8); }
+    .gallery-prev { left: 12px; }
+    .gallery-next { right: 12px; }
+    .gallery-counter {
+      position: absolute; bottom: 12px; right: 14px;
+      background: rgba(0,0,0,0.6); color: #fff;
+      font-size: 13px; padding: 4px 12px; border-radius: 20px;
+    }
+    .gallery-dots {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+    .gallery-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.2s;
+    }
+    .gallery-dot.active { background: #fff; }
+    .gallery-thumbs {
+      display: flex; gap: 6px; padding: 8px; background: #0F172A; overflow-x: auto;
+    }
+    .gallery-thumb {
+      flex: 0 0 70px; height: 52px; border-radius: 6px; overflow: hidden;
+      cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s;
+    }
+    .gallery-thumb.active { border-color: #FF6B2B; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ===== 상세 레이아웃 ===== */
+    .detail-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; padding: 28px 0 60px; }
+    .detail-main-card { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; padding: 28px; }
+    .detail-sidebar-card { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; padding: 22px; position: sticky; top: 80px; }
+    .detail-section { margin-bottom: 26px; padding-bottom: 26px; border-bottom: 1px solid #F1F5F9; }
+    .detail-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .detail-section-title {
+      font-size: 15px; font-weight: 700; color: #1E40AF;
+      border-left: 3px solid #2563EB; padding-left: 10px; margin-bottom: 14px;
+    }
+    .detail-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .detail-field label { font-size: 11px; color: #94A3B8; display: block; margin-bottom: 4px; }
+    .detail-field .val { font-size: 15px; font-weight: 600; color: #1E293B; }
+    .detail-field .val.highlight { color: #2563EB; font-size: 18px; }
+    .welfare-tag {
+      display: inline-block; background: #EFF6FF; color: #1D4ED8;
+      border: 1px solid #BFDBFE; border-radius: 20px;
+      padding: 5px 14px; font-size: 13px; font-weight: 500; margin: 3px;
+    }
+    .contact-btn {
+      display: block; padding: 14px; border-radius: 9px; font-size: 15px;
+      font-weight: 700; text-align: center; text-decoration: none; margin-bottom: 10px;
+      transition: opacity 0.2s;
+    }
+    .contact-btn:hover { opacity: 0.88; }
+    .contact-call { background: #2563EB; color: #fff; }
+    .contact-kakao { background: #FEE500; color: #191919; }
+    .fav-btn {
+      width: 100%; padding: 11px; border: 1.5px solid #E2E8F0;
+      border-radius: 9px; font-size: 14px; font-weight: 600;
+      color: #64748B; cursor: pointer; background: #fff; transition: all 0.2s;
+    }
+    .fav-btn.active { border-color: #FF6B2B; color: #FF6B2B; }
+    .detail-meta { font-size: 12px; color: #94A3B8; line-height: 1.8; margin-top: 20px; padding-top: 16px; border-top: 1px solid #F1F5F9; }
+    @media (max-width: 900px) {
+      .detail-layout { grid-template-columns: 1fr; }
+      .detail-sidebar-card { position: static; }
+      .gallery-main img { max-height: 260px; }
+      .detail-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+    }
+    @media (max-width: 480px) {
+      .detail-main-card { padding: 18px; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="container topbar-inner">
     <div class="topbar-stats">
-      <span>👥 오늘 방문 <strong>2,847</strong>명</span>
-      <span>📋 신규현장 <strong>93</strong>건</span>
+      <span>📋 전체현장 <strong id="topbarTotal">-</strong>건</span>
+      <span>🆕 오늘신규 <strong id="topbarNewSite">-</strong>건</span>
     </div>
-    <div class="topbar-links">
+    <div class="topbar-links" id="topbarLinks">
       <a href="login.html">로그인</a>
       <a href="signup.html" class="btn-join">회원가입</a>
     </div>
   </div>
 </div>
 
+<!-- HEADER -->
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <img src="assets/logo-icon.svg" alt="분양톡" class="logo-icon" />
+      <img src="assets/logo-icon.svg" width="38" height="38" alt="" style="border-radius:8px;vertical-align:middle;">
       <span class="logo-text">분양<span class="logo-accent">톡</span></span>
     </a>
     <nav class="nav-desktop">
@@ -32,167 +120,329 @@
       <a href="listings.html" class="nav-link active">지역현장</a>
       <a href="map.html" class="nav-link">지도현장</a>
       <a href="supporters.html" class="nav-link">서포터즈</a>
-      <a href="register.html" class="nav-link btn-register">+ 현장등록</a>
+      <a href="register.html" class="nav-link btn-register" onclick="goRegister();return false;">+ 현장등록</a>
     </nav>
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.html">HOME</a>
     <a href="listings.html">지역현장</a>
-    <a href="register.html">현장등록</a>
+    <a href="map.html">지도현장</a>
+    <a href="supporters.html">서포터즈</a>
+    <a href="register.html" onclick="goRegister();return false;">현장등록</a>
   </div>
 </header>
 
 <!-- BREADCRUMB -->
-<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:12px 0;">
+<div style="background:#fff; border-bottom:1px solid #E2E8F0; padding:11px 0;">
   <div class="container" style="font-size:13px; color:#64748B;">
-    <a href="index.html" style="color:#2563EB;">홈</a> &gt;
-    <a href="listings.html" style="color:#2563EB;">지역현장</a> &gt;
+    <a href="index.html" style="color:#2563EB;">홈</a> ›
+    <a href="listings.html" style="color:#2563EB;">지역현장</a> ›
     <span id="breadTitle">현장 상세</span>
   </div>
 </div>
 
-<div style="padding:32px 0 60px;">
-  <div class="container">
-    <div style="display:grid; grid-template-columns:1fr 340px; gap:28px;" id="detailLayout">
+<!-- LOADING -->
+<div id="loadingMsg" style="text-align:center;padding:80px;color:#94A3B8;">불러오는 중...</div>
 
-      <!-- 메인 콘텐츠 -->
-      <div>
-        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:32px;" id="detailMain">
-          <!-- JS로 채워짐 -->
-        </div>
+<!-- DETAIL CONTENT -->
+<div class="container detail-layout" id="detailLayout" style="display:none;">
 
-        <!-- 관련 현장 -->
-        <div style="margin-top:24px;">
-          <div class="section-header">
-            <div class="section-title">📋 비슷한 현장</div>
-            <a href="listings.html" class="view-all">전체보기 →</a>
-          </div>
-          <div class="listings-grid" id="relatedGrid"></div>
-        </div>
-      </div>
+  <!-- 메인 -->
+  <div>
+    <!-- 이미지 갤러리 -->
+    <div class="detail-gallery" id="galleryArea"></div>
 
-      <!-- 사이드바 -->
-      <div>
-        <div style="background:#fff; border-radius:10px; border:1px solid #E2E8F0; padding:24px; position:sticky; top:80px;" id="contactCard">
-          <!-- JS로 채워짐 -->
-        </div>
-      </div>
+    <!-- 메인 카드 -->
+    <div class="detail-main-card" id="detailMain"></div>
 
+    <!-- 비슷한 현장 -->
+    <div style="margin-top:24px;">
+      <div style="font-size:17px;font-weight:800;color:#1E293B;margin-bottom:14px;">📋 비슷한 현장</div>
+      <div class="listings-grid" id="relatedGrid"></div>
     </div>
   </div>
+
+  <!-- 사이드바 -->
+  <div>
+    <div class="detail-sidebar-card" id="sideCard"></div>
+  </div>
+
 </div>
 
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-col">
-      <div class="footer-logo"><img src="assets/logo-icon.svg" alt="분양톡" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;border-radius:6px;" />분양<span>톡</span></div>
-      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼</p>
+      <div class="footer-logo"><img src="assets/logo-icon.svg" width="28" height="28" alt="" style="border-radius:6px;vertical-align:middle;margin-right:6px;">분양<span>톡</span></div>
+      <p class="footer-desc">분양현장 구인구직 No.1 플랫폼<br/>전국 모든 현장 정보를 한눈에</p>
     </div>
     <div class="footer-col">
       <h4>서비스</h4>
       <a href="listings.html">지역현장</a>
+      <a href="map.html">지도현장</a>
       <a href="supporters.html">서포터즈</a>
-      <a href="register.html">현장등록</a>
+      <a href="register.html" onclick="goRegister();return false;">현장등록</a>
     </div>
     <div class="footer-col">
       <h4>고객지원</h4>
-      <a href="#">공지사항</a>
-      <a href="#">고객센터</a>
+      <a href="notice.html">공지사항</a>
+      <a href="faq.html">자주묻는질문</a>
+      <a href="contact.html">고객센터</a>
     </div>
     <div class="footer-col">
       <h4>고객센터</h4>
-      <div class="footer-tel">📞 1800-XXXX</div>
-      <div class="footer-hours">월~금 09:00~18:00</div>
+      <div class="footer-hours">카카오채널: @분양톡</div>
+      <div class="footer-hours">운영시간: 평일 09:00~18:00</div>
     </div>
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <a href="#">개인정보 처리방침</a>
-      <a href="#">이용약관</a>
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="terms.html">이용약관</a>
       <span class="footer-copy">© 2026 분양톡</span>
     </div>
   </div>
 </footer>
 
 <div class="float-btns">
-  <a href="register.html" class="float-btn float-register">✏️ 등록</a>
+  <a href="register.html" class="float-btn float-register" onclick="goRegister();return false;">✏️ 등록</a>
   <button class="float-btn float-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-const params = new URLSearchParams(location.search);
-const id = parseInt(params.get('id')) || 1;
-const item = LISTINGS.find(l => l.id === id) || LISTINGS[0];
+var _detailItem = null;
+var _galleryIdx = 0;
+var _galleryImgs = [];
 
-document.title = item.title + ' - 분양톡';
-document.getElementById('breadTitle').textContent = item.title;
+// ===== 이미지 갤러리 =====
+function buildGallery(imgs) {
+  if (!imgs || imgs.length === 0) return;
+  _galleryImgs = imgs;
+  _galleryIdx = 0;
+  var area = document.getElementById('galleryArea');
 
-document.getElementById('detailMain').innerHTML = `
-  <div class="card-badges" style="margin-bottom:16px;">
-    ${item.badges.map(b => `<span class="badge badge-${b==='HOT'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best'}">${b}</span>`).join('')}
-    <span class="badge badge-type">${item.type}</span>
-  </div>
-  <h1 style="font-size:22px; font-weight:800; margin-bottom:14px; line-height:1.4;">${item.title}</h1>
-  <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #E2E8F0;">
-    <span class="info-tag">📍 ${item.region}</span>
-    <span class="info-tag">${item.type}</span>
-    <span class="info-tag">🏢 ${item.company}</span>
-    <span class="info-tag">📅 등록일: 2026.06.21</span>
-  </div>
+  var mainImg = '<div class="gallery-main" id="galleryMain">' +
+    '<img id="galleryMainImg" src="' + imgs[0] + '" alt="현장사진" onerror="this.closest(\'.detail-gallery\').style.display=\'none\'">' +
+    (imgs.length > 1 ?
+      '<button class="gallery-btn gallery-prev" onclick="galleryMove(-1)">&#8249;</button>' +
+      '<button class="gallery-btn gallery-next" onclick="galleryMove(1)">&#8250;</button>' +
+      '<div class="gallery-counter" id="galleryCnt">1 / ' + imgs.length + '</div>' +
+      '<div class="gallery-dots" id="galleryDots">' +
+        imgs.map(function(_, i) { return '<span class="gallery-dot' + (i===0?' active':'') + '" onclick="galleryGo(' + i + ')"></span>'; }).join('') +
+      '</div>'
+    : '') +
+  '</div>';
 
-  <div style="margin-bottom:28px;">
-    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">💼 모집 조건</h3>
-    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:14px;">
-      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">직종</div><div style="font-weight:600;">${item.role.join(' / ')}</div></div>
-      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">급여형태</div><div style="font-weight:600;">${item.pay}</div></div>
-      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">팀 수수료</div><div style="font-weight:700; color:#2563EB; font-size:16px;">${item.fee}</div></div>
-      <div><div style="font-size:11px; color:#64748B; margin-bottom:4px;">경력조건</div><div style="font-weight:600;">${item.career}</div></div>
-    </div>
-  </div>
+  var thumbs = imgs.length > 1 ?
+    '<div class="gallery-thumbs" id="galleryThumbs">' +
+    imgs.map(function(url, i) {
+      return '<div class="gallery-thumb' + (i===0?' active':'') + '" id="gt_' + i + '" onclick="galleryGo(' + i + ')">' +
+        '<img src="' + url + '" alt="썸네일' + (i+1) + '" loading="lazy">' +
+      '</div>';
+    }).join('') +
+    '</div>' : '';
 
-  <div style="margin-bottom:28px;">
-    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">🎁 복리후생</h3>
-    <div style="display:flex; flex-wrap:wrap; gap:8px;">
-      ${item.welfare.map(w => `<span style="background:#F0F9FF; color:#0369A1; border:1px solid #BAE6FD; border-radius:20px; padding:6px 14px; font-size:13px; font-weight:500;">✓ ${w}</span>`).join('')}
-    </div>
-  </div>
-
-  <div style="margin-bottom:28px;">
-    <h3 style="font-size:16px; font-weight:700; color:#2563EB; border-bottom:2px solid #DBEAFE; padding-bottom:8px; margin-bottom:16px;">📋 현장 소개</h3>
-    <div style="font-size:15px; line-height:1.8; color:#334155;">${item.desc}</div>
-  </div>
-
-  <div style="background:#FEF3C7; border-radius:8px; padding:16px; font-size:13px; color:#92400E;">
-    ⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 반드시 담당자에게 확인하세요.
-  </div>
-`;
-
-document.getElementById('contactCard').innerHTML = `
-  <h3 style="font-size:16px; font-weight:700; margin-bottom:16px;">📞 지원 / 문의</h3>
-  <div style="background:#F0F9FF; border-radius:8px; padding:14px; margin-bottom:16px; font-size:13px; color:#0369A1;">
-    <strong>${item.company}</strong><br/>팀 수수료 <strong style="font-size:16px;">${item.fee}</strong>
-  </div>
-  <a href="tel:010-0000-0000" class="contact-btn contact-call" style="display:block; background:#2563EB; color:#fff; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">📞 전화 문의</a>
-  <a href="#" onclick="alert('카카오톡 오픈채팅으로 연결됩니다.')" class="contact-btn contact-msg" style="display:block; background:#FEE500; color:#000; padding:13px; border-radius:8px; font-size:15px; font-weight:700; text-align:center; margin-bottom:10px;">💬 카카오 문의</a>
-  <button onclick="alert('관심현장에 추가되었습니다!')" style="width:100%; padding:11px; border:1.5px solid #E2E8F0; border-radius:8px; font-size:14px; font-weight:600; color:#64748B; cursor:pointer; background:#fff;">🔖 관심현장 저장</button>
-
-  <div style="margin-top:20px; padding-top:20px; border-top:1px solid #E2E8F0; font-size:12px; color:#94A3B8; line-height:1.7;">
-    <div>📅 등록일: 2026.06.21</div>
-    <div>👁️ 조회수: 1,234회</div>
-    <div>🏢 업체: ${item.company}</div>
-  </div>
-`;
-
-// 관련 현장
-const related = LISTINGS.filter(l => l.id !== item.id && (l.region === item.region || l.type === item.type)).slice(0, 3);
-renderListings(related.length ? related : LISTINGS.slice(0,3));
-
-// 모바일에서 레이아웃 조정
-if (window.innerWidth < 900) {
-  document.getElementById('detailLayout').style.gridTemplateColumns = '1fr';
+  area.innerHTML = mainImg + thumbs;
 }
+function galleryGo(idx) {
+  if (idx < 0 || idx >= _galleryImgs.length) return;
+  var prev = _galleryIdx;
+  _galleryIdx = idx;
+  document.getElementById('galleryMainImg').src = _galleryImgs[idx];
+  var dots = document.querySelectorAll('.gallery-dot');
+  if (dots[prev]) dots[prev].classList.remove('active');
+  if (dots[idx]) dots[idx].classList.add('active');
+  var prevThumb = document.getElementById('gt_' + prev);
+  var nextThumb = document.getElementById('gt_' + idx);
+  if (prevThumb) prevThumb.classList.remove('active');
+  if (nextThumb) nextThumb.classList.add('active');
+  var cnt = document.getElementById('galleryCnt');
+  if (cnt) cnt.textContent = (idx + 1) + ' / ' + _galleryImgs.length;
+}
+function galleryMove(dir) {
+  galleryGo((_galleryIdx + dir + _galleryImgs.length) % _galleryImgs.length);
+}
+
+// ===== 상세 페이지 로드 =====
+async function loadDetail() {
+  var params = new URLSearchParams(location.search);
+  var id = params.get('id');
+  var db = getSupabase();
+
+  var item = null;
+
+  if (db && id) {
+    var q = db.from('listings').select('*').eq('is_active', true);
+    if (isNaN(id)) {
+      q = q.eq('id', id);
+    } else {
+      q = q.eq('id', parseInt(id));
+    }
+    var result = await q.single();
+    if (!result.error && result.data) item = result.data;
+  }
+
+  if (!item) {
+    var numId = parseInt(id) || 1;
+    item = (LISTINGS || []).find(function(l) { return l.id === numId; }) || (LISTINGS && LISTINGS[0]);
+  }
+
+  if (!item) {
+    document.getElementById('loadingMsg').textContent = '현장 정보를 찾을 수 없습니다.';
+    return;
+  }
+
+  _detailItem = item;
+  document.title = item.title + ' - 분양톡';
+  document.getElementById('breadTitle').textContent = item.title;
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('detailLayout').style.display = 'grid';
+
+  var imgs = (item.images && item.images.length > 0) ? item.images : (item.img ? [item.img] : []);
+  buildGallery(imgs);
+
+  if (db && item.id && !isNaN(item.id)) {
+    db.from('listings').update({ views: (item.views || 0) + 1 }).eq('id', item.id).then(function(){});
+  }
+
+  var badges = item.badges || [];
+  var role = Array.isArray(item.role) ? item.role : [];
+  var welfare = Array.isArray(item.welfare) ? item.welfare : [];
+  var regDate = item.created_at ? item.created_at.split('T')[0] : '-';
+
+  document.getElementById('detailMain').innerHTML =
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">' +
+      badges.map(function(b) {
+        var cls = b.toLowerCase()==='hot'?'hot':b==='NEW'?'new':b==='AD'?'ad':'best';
+        return '<span class="badge badge-' + cls + '">' + b + '</span>';
+      }).join('') +
+      '<span class="badge badge-type">' + (item.type || '아파트') + '</span>' +
+    '</div>' +
+    '<h1 style="font-size:21px;font-weight:800;margin-bottom:16px;line-height:1.45;color:#0F172A;">' + item.title + '</h1>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid #F1F5F9;">' +
+      '<span class="info-tag">📍 ' + (item.region || '') + '</span>' +
+      '<span class="info-tag">🏢 ' + (item.company || '') + '</span>' +
+      '<span class="info-tag">📅 ' + regDate + '</span>' +
+      '<span class="info-tag">👁️ ' + (item.views || 0) + '회</span>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<div class="detail-section-title">💼 모집 조건</div>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-field"><label>직종</label><div class="val">' + (role.join(' / ') || '-') + '</div></div>' +
+        '<div class="detail-field"><label>급여형태</label><div class="val">' + (item.pay || '-') + '</div></div>' +
+        '<div class="detail-field"><label>팀 수수료</label><div class="val highlight">' + (item.fee || '협의') + '</div></div>' +
+        '<div class="detail-field"><label>경력조건</label><div class="val">' + (item.career || '경력무관') + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    (welfare.length > 0 ?
+    '<div class="detail-section">' +
+      '<div class="detail-section-title">🎁 복리후생</div>' +
+      welfare.map(function(w) { return '<span class="welfare-tag">✓ ' + w + '</span>'; }).join('') +
+    '</div>' : '') +
+    '<div class="detail-section">' +
+      '<div class="detail-section-title">📋 현장 소개</div>' +
+      '<div style="font-size:15px;line-height:1.9;color:#334155;white-space:pre-line;">' + (item.description || item.desc || '') + '</div>' +
+    '</div>' +
+    '<div style="background:#FEF3C7;border-radius:8px;padding:14px;font-size:13px;color:#92400E;">' +
+      '⚠️ 본 공고의 수수료·조건은 변경될 수 있습니다. 지원 전 담당자에게 확인하세요.' +
+    '</div>';
+
+  var phoneHref = item.phone ? 'tel:' + item.phone.replace(/[^0-9]/g,'') : '#';
+  var phoneLabel = item.phone ? '📞 ' + item.phone + ' 전화 문의' : '📞 전화 문의';
+  document.getElementById('sideCard').innerHTML =
+    '<div style="font-size:16px;font-weight:800;margin-bottom:14px;">📞 지원 / 문의</div>' +
+    '<div style="background:#EFF6FF;border-radius:8px;padding:13px;margin-bottom:16px;font-size:13px;color:#1D4ED8;">' +
+      '<strong>' + (item.company || '') + '</strong><br/>' +
+      '팀 수수료 <strong style="font-size:17px;">' + (item.fee || '협의') + '</strong>' +
+    '</div>' +
+    (item.phone ?
+      '<a href="' + phoneHref + '" class="contact-btn contact-call">' + phoneLabel + '</a>' : '') +
+    (item.kakao_url ?
+      '<a href="' + item.kakao_url + '" target="_blank" rel="noopener" class="contact-btn contact-kakao">💬 카카오 오픈채팅</a>' : '') +
+    '<button class="fav-btn" id="favBtn" onclick="toggleFav()">🔖 관심현장 저장</button>' +
+    (item.user_id === _currentUserId ?
+      '<a href="edit.html?id=' + item.id + '" style="display:block;margin-top:10px;text-align:center;font-size:13px;color:#64748B;">✏️ 내 현장 수정</a>' : '') +
+    '<div class="detail-meta">' +
+      '<div>📅 등록일: ' + regDate + '</div>' +
+      '<div>👁️ 조회수: ' + (item.views || 0) + '회</div>' +
+    '</div>';
+
+  checkFavStatus(item.id);
+  loadRelated(item);
+  loadTopbarStats();
+}
+
+var _currentUserId = null;
+
+async function checkFavStatus(listingId) {
+  var db = getSupabase();
+  if (!db) return;
+  var sess = await db.auth.getSession();
+  var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+  if (!user) return;
+  _currentUserId = user.id;
+  var r = await db.from('favorites').select('id').eq('user_id', user.id).eq('listing_id', listingId).single();
+  if (r.data) {
+    var btn = document.getElementById('favBtn');
+    if (btn) { btn.classList.add('active'); btn.textContent = '❤️ 관심현장 저장됨'; }
+  }
+}
+
+async function toggleFav() {
+  var db = getSupabase();
+  if (!db || !_detailItem) return;
+  var sess = await db.auth.getSession();
+  var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+  if (!user) { alert('로그인이 필요합니다.'); window.location.href = 'login.html'; return; }
+  var btn = document.getElementById('favBtn');
+  var isActive = btn.classList.contains('active');
+  if (isActive) {
+    await db.from('favorites').delete().eq('user_id', user.id).eq('listing_id', _detailItem.id);
+    btn.classList.remove('active'); btn.textContent = '🔖 관심현장 저장';
+  } else {
+    await db.from('favorites').insert([{ user_id: user.id, listing_id: _detailItem.id }]);
+    btn.classList.add('active'); btn.textContent = '❤️ 관심현장 저장됨';
+  }
+}
+
+async function loadRelated(item) {
+  var db = getSupabase();
+  var related = [];
+  if (db) {
+    var r = await db.from('listings').select('*').eq('is_active', true).eq('region', item.region).neq('id', item.id).limit(3);
+    if (!r.error && r.data) related = r.data;
+  }
+  if (related.length === 0) {
+    related = (LISTINGS || []).filter(function(l) { return l.id !== item.id; }).slice(0, 3);
+  }
+  var grid = document.getElementById('relatedGrid');
+  if (grid) renderListings(related.length ? related : []);
+}
+
+function loadTopbarStats() {
+  var db = getSupabase();
+  if (!db) return;
+  var today = new Date().toISOString().split('T')[0];
+  db.from('listings').select('id', {count:'exact', head:true}).eq('is_active', true).then(function(r) {
+    var el = document.getElementById('topbarTotal'); if (el) el.textContent = r.count || 0;
+  });
+  db.from('listings').select('id', {count:'exact', head:true}).eq('is_active', true).gte('created_at', today).then(function(r) {
+    var el = document.getElementById('topbarNewSite'); if (el) el.textContent = r.count || 0;
+  });
+}
+
+(function() {
+  var db = getSupabase();
+  if (!db) return;
+  db.auth.getSession().then(function(sess) {
+    var user = sess && sess.data && sess.data.session ? sess.data.session.user : null;
+    if (user) updateAuthUI(user);
+  });
+})();
+
+loadDetail();
 </script>
 </body>
 </html>
