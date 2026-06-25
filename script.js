@@ -94,7 +94,12 @@ async function loadListings(region, keyword) {
     window._cachedData = allResult.data || [];
     var fcEl = document.getElementById('filterCount');
     if (fcEl) fcEl.textContent = '전체 ' + window._cachedData.length + '개 현장';
-    renderListings(window._cachedData);
+    // listings.html에 applyFilters가 있으면 keyword/region 포함 필터 적용
+    if (typeof applyFilters === 'function') {
+      applyFilters();
+    } else {
+      renderListings(window._cachedData);
+    }
   } catch (err) {
     console.error('Supabase 오류:', err);
     window._cachedData = LISTINGS_FALLBACK;
