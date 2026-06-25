@@ -455,6 +455,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   function build() {
     if (document.getElementById('fontSizeBtn')) return;
+    // 모바일 메인(홈) 화면에서만 표시 — 회원가입/로그인 등 다른 페이지엔 생성 안 함
+    var _p = location.pathname;
+    if (!(_p === '/' || _p === '' || /\/index\.html$/.test(_p))) return;
     var b = document.createElement('button');
     b.id = 'fontSizeBtn';
     b.className = 'font-size-btn';
