@@ -66,6 +66,7 @@ var LISTINGS_FALLBACK = [
     career: "경력무관", company: "도우씨앤디", fee: "협의"
   }
 ];
+var LISTINGS = LISTINGS_FALLBACK; // 구버전 detail.html 호환
 
 // ===== 현재 필터 상태 =====
 var currentRegion = '전체';
