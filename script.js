@@ -20,50 +20,50 @@ var LISTINGS_FALLBACK = [
   {
     id: 1, region: "서울", type: "아파트", badges: ["HOT", "AD"],
     img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70",
-    title: "강동구 고덕동 신규 아파트 팀장/팀원 모집",
+    title: "노원역 효성해링턴 센트럴 (신규)",
     description: "팀 수수료 1,800만원, 광고비지원 50%, 일반분양아파트 신규현장 콜 무수히 뜹니다.",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "6개월이상", company: "예시부동산", fee: "1,800만원"
+    career: "6개월이상", company: "지승", fee: "1,800만원"
   },
   {
     id: 2, region: "인천", type: "아파트", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
-    title: "인천 송도 신도시 랜드마크 아파트 분양",
-    description: "지하철 직통연결, 랜드마크 500세대 4개동, 쇼핑몰 바로 앞 최고의 입지",
+    title: "힐스테이트 구월 아트파크",
+    description: "1호선 예술공원역 직통연결, 랜드마크 498세대 4개동, 롯데백화점 자리 최고의 입지",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["경력무관"],
-    career: "12개월이상", company: "예시부동산", fee: "1,200만원"
+    career: "12개월이상", company: "지우알엔씨", fee: "1,200만원"
   },
   {
     id: 3, region: "부산", type: "아파트", badges: ["NEW", "AD"],
     img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70",
-    title: "부산 해운대 오션뷰 하이엔드 팀장/팀원 모집",
-    description: "부산 해운대 오션뷰 파노라마, 부산 최초 하이엔드 아파트 분양",
+    title: "알티에로 광안 팀장/팀원/사이드 모집",
+    description: "부산 민락동 광안대교 파노라마 뷰, MBC자리, 부산최초 하이퍼엔드 아파트 분양",
     role: ["팀장", "팀원", "사이드"], pay: "계약수수료", welfare: ["일비", "경력무관"],
-    career: "경력무관", company: "예시부동산", fee: "협의"
+    career: "경력무관", company: "(주)루트플래닝", fee: "협의"
   },
   {
     id: 4, region: "경기남부", type: "아파트", badges: ["HOT", "대박"],
     img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=70",
-    title: "수원 영통구 대형 단지 대행사 직영 모집",
+    title: "수지자이 에디시온 (대행사 직영)",
     description: "일비 7만원 (방문시 상담), 대행사 직영으로 빠른 계약 진행",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비"],
-    career: "3개월이상", company: "예시부동산", fee: "800만원"
+    career: "3개월이상", company: "주식회사 유성", fee: "800만원"
   },
   {
     id: 5, region: "충청도", type: "아파트", badges: ["HOT"],
     img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70",
-    title: "천안 신규 아파트 파격 조건 변경",
+    title: "천안 성성호수공원 파격 조건 변경",
     description: "경쟁 상대 없는 독점 현장, 이보다 계약 쓰기 편한 곳은 없습니다.",
     role: ["팀장", "팀원"], pay: "계약수수료", welfare: ["일비", "광고비지원"],
-    career: "경력무관", company: "예시부동산", fee: "970만원"
+    career: "경력무관", company: "씨아이앤드플러스", fee: "970만원"
   },
   {
     id: 6, region: "경기남부", type: "아파트", badges: ["NEW"],
     img: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?w=600&q=70",
-    title: "경기 광주 2,300세대 대단지 본부장/팀장 모집",
+    title: "경기광주역 롯데캐슬 시그니처 2,326세대",
     description: "매주 총괄 광고 집행, 압도적 혜택! 대형 단지 안정적 현장",
     role: ["본부장", "팀장"], pay: "계약수수료", welfare: ["광고비지원"],
-    career: "경력무관", company: "예시부동산", fee: "협의"
+    career: "경력무관", company: "도우씨앤디", fee: "협의"
   }
 ];
 
@@ -88,25 +88,12 @@ async function loadListings(region, keyword) {
   }
 
   try {
-    // 전체 데이터를 먼저 캐시에 저장 (필터는 클라이언트에서)
     var allResult = await db.from('listings').select('*').eq('is_active', true).order('created_at', { ascending: false });
     if (allResult.error) throw allResult.error;
     window._cachedData = allResult.data || [];
-
-    var data = window._cachedData.slice();
-    if (region && region !== '전체') data = data.filter(function(l) { return l.region === region; });
-    if (keyword) {
-      var kw = keyword.toLowerCase();
-      data = data.filter(function(l) {
-        return (l.title || '').toLowerCase().includes(kw) ||
-               (l.description || '').toLowerCase().includes(kw) ||
-               (l.company || '').toLowerCase().includes(kw);
-      });
-    }
-
-    var fc = document.getElementById('filterCount');
-    if (fc) fc.textContent = '전체 ' + data.length + '개 현장';
-    renderListings(data);
+    var fcEl = document.getElementById('filterCount');
+    if (fcEl) fcEl.textContent = '전체 ' + window._cachedData.length + '개 현장';
+    renderListings(window._cachedData);
   } catch (err) {
     console.error('Supabase 오류:', err);
     window._cachedData = LISTINGS_FALLBACK;
@@ -150,7 +137,7 @@ function renderListings(data) {
         '<span class="info-tag">경력: ' + (item.career || '경력무관') + '</span>' +
       '</div>' +
       '<div class="card-footer">' +
-        '<span class="card-company" style="visibility:hidden">📋 </span>' +
+        '<span class="card-company">📋 ' + item.company + '</span>' +
         '<span class="card-btn">상세보기</span>' +
       '</div>' +
       '</div>' +
@@ -183,25 +170,6 @@ async function renderBest() {
       }
     } catch(e) {}
   }
-
-  // 폴백
-  var BEST = [
-    { rank: 1, title: "거제 하이엔드 일반분양 아파트", region: "경상도", type: "아파트", views: "4,821" },
-    { rank: 2, title: "수원 영통구 대단지 팀원 모집", region: "경기남부", type: "아파트", views: "3,962" },
-    { rank: 3, title: "인천 송도 신도시 랜드마크 분양", region: "인천", type: "아파트", views: "3,541" },
-    { rank: 4, title: "강동구 고덕동 신규 아파트 모집", region: "서울", type: "아파트", views: "3,204" },
-    { rank: 5, title: "경기 광주 2,300세대 대단지 모집", region: "경기남부", type: "아파트", views: "2,987" },
-    { rank: 6, title: "천안 신규 아파트 파격 조건 변경", region: "충청도", type: "아파트", views: "2,744" },
-  ];
-  grid.innerHTML = BEST.map(function(item, i) {
-    return '<div class="best-card" onclick="location.href=\'listings.html\'">' +
-      '<div class="best-rank ' + (rankClass[i] || '') + '">' + item.rank + '</div>' +
-      '<div class="best-info">' +
-        '<div class="best-title">' + item.title + '</div>' +
-        '<div class="best-meta">📍 ' + item.region + ' · ' + item.type + ' · 조회 ' + item.views + '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
 }
 
 // ===== 지역 필터 =====
@@ -256,21 +224,8 @@ function initTicker() {
   content.innerHTML += content.innerHTML;
 }
 
-// ===== 숫자 애니메이션 =====
-function animateNumber(el, target) {
-  if (!el) return;
-  var current = 0;
-  var step = Math.ceil(target / 60);
-  var timer = setInterval(function() {
-    current = Math.min(current + step, target);
-    el.textContent = current.toLocaleString();
-    if (current >= target) clearInterval(timer);
-  }, 30);
-}
-
 // ===== 스크롤 애니메이션 =====
 function initScrollAnimations() {
-  // 두 번의 rAF로 레이아웃 완료 후 IntersectionObserver 실행
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       var targets = document.querySelectorAll('.fade-up, .section-reveal');
@@ -282,7 +237,7 @@ function initScrollAnimations() {
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+      }, { threshold: 0, rootMargin: '0px' });
       targets.forEach(function(el) { observer.observe(el); });
     });
   });
@@ -336,50 +291,6 @@ async function submitListing(e) {
   }
 }
 
-// ===== 회원가입 =====
-async function submitSignup(e) {
-  e.preventDefault();
-  var db = getSupabase();
-  if (!db) { alert('연결 오류'); return; }
-  var email = document.getElementById('email') ? document.getElementById('email').value : '';
-  var password = document.getElementById('password') ? document.getElementById('password').value : '';
-  var name = document.getElementById('name') ? document.getElementById('name').value : '';
-  var btn = document.getElementById('submitBtn');
-  if (btn) { btn.textContent = '처리 중...'; btn.disabled = true; }
-  try {
-    var result = await db.auth.signUp({ email: email, password: password, options: { data: { name: name } } });
-    if (result.error) throw result.error;
-    alert('회원가입 완료! 이메일을 확인해주세요.');
-    window.location.href = 'login.html';
-  } catch (err) {
-    alert('오류: ' + (err.message || err));
-    if (btn) { btn.textContent = '회원가입'; btn.disabled = false; }
-  }
-}
-
-// ===== 로그인 =====
-async function submitLogin(e) {
-  e.preventDefault();
-  var db = getSupabase();
-  if (!db) { alert('연결 오류'); return; }
-  // userId 필드(아이디 방식) 또는 email 필드 둘 다 지원
-  var userId = document.getElementById('userId') ? document.getElementById('userId').value.trim() : '';
-  var emailRaw = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
-  var email = userId ? (userId + '@bunyangtok.com') : emailRaw;
-  var password = document.getElementById('password') ? document.getElementById('password').value : '';
-  var btn = document.getElementById('submitBtn');
-  if (!email) { alert('아이디를 입력해주세요.'); return; }
-  if (btn) { btn.textContent = '로그인 중...'; btn.disabled = true; }
-  try {
-    var result = await db.auth.signInWithPassword({ email: email, password: password });
-    if (result.error) throw result.error;
-    window.location.href = 'index.html';
-  } catch (err) {
-    alert('아이디 또는 비밀번호가 올바르지 않습니다.');
-    if (btn) { btn.textContent = '로그인'; btn.disabled = false; }
-  }
-}
-
 // ===== 로그아웃 =====
 async function logout() {
   var db = getSupabase();
@@ -407,7 +318,9 @@ function updateAuthUI(user) {
   var topbarLinks = document.querySelector('.topbar-links');
   if (!topbarLinks) return;
   if (user) {
-    var nickname = (user.user_metadata && user.user_metadata.nickname) ? user.user_metadata.nickname : (user.email || '').split('@')[0];
+    var nickname = (user.user_metadata && user.user_metadata.nickname)
+      ? user.user_metadata.nickname
+      : (user.email || '').split('@')[0];
     topbarLinks.innerHTML =
       '<a href="profile.html" style="color:rgba(255,255,255,0.85);font-size:12px;font-weight:600;text-decoration:none;margin-right:4px;">👤 ' + nickname + '</a>' +
       '<a href="my-listings.html" style="color:rgba(255,255,255,0.7);font-size:12px;text-decoration:none;margin-right:4px;">내 현장</a>' +
@@ -417,7 +330,6 @@ function updateAuthUI(user) {
 
 // ===== 초기화 =====
 document.addEventListener('DOMContentLoaded', async function() {
-  // 로그인 상태 확인
   var db = getSupabase();
   var currentUser = null;
   if (db) {
@@ -447,16 +359,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   initTicker();
 
-  // Supabase 실제 현장수 표시
+  // Supabase 실제 현장수 표시 (hero-stats + topbar)
   if (db) {
     var today = new Date().toISOString().split('T')[0];
     db.from('listings').select('id', {count: 'exact', head: true}).then(function(r) {
-      var el = document.getElementById('totalListings');
-      if (el) el.innerHTML = (r.count || 0) + '<span>건</span>';
+      var cnt = r.count || 0;
+      var el1 = document.getElementById('totalListings');
+      var el2 = document.getElementById('topbarTotal');
+      if (el1) el1.innerHTML = cnt + '<span>건</span>';
+      if (el2) el2.textContent = cnt;
     });
     db.from('listings').select('id', {count: 'exact', head: true}).gte('created_at', today).then(function(r) {
-      var el = document.getElementById('todaySite');
-      if (el) el.innerHTML = (r.count || 0) + '<span>건</span>';
+      var cnt = r.count || 0;
+      var el1 = document.getElementById('todaySite');
+      var el2 = document.getElementById('topbarNewSite');
+      if (el1) el1.innerHTML = cnt + '<span>건</span>';
+      if (el2) el2.textContent = cnt;
     });
   }
 
@@ -467,6 +385,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   var registerForm = document.getElementById('registerForm');
   if (registerForm) registerForm.addEventListener('submit', submitListing);
-
-  // signup.html / login.html은 각 파일의 인라인 스크립트가 직접 처리
-  // (중복 이벤트 방
+});
