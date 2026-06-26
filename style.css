@@ -516,3 +516,180 @@ img, svg, video, iframe { max-width: 100%; height: auto; }
   body.fs-xl .footer-col a, body.fs-xl .footer-desc { font-size: 15.5px; }
   body.fs-xl .banner-text p, body.fs-xl .cta-box p { font-size: 17px; }
 }
+
+
+/* ============================================================
+   카카오톡 채팅목록 스타일 — 모바일 전용
+   데스크탑에서는 card-chat 요소 모두 숨김
+   ============================================================ */
+.card-chat-name    { display: none; }
+.card-chat-preview { display: none; }
+.card-chat-right   { display: none; }
+
+@media (max-width: 600px) {
+  /* 히어로 숨기기 → 현장 목록 바로 노출 */
+  .hero { display: none; }
+
+  /* 리스트 그리드 → 카카오톡 채팅목록처럼 */
+  .listings-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* 카드: 채팅 행 스타일 */
+  .listing-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 16px;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    box-shadow: none !important;
+    background: #fff;
+    transform: none !important;
+    transition: background .15s !important;
+  }
+  .listing-card:hover { transform: none !important; background: #fafafa !important; }
+  .listing-card.hot-card,
+  .listing-card.ad-card { border-left: none !important; }
+
+  /* 이미지: 작은 프로필 썸네일 */
+  .card-img {
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 14px;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  /* 슬라이더도 썸네일로 (화살표·점·카운터 숨김) */
+  .card-slider {
+    width: 54px !important;
+    height: 54px !important;
+    flex-shrink: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .card-slider .sl-img { width: 54px !important; height: 54px !important; object-fit: cover; }
+  .card-slider .sl-btn,
+  .card-slider .sl-dots,
+  .card-slider .sl-counter { display: none !important; }
+
+  /* 카드 바디: 중앙 텍스트 영역 */
+  .card-body {
+    flex: 1;
+    min-width: 0;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  /* 데스크탑 전용 요소 숨기기 */
+  .card-badges { display: none !important; }
+  .card-desc   { display: none !important; }
+  .card-info   { display: none !important; }
+  .card-footer { display: none !important; }
+
+  /* 현장명 — 카톡의 대화상대 이름 */
+  .card-chat-name {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* card-title 숨김 (card-chat-name으로 대체) */
+  .card-title { display: none !important; }
+
+  /* 지역 + 수수료 미리보기 */
+  .card-chat-preview {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+  .card-chat-region { font-size: 10px; color: #bbb; white-space: nowrap; }
+  .card-chat-fee {
+    background: #FF6B2B;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .card-chat-right { display: none !important; }
+}
+
+/* ============================================================
+   모바일 폰트 크기 토글 버튼 (소 / 중 / 대)
+   ============================================================ */
+.font-toggle-btn { display: none; }
+
+@media (max-width: 600px) {
+  .font-toggle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 92px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    background: #2C2C2C;
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.35);
+    z-index: 300;
+    cursor: pointer;
+    border: 2px solid #444;
+    transition: transform .15s, background .15s;
+    line-height: 1;
+  }
+  .font-toggle-btn:active { transform: scale(0.9); }
+  .font-toggle-btn .ft-icon { font-size: 17px; font-weight: 800; }
+  .font-toggle-btn .ft-label { font-size: 8px; color: #aaa; margin-top: 1px; }
+
+  /* 소 (sm) */
+  body.fs-sm .card-chat-name    { font-size: 12px    !important; }
+  body.fs-sm .card-chat-preview { font-size: 10.5px  !important; }
+  body.fs-sm .card-img,
+  body.fs-sm .card-slider       { width: 40px !important; height: 40px !important; }
+  body.fs-sm .card-slider .sl-img { width: 40px !important; height: 40px !important; }
+  body.fs-sm .listing-card      { padding: 8px 13px  !important; gap: 9px !important; }
+  body.fs-sm .card-chat-fee     { font-size: 9.5px   !important; padding: 2px 6px !important; }
+  body.fs-sm .card-chat-region  { font-size: 9px     !important; }
+
+  /* 중 (md) */
+  body.fs-md .card-chat-name    { font-size: 14px    !important; }
+  body.fs-md .card-chat-preview { font-size: 12px    !important; }
+  body.fs-md .card-img,
+  body.fs-md .card-slider       { width: 48px !important; height: 48px !important; }
+  body.fs-md .card-slider .sl-img { width: 48px !important; height: 48px !important; }
+  body.fs-md .listing-card      { padding: 12px 15px !important; gap: 12px !important; }
+  body.fs-md .card-chat-fee     { font-size: 11px    !important; padding: 3px 9px !important; }
+  body.fs-md .card-chat-region  { font-size: 11px    !important; }
+
+  /* 대 (lg) */
+  body.fs-lg .card-chat-name    { font-size: 16px    !important; }
+  body.fs-lg .card-chat-preview { font-size: 13.5px  !important; }
+  body.fs-lg .card-img,
+  body.fs-lg .card-slider       { width: 56px !important; height: 56px !important; }
+  body.fs-lg .card-slider .sl-img { width: 56px !important; height: 56px !important; }
+  body.fs-lg .listing-card      { padding: 14px 16px !important; gap: 14px !important; }
+  body.fs-lg .card-chat-fee     { font-size: 12px    !important; padding: 3px 10px !important; }
+  body.fs-lg .card-chat-region  { font-size: 11.5px  !important; }
+}
