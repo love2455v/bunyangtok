@@ -586,14 +586,26 @@ function toggleWelfare(v){ const i=R.welfare.indexOf(v); i<0?R.welfare.push(v):R
 function regPrev(){ if(regStep>1){ regStep--; renderReg(); } }
 function regNext(){ if(document.getElementById('regNext').disabled) return;
   if(regStep<REG_TOTAL){ regStep++; renderReg(); } else { regSubmit(); } }
-function regSubmit(){
+async function regSubmit(){
+  const nextBtn=document.getElementById('regNext');
+  if(nextBtn){ nextBtn.disabled=true; nextBtn.textContent='등록 중...'; }
+  let user=null; try{ const r=await sb().auth.getUser(); user=r.data&&r.data.user; }catch(e){}
+  if(!user){ showRegDone('로그인이 필요합니다','현장 등록은 로그인 후 가능합니다.\n하단 "내정보"에서 로그인해주세요.', false); return; }
+  const payload={ title:R.title_display||R.title, region:R.region, type:R.type, company:R.company,
+    pay:R.pay, fee:R.fee||'', career:R.career||'경력무관', description:R.description, phone:R.phone,
+    kakao_url:R.kakao_url||'', role:R.role, welfare:R.welfare, images:[], img:'', badges:[], is_active:true, user_id:user.id };
+  let err=null;
+  try{ const res=await sb().from('listings').insert([payload]); err=res.error; }catch(e){ err=e; }
+  if(err){ if(nextBtn){ nextBtn.disabled=false; nextBtn.textContent='등록 신청하기'; } alert('등록 실패: '+(err.message||err)); return; }
+  try{ await load(); }catch(e){}
+  showRegDone('현장이 등록되었습니다','목록에서 바로 확인할 수 있어요.', true);
+}
+function showRegDone(title,msg,ok){
   document.getElementById('regTitle').textContent='';
   document.getElementById('regSub').textContent='';
-  document.getElementById('regContent').innerHTML=`<div class="reg-done">
-    <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
-    <h2>등록 신청이 접수되었습니다</h2>
-    <p>관리자 확인 후 현장 목록에 노출됩니다.<br><span style="font-size:13px;color:#aaa">(시제품 화면이라 실제 저장은 로그인 기능 연결 후 작동합니다)</span></p>
-  </div>`;
+  const icon = ok ? '<svg viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>'
+                  : '<svg viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v6M12 16.5v.01"/></svg>';
+  document.getElementById('regContent').innerHTML=`<div class="reg-done"><div class="check">${icon}</div><h2>${title}</h2><p>${msg.replace(/\n/g,'<br>')}</p></div>`;
   document.getElementById('regBar').style.width='100%';
   document.getElementById('regStep').textContent='완료';
   document.getElementById('regFooter').innerHTML='<button class="reg-btn-next" onclick="closeRegister()">홈으로 돌아가기</button>';
