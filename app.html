@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>분양톡</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d686eda8e41e10cb124de30d34614f0&autoload=false"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --charcoal:#1E1E1E; --orange:#FF6B2B; --orange-soft:#fff1ea; --gray:#64748B;
+    --line:#f0f0f0; --bg:#f5f5f7; --touch:#fafafa;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+    background:#000; color:#222; word-break:keep-all;
+  }
+  .phone{
+    max-width:480px; margin:0 auto; min-height:100vh; background:var(--bg);
+    display:flex; flex-direction:column; position:relative; box-shadow:0 0 40px rgba(0,0,0,.25);
+    overflow-x:hidden;
+  }
+  /* ===== 상단 앱바 ===== */
+  .appbar{
+    background:var(--charcoal); color:#fff; padding:15px 18px 0;
+    position:sticky; top:0; z-index:30;
+  }
+  .appbar-top{ display:flex; align-items:center; gap:12px; }
+  .logo{ font-size:23px; font-weight:800; letter-spacing:-.5px; }
+  .logo .dot{ color:var(--orange); }
+  .appbar .spacer{ flex:1; }
+  .icon-btn{
+    width:42px; height:42px; border:none; background:transparent; color:#fff;
+    cursor:pointer; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:active{ background:#333; }
+  .icon-btn svg{ width:23px; height:23px; }
+  .searchbox{
+    width:100%; height:48px; border:none; border-radius:13px; padding:0 16px;
+    font-size:16px; background:#2c2c2c; color:#fff; margin:13px 0 16px;
+  }
+  .searchbox::placeholder{ color:#8a8a8a; }
+  /* ===== 지역 탭 ===== */
+  .regiontabs{
+    display:flex; gap:8px; overflow-x:auto; padding:13px 16px;
+    background:#fff; position:sticky; top:138px; z-index:20; border-bottom:1px solid var(--line);
+    scrollbar-width:none;
+  }
+  .regiontabs::-webkit-scrollbar{ display:none; }
+  .rtab{
+    flex:0 0 auto; padding:9px 17px; border-radius:21px; border:1.5px solid #e4e4e7;
+    background:#fff; color:#555; font-size:15px; font-weight:600; cursor:pointer; white-space:nowrap;
+    transition:.15s;
+  }
+  .rtab.active{ background:var(--orange); border-color:var(--orange); color:#fff;
+    box-shadow:0 3px 10px rgba(255,107,43,.35); }
+  /* ===== 카운트 바 ===== */
+  .countbar{ background:#fff; padding:13px 18px 5px; font-size:14px; color:#888; font-weight:600; }
+  .countbar b{ color:var(--orange); }
+  /* ===== 목록 ===== */
+  .list{ flex:1; background:#fff; padding-bottom:84px; }
+  .card{
+    display:flex; align-items:center; gap:14px; padding:15px 18px;
+    border-bottom:1px solid var(--line); cursor:pointer; animation:fadeUp .4s both;
+  }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  .card:active{ background:var(--touch); }
+  .thumb{
+    width:60px; height:60px; border-radius:16px; flex:0 0 auto; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#ff8a5c,#FF6B2B);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+  }
+  .thumb svg{ width:30px; height:30px; }
+  .thumb img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .cbody{ flex:1; min-width:0; }
+  .ctitle-row{ display:flex; align-items:center; gap:6px; }
+  .ctitle{ font-size:17px; font-weight:700; color:#1a1a1a; line-height:1.35;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .badge{ flex:0 0 auto; font-size:11px; font-weight:800; padding:2px 7px; border-radius:6px; color:#fff; }
+  .b-new{ background:#16A34A; } .b-hot{ background:#EF4444; }
+  .b-ad{ background:#2563EB; } .b-big{ background:#EAB308; color:#3a2e00; }
+  .cmeta{ display:flex; align-items:center; gap:7px; margin-top:8px; flex-wrap:wrap; }
+  .fee{ background:var(--orange-soft); color:var(--orange); font-size:14px; font-weight:800;
+    padding:4px 10px; border-radius:8px; }
+  .type-chip{ font-size:12px; color:#888; background:#f1f1f3; padding:3px 8px; border-radius:7px; font-weight:600; }
+  .role{ font-size:13px; color:var(--gray); font-weight:600; }
+  .cright{ text-align:right; flex:0 0 auto; }
+  .region{ font-size:13px; color:#9a9a9a; }
+  .empty{ text-align:center; color:#999; padding:60px 20px; font-size:16px; line-height:1.6; }
+  /* ===== 스켈레톤 ===== */
+  .skel-card{ display:flex; gap:14px; padding:15px 18px; border-bottom:1px solid var(--line); }
+  .skel{ background:linear-gradient(90deg,#eee 25%,#f6f6f6 37%,#eee 63%); background-size:400% 100%;
+    animation:shimmer 1.3s infinite linear; border-radius:8px; }
+  @keyframes shimmer{ 0%{background-position:100% 0;} 100%{background-position:-100% 0;} }
+  /* ===== 하단 탭바 ===== */
+  .tabbar{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px; background:#fff; border-top:1px solid #ececec;
+    display:flex; z-index:40; padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -2px 12px rgba(0,0,0,.04);
+  }
+  .tab{
+    flex:1; border:none; background:transparent; padding:10px 0 12px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:3px; color:#b0b0b0; font-size:11px; font-weight:600;
+  }
+  .tab svg{ width:24px; height:24px; }
+  .tab.active{ color:var(--orange); }
+  /* ===== 상세 바텀시트 ===== */
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:none; opacity:0; transition:opacity .25s; }
+  .overlay.show{ display:block; opacity:1; }
+  .sheet{
+    position:fixed; left:50%; transform:translateX(-50%) translateY(100%);
+    bottom:0; width:100%; max-width:480px; background:#fff; z-index:60;
+    border-radius:24px 24px 0 0; max-height:92vh; overflow-y:auto; transition:transform .3s cubic-bezier(.2,.8,.2,1);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .sheet.show{ transform:translateX(-50%) translateY(0); }
+  .sheet-hero{ position:relative; height:220px; background:linear-gradient(135deg,#ff8a5c,#FF6B2B);
+    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .sheet-hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .sheet-hero .ph svg{ width:70px; height:70px; }
+  .hero-grad{ position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,0) 55%); }
+  .hero-text{ position:absolute; left:20px; right:20px; bottom:16px; color:#fff; }
+  .hero-text h2{ margin:0; font-size:22px; font-weight:800; line-height:1.35; text-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .hero-text .sub{ margin-top:6px; font-size:15px; opacity:.95; }
+  .sheet-grab{ position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    width:44px; height:5px; background:rgba(255,255,255,.7); border-radius:3px; z-index:2; }
+  .sheet-body{ padding:18px 20px 16px; }
+  .badge-row{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .infobox{ background:var(--bg); border-radius:16px; padding:4px 16px; }
+  .inforow{ display:flex; padding:13px 0; border-bottom:1px solid #ececec; font-size:16px; }
+  .inforow:last-child{ border-bottom:none; }
+  .infokey{ width:84px; color:var(--gray); font-weight:600; flex:0 0 auto; }
+  .infoval{ flex:1; color:#222; font-weight:700; }
+  .desc-title{ font-size:15px; font-weight:700; color:#888; margin:20px 0 8px; }
+  .sheet-desc{ font-size:16px; line-height:1.75; color:#333; white-space:pre-wrap; }
+  .actions{
+    position:sticky; bottom:0; background:#fff; padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+    display:flex; gap:10px; border-top:1px solid var(--line);
+  }
+  .btn{ flex:1; height:58px; border:none; border-radius:15px; font-size:18px; font-weight:800;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; }
+  .btn svg{ width:21px; height:21px; }
+  .btn-call{ background:var(--orange); color:#fff; box-shadow:0 4px 14px rgba(255,107,43,.4); }
+  .btn-kakao{ background:#FEE500; color:#3A1D1D; }
+  .btn.off{ background:#e5e5e5; color:#999; pointer-events:none; box-shadow:none; }
+  /* 토스트 */
+  #toast{ position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.85);
+    color:#fff; padding:12px 20px; border-radius:24px; font-size:15px; z-index:99; max-width:300px;
+    text-align:center; opacity:0; transition:opacity .3s; pointer-events:none; }
+  /* ===== 현장 등록 화면 ===== */
+  .reg-screen{ position:fixed; inset:0; left:50%; transform:translateX(-50%) translateY(100%);
+    width:100%; max-width:480px; background:#fff; z-index:70; display:flex; flex-direction:column;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1); }
+  .reg-screen.show{ transform:translateX(-50%) translateY(0); }
+  .reg-header{ display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); }
+  .reg-back{ width:40px; height:40px; border:none; background:transparent; font-size:32px; color:#333;
+    cursor:pointer; line-height:1; border-radius:10px; padding:0; }
+  .reg-back:active{ background:#f2f2f2; }
+  .reg-progress{ flex:1; height:8px; background:#eee; border-radius:4px; overflow:hidden; }
+  .reg-bar{ height:100%; width:20%; background:var(--orange); border-radius:4px; transition:width .3s; }
+  .reg-stepnum{ font-size:14px; font-weight:700; color:#888; min-width:40px; text-align:right; }
+  .reg-scroll{ flex:1; overflow-y:auto; padding:24px 20px 20px; }
+  .reg-title{ font-size:24px; font-weight:800; margin:0 0 6px; }
+  .reg-sub{ font-size:15px; color:var(--gray); margin:0 0 24px; line-height:1.5; }
+  .reg-field{ margin-bottom:22px; }
+  .reg-label{ display:block; font-size:16px; font-weight:700; margin-bottom:10px; }
+  .reg-label .req{ color:var(--orange); }
+  .reg-input, .reg-select, .reg-textarea{ width:100%; border:2px solid #e2e2e7; border-radius:13px;
+    padding:0 15px; height:54px; font-size:17px; font-family:inherit; background:#fff; color:#222; }
+  .reg-textarea{ height:140px; padding:14px 15px; line-height:1.6; resize:none; }
+  .reg-input:focus, .reg-select:focus, .reg-textarea:focus{ outline:none; border-color:var(--orange); }
+  .chips{ display:flex; flex-wrap:wrap; gap:9px; }
+  .chip{ padding:11px 18px; border:2px solid #e2e2e7; border-radius:24px; background:#fff; font-size:16px;
+    font-weight:600; color:#555; cursor:pointer; }
+  .chip.on{ background:var(--orange-soft); border-color:var(--orange); color:var(--orange); }
+  .reg-footer{ display:flex; gap:10px; padding:14px 18px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); }
+  .reg-btn-prev{ flex:0 0 auto; padding:0 22px; height:56px; border:2px solid #ddd; background:#fff;
+    border-radius:15px; font-size:17px; font-weight:700; color:#666; cursor:pointer; }
+  .reg-btn-next{ flex:1; height:56px; border:none; background:var(--orange); color:#fff; border-radius:15px;
+    font-size:18px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(255,107,43,.4); }
+  .reg-btn-next:disabled{ background:#e0e0e0; color:#999; box-shadow:none; cursor:default; }
+  .sum-row{ display:flex; padding:13px 0; border-bottom:1px solid #eee; font-size:16px; }
+  .sum-row:last-child{ border:none; }
+  .sum-k{ width:84px; color:var(--gray); font-weight:600; flex:0 0 auto; }
+  .sum-v{ flex:1; font-weight:700; color:#222; }
+  .reg-done{ text-align:center; padding:50px 30px; }
+  .reg-done .check{ width:88px; height:88px; border-radius:50%; background:var(--orange-soft);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 24px; }
+  .reg-done .check svg{ width:46px; height:46px; }
+  .reg-done h2{ font-size:23px; margin:0 0 12px; }
+  .reg-done p{ font-size:16px; color:var(--gray); line-height:1.65; margin:0; }
+  /* ===== 지도 화면 ===== */
+  .map-screen{ position:fixed; inset:0; left:50%; transform:translateX(-50%) translateY(100%);
+    width:100%; max-width:480px; background:#fff; z-index:45; display:flex; flex-direction:column;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1); }
+  .map-screen.show{ transform:translateX(-50%) translateY(0); }
+  .map-title{ flex:1; font-size:18px; font-weight:800; }
+  .map-box{ flex:1; background:#e8e8e8; }
+  .map-box .pin{ width:22px; height:22px; border-radius:50% 50% 50% 0; background:var(--orange);
+    border:2.5px solid #fff; transform:rotate(-45deg); box-shadow:0 2px 5px rgba(0,0,0,.35); }
+  /* ===== 로그인 / 내정보 화면 ===== */
+  .info-screen{ position:fixed; inset:0; left:50%; transform:translateX(-50%) translateY(100%);
+    width:100%; max-width:480px; background:var(--bg); z-index:48; display:flex; flex-direction:column;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1); }
+  .info-screen.show{ transform:translateX(-50%) translateY(0); }
+  .info-screen .reg-header{ background:#fff; }
+  .info-body{ flex:1; overflow-y:auto; }
+  .profile-top{ background:#fff; padding:34px 20px; text-align:center; border-bottom:1px solid var(--line); }
+  .profile-avatar{ width:84px; height:84px; border-radius:50%; background:var(--orange-soft);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+  .profile-avatar svg{ width:44px; height:44px; }
+  .profile-name{ font-size:22px; font-weight:800; }
+  .profile-id{ font-size:15px; color:var(--gray); margin-top:6px; }
+  .menu-list{ background:#fff; margin-top:12px; }
+  .menu-item{ width:100%; border:none; background:#fff; border-bottom:1px solid var(--line); padding:20px;
+    font-size:17px; font-weight:600; color:#222; text-align:left; cursor:pointer; display:flex; align-items:center; }
+  .menu-item:active{ background:var(--touch); }
+  .menu-item.danger{ color:#EF4444; justify-content:center; }
+  .menu-arrow{ margin-left:auto; color:#ccc; font-size:22px; }
+  .login-wrap{ padding:40px 24px; }
+  .login-logo{ text-align:center; font-size:30px; font-weight:800; margin-bottom:6px; }
+  .login-logo span{ color:var(--orange); }
+  .login-sub{ text-align:center; color:var(--gray); margin:0 0 28px; font-size:15px; }
+  .login-msg{ min-height:22px; font-size:14px; margin:4px 0 8px; }
+  .login-foot{ text-align:center; color:#999; font-size:14px; margin-top:20px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="appbar">
+    <div class="appbar-top">
+      <span class="logo">분양<span class="dot">톡</span></span>
+      <span class="spacer"></span>
+      <button class="icon-btn" title="알림" onclick="toast('알림 기능은 준비 중입니다')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+    </div>
+    <input id="search" class="searchbox" placeholder="현장명·지역 검색" oninput="render()" />
+  </div>
+
+  <div id="regiontabs" class="regiontabs"></div>
+  <div id="countbar" class="countbar"></div>
+
+  <div id="list" class="list"></div>
+
+  <div class="tabbar">
+    <button class="tab active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>홈
+    </button>
+    <button class="tab" onclick="openMap()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>지도
+    </button>
+    <button class="tab" onclick="openRegister()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>등록
+    </button>
+    <button class="tab" onclick="openFav()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-8.5C.5 9 2 5 6 5c2 0 3.5 1.5 4 2.5C10.5 6.5 12 5 14 5c4 0 5.5 4 3.5 7.5C19 16.5 12 21 12 21z"/></svg>관심
+    </button>
+    <button class="tab" onclick="openInfo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>내정보
+    </button>
+  </div>
+</div>
+
+<!-- 로그인 / 내정보 화면 -->
+<div id="infoScreen" class="info-screen">
+  <div class="reg-header">
+    <button class="reg-back" onclick="closeInfo()" title="닫기">&#8249;</button>
+    <div class="map-title" id="infoTitle">내 정보</div>
+  </div>
+  <div class="info-body" id="infoBody"></div>
+</div>
+
+<!-- 지도 화면 -->
+<div id="mapScreen" class="map-screen">
+  <div class="reg-header">
+    <button class="reg-back" onclick="closeMap()" title="닫기">&#8249;</button>
+    <div class="map-title">현장 지도</div>
+    <span id="mapCount" class="reg-stepnum"></span>
+  </div>
+  <div id="mapBox" class="map-box"></div>
+</div>
+
+<!-- 현장 등록 화면 -->
+<div id="regScreen" class="reg-screen">
+  <div class="reg-header">
+    <button class="reg-back" onclick="closeRegister()" title="닫기">&#8249;</button>
+    <div class="reg-progress"><div id="regBar" class="reg-bar"></div></div>
+    <span id="regStep" class="reg-stepnum">1/5</span>
+  </div>
+  <div class="reg-scroll" id="regScroll">
+    <h2 id="regTitle" class="reg-title"></h2>
+    <p id="regSub" class="reg-sub"></p>
+    <div id="regContent"></div>
+  </div>
+  <div class="reg-footer" id="regFooter">
+    <button id="regPrev" class="reg-btn-prev" onclick="regPrev()" style="display:none">이전</button>
+    <button id="regNext" class="reg-btn-next" onclick="regNext()">다음</button>
+  </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeSheet()"></div>
+<div id="sheet" class="sheet"></div>
+<div id="toast"></div>
+
+<script>
+const SB_URL = 'https://prjmiekiehvveklbqxjt.supabase.co';
+const SB_KEY = 'sb_publishable__4jfHSNP9Cifbtyvt-dI6Q_uiHjjZEo';
+let LISTINGS = [], activeRegion = '전체';
+const HOUSE = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>';
+const PHONE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg>';
+const CHAT_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.5 1.5 4.8 3.8 6.2-.2.8-.7 2.2-.8 2.6 0 .2.1.4.4.3.3-.1 2.4-1.6 3.3-2.2.9.2 1.9.3 2.9.3 5.5 0 10-3.6 10-8s-4.5-8.5-10-8.5z"/></svg>';
+
+function skeleton(){
+  let s='';
+  for(let i=0;i<6;i++){ s+=`<div class="skel-card">
+    <div class="skel" style="width:60px;height:60px;border-radius:16px;flex:0 0 auto"></div>
+    <div style="flex:1">
+      <div class="skel" style="width:70%;height:16px;margin-bottom:12px"></div>
+      <div class="skel" style="width:40%;height:13px"></div>
+    </div></div>`; }
+  return s;
+}
+
+async function load(){
+  document.getElementById('list').innerHTML = skeleton();
+  try{
+    const url = SB_URL + '/rest/v1/listings?select=id,title,region,type,fee,role,welfare,career,pay,img,images,badges,phone,kakao_url,description,created_at&is_active=eq.true&order=created_at.desc';
+    const res = await fetch(url, { headers:{ apikey:SB_KEY } });
+    LISTINGS = await res.json();
+    buildTabs(); render();
+  }catch(e){
+    document.getElementById('list').innerHTML = '<div class="empty">현장을 불러오지 못했습니다.<br>잠시 후 다시 시도해주세요.</div>';
+  }
+}
+
+function isNew(iso){ return iso && (Date.now()-new Date(iso))/86400000 < 2; }
+function badgeHtml(l){
+  let out='';
+  if(isNew(l.created_at)) out+='<span class="badge b-new">NEW</span>';
+  (l.badges||[]).forEach(b=>{
+    if(b==='HOT') out+='<span class="badge b-hot">HOT</span>';
+    else if(b==='대박') out+='<span class="badge b-big">대박</span>';
+    else if(b==='AD') out+='<span class="badge b-ad">AD</span>';
+  });
+  return out;
+}
+
+function buildTabs(){
+  const c={}; LISTINGS.forEach(l=>{const r=l.region||'기타'; c[r]=(c[r]||0)+1;});
+  const regions=Object.keys(c).sort((a,b)=>c[b]-c[a]);
+  document.getElementById('regiontabs').innerHTML=['전체',...regions].map(r=>
+    `<button class="rtab${r===activeRegion?' active':''}" onclick="pickRegion('${r}')">${r}</button>`).join('');
+}
+function pickRegion(r){ activeRegion=r; buildTabs(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function timeAgo(iso){ if(!iso)return''; const d=(Date.now()-new Date(iso))/86400000;
+  if(d<1)return'오늘'; if(d<2)return'어제'; if(d<30)return Math.floor(d)+'일 전'; return Math.floor(d/30)+'개월 전'; }
+function img1(l){ return (l.images&&l.images.length)?l.images[0]:(l.img||''); }
+
+function cardHtml(l,i){
+  const im=img1(l);
+  const thumb=`<div class="thumb">${HOUSE}${im?`<img src="${im}" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`;
+  const fee=(l.fee&&l.fee.trim())?l.fee.trim():'수수료 문의';
+  const role=(l.role&&l.role.length)?`<span class="role">${l.role.join('/')}</span>`:'';
+  const type=l.type?`<span class="type-chip">${l.type}</span>`:'';
+  return `<div class="card" style="animation-delay:${Math.min(i*40,400)}ms" onclick="openSheet('${l.id}')">
+      ${thumb}
+      <div class="cbody">
+        <div class="ctitle-row"><span class="ctitle">${l.title||'(제목 없음)'}</span>${badgeHtml(l)}</div>
+        <div class="cmeta"><span class="fee">${fee}</span>${type}${role}</div>
+      </div>
+      <div class="cright"><div class="region">${l.region||''}</div><div class="region" style="margin-top:7px">${timeAgo(l.created_at)}</div></div>
+    </div>`;
+}
+function render(){
+  const kw=document.getElementById('search').value.trim();
+  let arr=LISTINGS.filter(l=>{
+    if(activeRegion!=='전체'&&(l.region||'기타')!==activeRegion)return false;
+    if(kw){const t=(l.title||'')+(l.region||'')+(l.type||''); if(!t.includes(kw))return false;}
+    return true;
+  });
+  document.getElementById('countbar').innerHTML = arr.length ? `${activeRegion==='전체'?'전국':activeRegion} <b>${arr.length}</b>개 현장` : '';
+  const list=document.getElementById('list');
+  if(!arr.length){ list.innerHTML='<div class="empty">조건에 맞는 현장이 없습니다.<br>다른 지역이나 검색어로 찾아보세요.</div>'; return; }
+  list.innerHTML=arr.map((l,i)=>cardHtml(l,i)).join('');
+}
+
+function openSheet(id){
+  const l=LISTINGS.find(x=>String(x.id)===String(id)); if(!l)return;
+  const im=img1(l);
+  const hero=`<div class="ph">${HOUSE}</div>${im?`<img src="${im}" onerror="this.remove()">`:''}`;
+  const rows=[['수수료',(l.fee&&l.fee.trim())||'문의'],['모집직종',(l.role&&l.role.length)?l.role.join(' / '):'-'],
+    ['경력',l.career||'무관'],['급여',l.pay||'-'],['복리후생',(l.welfare&&l.welfare.length)?l.welfare.join(', '):'-']]
+    .map(([k,v])=>`<div class="inforow"><span class="infokey">${k}</span><span class="infoval">${v}</span></div>`).join('');
+  const phone=(l.phone||'').trim(), kakao=(l.kakao_url||'').trim();
+  const callBtn=phone?`<a class="btn btn-call" href="tel:${phone}">${PHONE_ICON}전화하기</a>`:`<span class="btn off">${PHONE_ICON}전화번호 없음</span>`;
+  const kakaoBtn=kakao?`<a class="btn btn-kakao" href="${kakao}" target="_blank" rel="noopener">${CHAT_ICON}카카오톡 문의</a>`:`<span class="btn off">${CHAT_ICON}카카오 없음</span>`;
+  const bh=badgeHtml(l);
+  document.getElementById('sheet').innerHTML=`
+    <div class="sheet-grab"></div>
+    <div class="sheet-hero">${hero}<div class="hero-grad"></div>
+      <div class="hero-text"><h2>${l.title||''}</h2><div class="sub">${l.region||''} &middot; ${l.type||''}</div></div>
+    </div>
+    <div class="sheet-body">
+      ${bh?`<div class="badge-row">${bh}</div>`:''}
+      <div class="infobox">${rows}</div>
+      <div class="desc-title">현장 소개</div>
+      <div class="sheet-desc">${l.description||'등록된 상세 설명이 없습니다.'}</div>
+    </div>
+    <div class="actions">${callBtn}${kakaoBtn}</div>`;
+  document.getElementById('overlay').classList.add('show');
+  const s=document.getElementById('sheet'); s.classList.add('show'); s.scrollTop=0;
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('sheet').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+let toastT;
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.style.opacity='1';
+  clearTimeout(toastT); toastT=setTimeout(()=>el.style.opacity='0',1800); }
+
+// ===== 현장 등록 (5단계 마법사 · 시제품) =====
+const REG_REGIONS=['서울','경기남부','경기북부','인천','부산','울산','대구','경상도','대전','세종','충청도','광주','전라도','강원도','제주도'];
+const REG_TYPES=['아파트','오피스텔','상가','도시형생활주택','타운하우스','기타'];
+const REG_ROLES=['본부장','팀장','팀원','사이드','각개'];
+const REG_PAY=['계약수수료','기본급+인센'];
+const REG_CAREER=['경력무관','3개월이상','6개월이상','12개월이상'];
+const REG_WELFARE=['일비','숙소제공','숙소비지원','광고비지원','팀정착금','잔금유예','선납할인','페이백'];
+let R={}, regStep=1; const REG_TOTAL=5;
+const REG_OK={1:()=>R.title&&R.region&&R.type&&R.company,2:()=>R.role.length&&R.pay,3:()=>R.title_display&&R.description,4:()=>R.phone,5:()=>true};
+
+function openRegister(){
+  R={role:[],welfare:[],career:'경력무관'}; regStep=1;
+  document.getElementById('regFooter').innerHTML='<button id="regPrev" class="reg-btn-prev" onclick="regPrev()" style="display:none">이전</button><button id="regNext" class="reg-btn-next" onclick="regNext()">다음</button>';
+  renderReg();
+  document.getElementById('regScreen').classList.add('show'); document.body.style.overflow='hidden';
+}
+function closeRegister(){ document.getElementById('regScreen').classList.remove('show'); document.body.style.overflow=''; }
+
+function selHtml(id,opts,val,ph){
+  return `<select class="reg-select" onchange="R.${id}=this.value;regValidate()"><option value="">${ph}</option>`+
+    opts.map(o=>`<option${val===o?' selected':''}>${o}</option>`).join('')+`</select>`;
+}
+function chipHtml(arr,sel,fn){
+  return `<div class="chips">`+arr.map(o=>`<button type="button" class="chip${sel.includes(o)?' on':''}" onclick="${fn}('${o}')">${o}</button>`).join('')+`</div>`;
+}
+function renderReg(){
+  const steps={
+    1:{t:'기본 정보',s:'현장의 기본 정보를 입력해주세요.',html:`
+      <div class="reg-field"><label class="reg-label">현장명 <span class="req">*</span></label>
+        <input class="reg-input" value="${R.title||''}" placeholder="예: 힐스테이트 구월 아트파크" oninput="R.title=this.value;regValidate()"></div>
+      <div class="reg-field"><label class="reg-label">지역 <span class="req">*</span></label>${selHtml('region',REG_REGIONS,R.region,'지역 선택')}</div>
+      <div class="reg-field"><label class="reg-label">업종 <span class="req">*</span></label>${selHtml('type',REG_TYPES,R.type,'업종 선택')}</div>
+      <div class="reg-field"><label class="reg-label">회사명 <span class="req">*</span></label>
+        <input class="reg-input" value="${R.company||''}" placeholder="예: (주)크리사온" oninput="R.company=this.value;regValidate()"></div>`},
+    2:{t:'모집 조건',s:'어떤 분을, 어떤 조건으로 모집하나요?',html:`
+      <div class="reg-field"><label class="reg-label">모집 직종 <span class="req">*</span> <span style="font-size:13px;color:#999;font-weight:500">(여러 개 가능)</span></label>${chipHtml(REG_ROLES,R.role,'toggleRole')}</div>
+      <div class="reg-field"><label class="reg-label">급여 형태 <span class="req">*</span></label>${selHtml('pay',REG_PAY,R.pay,'선택')}</div>
+      <div class="reg-field"><label class="reg-label">팀 수수료</label>
+        <input class="reg-input" value="${R.fee||''}" placeholder="예: 1,200만원 또는 협의" oninput="R.fee=this.value"></div>
+      <div class="reg-field"><label class="reg-label">경력 조건</label>${selHtml('career',REG_CAREER,R.career,'선택')}</div>`},
+    3:{t:'복리후생 · 소개',s:'혜택과 현장 소개를 적어주세요.',html:`
+      <div class="reg-field"><label class="reg-label">복리후생 <span style="font-size:13px;color:#999;font-weight:500">(여러 개 가능)</span></label>${chipHtml(REG_WELFARE,R.welfare,'toggleWelfare')}</div>
+      <div class="reg-field"><label class="reg-label">소개 제목 <span class="req">*</span></label>
+        <input class="reg-input" value="${R.title_display||''}" placeholder="예: 팀수수료 1800만원! 광고비 지원" oninput="R.title_display=this.value;regValidate()"></div>
+      <div class="reg-field"><label class="reg-label">상세 내용 <span class="req">*</span></label>
+        <textarea class="reg-textarea" placeholder="현장 특징, 세대수, 수수료 상세, 혜택 등을 적어주세요." oninput="R.description=this.value;regValidate()">${R.description||''}</textarea></div>`},
+    4:{t:'연락처',s:'지원자가 연락할 방법을 입력해주세요.',html:`
+      <div class="reg-field"><label class="reg-label">연락처 <span class="req">*</span></label>
+        <input class="reg-input" type="tel" value="${R.phone||''}" placeholder="010-0000-0000" oninput="R.phone=this.value;regValidate()"></div>
+      <div class="reg-field"><label class="reg-label">카카오 오픈채팅 링크</label>
+        <input class="reg-input" value="${R.kakao_url||''}" placeholder="https://open.kakao.com/..." oninput="R.kakao_url=this.value"></div>`},
+    5:{t:'입력 내용 확인',s:'아래 내용으로 등록을 신청합니다.',html:(function(){
+      const rows=[['현장명',R.title],['지역',R.region],['업종',R.type],['회사명',R.company],
+        ['모집직종',(R.role||[]).join(', ')],['급여형태',R.pay],['수수료',R.fee||'협의'],['경력',R.career],
+        ['복리후생',(R.welfare||[]).join(', ')||'-'],['소개제목',R.title_display],['연락처',R.phone],['카카오',R.kakao_url||'-']];
+      return `<div class="infobox" style="padding:4px 16px">`+rows.map(([k,v])=>`<div class="sum-row"><span class="sum-k">${k}</span><span class="sum-v">${v||'-'}</span></div>`).join('')+`</div>`;
+    })()}
+  };
+  const st=steps[regStep];
+  document.getElementById('regTitle').textContent=st.t;
+  document.getElementById('regSub').textContent=st.s;
+  document.getElementById('regContent').innerHTML=st.html;
+  document.getElementById('regBar').style.width=(regStep/REG_TOTAL*100)+'%';
+  document.getElementById('regStep').textContent=regStep+'/'+REG_TOTAL;
+  document.getElementById('regPrev').style.display=regStep>1?'block':'none';
+  document.getElementById('regNext').textContent=regStep===REG_TOTAL?'등록 신청하기':'다음';
+  document.getElementById('regScroll').scrollTop=0;
+  regValidate();
+}
+function regValidate(){ document.getElementById('regNext').disabled=!REG_OK[regStep](); }
+function toggleRole(v){ const i=R.role.indexOf(v); i<0?R.role.push(v):R.role.splice(i,1); renderReg(); }
+function toggleWelfare(v){ const i=R.welfare.indexOf(v); i<0?R.welfare.push(v):R.welfare.splice(i,1); renderReg(); }
+function regPrev(){ if(regStep>1){ regStep--; renderReg(); } }
+function regNext(){ if(document.getElementById('regNext').disabled) return;
+  if(regStep<REG_TOTAL){ regStep++; renderReg(); } else { regSubmit(); } }
+function regSubmit(){
+  document.getElementById('regTitle').textContent='';
+  document.getElementById('regSub').textContent='';
+  document.getElementById('regContent').innerHTML=`<div class="reg-done">
+    <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+    <h2>등록 신청이 접수되었습니다</h2>
+    <p>관리자 확인 후 현장 목록에 노출됩니다.<br><span style="font-size:13px;color:#aaa">(시제품 화면이라 실제 저장은 로그인 기능 연결 후 작동합니다)</span></p>
+  </div>`;
+  document.getElementById('regBar').style.width='100%';
+  document.getElementById('regStep').textContent='완료';
+  document.getElementById('regFooter').innerHTML='<button class="reg-btn-next" onclick="closeRegister()">홈으로 돌아가기</button>';
+}
+
+// ===== 지도 화면 (카카오맵 우선 · 키 도메인 제한 시 무료지도로 자동 대체) =====
+const REGION_COORDS={ '서울':[37.5665,126.978],'경기남부':[37.26,127.03],'경기북부':[37.74,127.05],
+  '인천':[37.456,126.705],'부산':[35.18,129.075],'울산':[35.538,129.311],'대구':[35.871,128.601],
+  '경상도':[36.2,128.4],'대전':[36.35,127.385],'세종':[36.48,127.289],'충청도':[36.64,127.49],
+  '광주':[35.16,126.853],'전라도':[35.82,127.11],'강원도':[37.75,128.2],'제주도':[33.5,126.531] };
+function jitter(idx,c){ const s=idx+1; return [c[0]+(((s*73)%100)/100-0.5)*0.22, c[1]+(((s*149)%100)/100-0.5)*0.22]; }
+let mapMode=null;
+function openMap(){
+  document.getElementById('mapScreen').classList.add('show'); document.body.style.overflow='hidden';
+  if(mapMode===null){
+    if(window.kakao && window.kakao.maps){ mapMode='kakao'; kakao.maps.load(initKakao); }
+    else { mapMode='leaflet'; initLeaflet(); }
+    return;
+  }
+  if(mapMode==='kakao'){ setTimeout(()=>{ if(_kmap){ _kmap.relayout(); drawKakao(); } },320); }
+  else { drawLeaflet(); setTimeout(()=>_lmap.invalidateSize(),320); }
+}
+function closeMap(){ document.getElementById('mapScreen').classList.remove('show'); document.body.style.overflow=''; }
+
+// --- 카카오맵 (웹과 동일한 키 재사용) ---
+let _kmap,_kmarkers=[];
+const KPIN='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 28 38"><path d="M14 0C6.27 0 0 6.27 0 14c0 9.8 14 24 14 24S28 23.8 28 14C28 6.27 21.73 0 14 0z" fill="#FF6B2B"/><circle cx="14" cy="14" r="6" fill="white"/></svg>');
+function initKakao(){
+  _kmap=new kakao.maps.Map(document.getElementById('mapBox'),{center:new kakao.maps.LatLng(36.5,127.8),level:13});
+  drawKakao(); setTimeout(()=>_kmap.relayout(),320);
+}
+function drawKakao(){
+  _kmarkers.forEach(m=>m.setMap(null)); _kmarkers=[];
+  const img=new kakao.maps.MarkerImage(KPIN,new kakao.maps.Size(26,34),{offset:new kakao.maps.Point(13,34)});
+  const b=new kakao.maps.LatLngBounds(); let n=0;
+  LISTINGS.forEach((l,idx)=>{ const c=REGION_COORDS[l.region]; if(!c)return;
+    const p=jitter(idx,c); const pos=new kakao.maps.LatLng(p[0],p[1]);
+    const m=new kakao.maps.Marker({position:pos,image:img,map:_kmap});
+    kakao.maps.event.addListener(m,'click',()=>openSheet(l.id)); _kmarkers.push(m); b.extend(pos); n++; });
+  if(n>0) _kmap.setBounds(b);
+  document.getElementById('mapCount').textContent=n+'곳';
+}
+
+// --- 무료지도 (대체용) ---
+let _lmap,_llayer;
+function initLeaflet(){
+  _lmap=L.map('mapBox',{zoomControl:true,attributionControl:false}).setView([36.5,127.8],7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(_lmap);
+  _llayer=L.layerGroup().addTo(_lmap);
+  drawLeaflet(); setTimeout(()=>_lmap.invalidateSize(),320);
+}
+function drawLeaflet(){
+  _llayer.clearLayers(); let n=0;
+  const pinIcon=L.divIcon({className:'',html:'<div class="pin"></div>',iconSize:[22,22],iconAnchor:[11,22]});
+  LISTINGS.forEach((l,idx)=>{ const c=REGION_COORDS[l.region]; if(!c)return;
+    const p=jitter(idx,c); const m=L.marker(p,{icon:pinIcon}).addTo(_llayer);
+    m.on('click',()=>openSheet(l.id)); n++; });
+  document.getElementById('mapCount').textContent=n+'곳';
+}
+
+// ===== 로그인 / 내정보 / 관심현장 (실제 Supabase 인증) =====
+let _sb=null;
+function sb(){ if(!_sb && window.supabase) _sb=window.supabase.createClient(SB_URL,SB_KEY); return _sb; }
+function openInfo(){ document.getElementById('infoScreen').classList.add('show'); document.body.style.overflow='hidden'; renderInfo('profile'); }
+function openFav(){ document.getElementById('infoScreen').classList.add('show'); document.body.style.overflow='hidden'; renderInfo('fav'); }
+function closeInfo(){ document.getElementById('infoScreen').classList.remove('show'); document.body.style.overflow=''; }
+
+async function renderInfo(view){
+  const body=document.getElementById('infoBody'), title=document.getElementById('infoTitle');
+  body.innerHTML='<div class="loading">불러오는 중...</div>';
+  let user=null;
+  try{ const r=await sb().auth.getUser(); user=r.data&&r.data.user; }catch(e){}
+  if(!user){ title.textContent='로그인'; body.innerHTML=loginForm(); return; }
+  const nick=(user.user_metadata&&(user.user_metadata.nickname||user.user_metadata.name))||'회원';
+  const idname=(user.email||'').replace('@bunyangtok.com','');
+  if(view==='fav'){
+    title.textContent='관심현장';
+    let favIds=[];
+    try{ const r=await sb().from('favorites').select('listing_id').eq('user_id',user.id); favIds=(r.data||[]).map(x=>String(x.listing_id)); }catch(e){}
+    const favs=LISTINGS.filter(l=>favIds.includes(String(l.id)));
+    body.innerHTML = favs.length ? `<div style="background:#fff">${favs.map((l,i)=>cardHtml(l,i)).join('')}</div>`
+      : '<div class="empty">아직 저장한 관심현장이 없습니다.<br>현장 상세에서 하트를 눌러 저장하세요.</div>';
+    return;
+  }
+  title.textContent='내 정보';
+  body.innerHTML=`
+    <div class="profile-top">
+      <div class="profile-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6B2B" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+      <div class="profile-name">${nick}님</div>
+      <div class="profile-id">아이디 · ${idname}</div>
+    </div>
+    <div class="menu-list">
+      <button class="menu-item" onclick="openFav()">관심현장<span class="menu-arrow">&rsaquo;</span></button>
+      <button class="menu-item" onclick="toast('내 현장 관리는 곧 연결됩니다')">내 현장 관리<span class="menu-arrow">&rsaquo;</span></button>
+      <button class="menu-item danger" onclick="doLogout()">로그아웃</button>
+    </div>`;
+}
+function loginForm(){
+  return `<div class="login-wrap">
+    <div class="login-logo">분양<span>톡</span></div>
+    <p class="login-sub">아이디로 로그인하세요</p>
+    <div class="reg-field"><label class="reg-label">아이디</label><input id="loginId" class="reg-input" placeholder="아이디" autocomplete="username"></div>
+    <div class="reg-field"><label class="reg-label">비밀번호</label><input id="loginPw" type="password" class="reg-input" placeholder="비밀번호" autocomplete="current-password"></div>
+    <div id="loginMsg" class="login-msg"></div>
+    <button class="reg-btn-next" style="width:100%" onclick="doLogin()">로그인</button>
+    <p class="login-foot">계정이 없으세요? 웹사이트에서 회원가입 후 이용하세요.</p>
+  </div>`;
+}
+async function doLogin(){
+  const id=document.getElementById('loginId').value.trim();
+  const pw=document.getElementById('loginPw').value;
+  const msg=document.getElementById('loginMsg');
+  if(!id||!pw){ msg.style.color='#EF4444'; msg.textContent='아이디와 비밀번호를 입력해주세요.'; return; }
+  msg.style.color='#888'; msg.textContent='로그인 중...';
+  try{
+    const {error}=await sb().auth.signInWithPassword({email:id+'@bunyangtok.com',password:pw});
+    if(error){ msg.style.color='#EF4444'; msg.textContent='아이디 또는 비밀번호가 올바르지 않습니다.'; return; }
+    renderInfo('profile');
+  }catch(e){ msg.style.color='#EF4444'; msg.textContent='로그인 중 오류가 발생했습니다.'; }
+}
+async function doLogout(){ try{ await sb().auth.signOut(); }catch(e){} renderInfo('profile'); }
+
+load();
+</script>
+</body>
+</html>
