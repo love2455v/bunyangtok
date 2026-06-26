@@ -30,8 +30,9 @@
     position:sticky; top:0; z-index:30;
   }
   .appbar-top{ display:flex; align-items:center; gap:12px; }
-  .logo{ font-size:23px; font-weight:800; letter-spacing:-.5px; }
+  .logo{ font-size:23px; font-weight:800; letter-spacing:-.5px; display:flex; align-items:center; gap:9px; }
   .logo .dot{ color:var(--orange); }
+  .logo-mark{ width:32px; height:32px; border-radius:8px; flex:0 0 auto; }
   .appbar .spacer{ flex:1; }
   .icon-btn{
     width:42px; height:42px; border:none; background:transparent; color:#fff;
@@ -229,13 +230,47 @@
   .login-sub{ text-align:center; color:var(--gray); margin:0 0 28px; font-size:15px; }
   .login-msg{ min-height:22px; font-size:14px; margin:4px 0 8px; }
   .login-foot{ text-align:center; color:#999; font-size:14px; margin-top:20px; line-height:1.5; }
+  /* ===== 글자 크기 조절 버튼 (좌측 하단) ===== */
+  .font-size-btn{ position:fixed; left:max(14px,calc(50% - 226px)); bottom:78px; z-index:35;
+    width:52px; height:52px; border-radius:50%; background:#2b2b2b; color:#fff; border:2px solid #4a4a4a;
+    box-shadow:0 4px 16px rgba(0,0,0,.3); cursor:pointer; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; line-height:1; padding:0; font-family:inherit; }
+  .font-size-btn:active{ transform:scale(.92); }
+  .fsb-icon{ font-size:18px; font-weight:800; }
+  .fsb-label{ font-size:9px; color:#bbb; margin-top:2px; }
+  /* ----- 크게 ----- */
+  body.fs-lg .ctitle{ font-size:18.5px; }
+  body.fs-lg .fee{ font-size:15px; }
+  body.fs-lg .role, body.fs-lg .region, body.fs-lg .type-chip{ font-size:14px; }
+  body.fs-lg .countbar{ font-size:15px; }
+  body.fs-lg .rtab{ font-size:16px; }
+  body.fs-lg .searchbox{ font-size:17px; }
+  body.fs-lg .sheet-title, body.fs-lg .hero-text h2{ font-size:23px; }
+  body.fs-lg .infokey, body.fs-lg .infoval, body.fs-lg .sheet-desc, body.fs-lg .sum-row{ font-size:17px; }
+  body.fs-lg .reg-input, body.fs-lg .reg-select, body.fs-lg .reg-textarea, body.fs-lg .chip{ font-size:18px; }
+  body.fs-lg .reg-label{ font-size:17px; }
+  body.fs-lg .menu-item{ font-size:18px; }
+  body.fs-lg .profile-name{ font-size:23px; }
+  /* ----- 더크게 ----- */
+  body.fs-xl .ctitle{ font-size:20px; }
+  body.fs-xl .fee{ font-size:16px; }
+  body.fs-xl .role, body.fs-xl .region, body.fs-xl .type-chip{ font-size:15px; }
+  body.fs-xl .countbar{ font-size:16px; }
+  body.fs-xl .rtab{ font-size:17px; }
+  body.fs-xl .searchbox{ font-size:18px; }
+  body.fs-xl .sheet-title, body.fs-xl .hero-text h2{ font-size:25px; }
+  body.fs-xl .infokey, body.fs-xl .infoval, body.fs-xl .sheet-desc, body.fs-xl .sum-row{ font-size:18.5px; }
+  body.fs-xl .reg-input, body.fs-xl .reg-select, body.fs-xl .reg-textarea, body.fs-xl .chip{ font-size:19px; }
+  body.fs-xl .reg-label{ font-size:18px; }
+  body.fs-xl .menu-item{ font-size:19px; }
+  body.fs-xl .profile-name{ font-size:25px; }
 </style>
 </head>
 <body>
 <div class="phone">
   <div class="appbar">
     <div class="appbar-top">
-      <span class="logo">분양<span class="dot">톡</span></span>
+      <span class="logo"><svg class="logo-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lbg" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FF9A4D"/><stop offset="0.55" stop-color="#FF6B2B"/><stop offset="1" stop-color="#EA4A14"/></linearGradient></defs><rect width="200" height="200" rx="46" fill="url(#lbg)"/><path d="M40 44 h120 a20 20 0 0 1 20 20 v54 a20 20 0 0 1 -20 20 H94 l-30 28 v-28 H40 a20 20 0 0 1 -20 -20 V64 a20 20 0 0 1 20 -20 Z" fill="#fff"/><g fill="#EA4A14"><rect x="52" y="86" width="24" height="38" rx="3"/><rect x="83" y="66" width="32" height="58" rx="3"/><rect x="122" y="80" width="26" height="44" rx="3"/></g></svg>분양<span class="dot">톡</span></span>
       <span class="spacer"></span>
       <button class="icon-btn" title="알림" onclick="toast('알림 기능은 준비 중입니다')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -304,6 +339,11 @@
     <button id="regNext" class="reg-btn-next" onclick="regNext()">다음</button>
   </div>
 </div>
+
+<!-- 글자 크기 조절 버튼 -->
+<button id="fontSizeBtn" class="font-size-btn" type="button" aria-label="글자 크기 조절" onclick="cycleFont()">
+  <span class="fsb-icon">가</span><span class="fsb-label" id="fsbLabel">보통</span>
+</button>
 
 <div id="overlay" class="overlay" onclick="closeSheet()"></div>
 <div id="sheet" class="sheet"></div>
@@ -633,6 +673,19 @@ async function doLogin(){
   }catch(e){ msg.style.color='#EF4444'; msg.textContent='로그인 중 오류가 발생했습니다.'; }
 }
 async function doLogout(){ try{ await sb().auth.signOut(); }catch(e){} renderInfo('profile'); }
+
+// ===== 글자 크기 조절 (보통/크게/더크게 · localStorage 저장) =====
+const FS_LEVELS=['','fs-lg','fs-xl'], FS_NAMES=['보통','크게','더크게'];
+let fsIdx=0; try{ fsIdx=parseInt(localStorage.getItem('fontScale')||'0',10)||0; }catch(e){}
+if(fsIdx<0||fsIdx>2) fsIdx=0;
+function applyFont(){
+  document.body.classList.remove('fs-lg','fs-xl');
+  if(FS_LEVELS[fsIdx]) document.body.classList.add(FS_LEVELS[fsIdx]);
+  const l=document.getElementById('fsbLabel'); if(l) l.textContent=FS_NAMES[fsIdx];
+  try{ localStorage.setItem('fontScale',String(fsIdx)); }catch(e){}
+}
+function cycleFont(){ fsIdx=(fsIdx+1)%FS_LEVELS.length; applyFont(); }
+applyFont();
 
 load();
 </script>
