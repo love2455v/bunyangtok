@@ -122,12 +122,12 @@
   .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:none; opacity:0; transition:opacity .25s; }
   .overlay.show{ display:block; opacity:1; }
   .sheet{
-    position:fixed; left:50%; transform:translateX(-50%) translateY(100%);
-    bottom:0; width:100%; max-width:480px; background:#fff; z-index:60;
-    border-radius:24px 24px 0 0; max-height:92vh; overflow-y:auto; transition:transform .3s cubic-bezier(.2,.8,.2,1);
+    position:fixed; left:50%; top:0; bottom:0; transform:translateX(-150%);
+    width:100%; max-width:480px; background:#fff; z-index:60;
+    overflow-y:auto; transition:transform .32s cubic-bezier(.2,.8,.2,1);
     padding-bottom:env(safe-area-inset-bottom);
   }
-  .sheet.show{ transform:translateX(-50%) translateY(0); }
+  .sheet.show{ transform:translateX(-50%); }
   .sheet-hero{ position:relative; height:230px; background:linear-gradient(135deg,#ff8a5c,#FF6B2B);
     display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .sheet-hero .ph svg{ width:70px; height:70px; }
@@ -144,8 +144,10 @@
   .hero-text{ position:absolute; left:20px; right:20px; bottom:16px; color:#fff; z-index:2; pointer-events:none; }
   .hero-text h2{ margin:0; font-size:22px; font-weight:800; line-height:1.35; text-shadow:0 1px 4px rgba(0,0,0,.4); }
   .hero-text .sub{ margin-top:6px; font-size:15px; opacity:.95; }
-  .sheet-grab{ position:absolute; top:10px; left:50%; transform:translateX(-50%);
-    width:44px; height:5px; background:rgba(255,255,255,.7); border-radius:3px; z-index:4; pointer-events:none; }
+  .sheet-back{ position:absolute; top:14px; left:14px; z-index:5; width:40px; height:40px; border-radius:50%;
+    background:rgba(0,0,0,.4); color:#fff; border:none; font-size:28px; line-height:1; cursor:pointer; padding:0;
+    display:flex; align-items:center; justify-content:center; }
+  .sheet-back:active{ background:rgba(0,0,0,.6); }
   .sheet-body{ padding:18px 20px 16px; }
   .badge-row{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
   .infobox{ background:var(--bg); border-radius:16px; padding:4px 16px; }
@@ -466,7 +468,7 @@ function openSheet(id){
   const kakaoBtn=kakao?`<a class="btn btn-kakao" href="${kakao}" target="_blank" rel="noopener">${CHAT_ICON}카카오톡 문의</a>`:`<span class="btn off">${CHAT_ICON}카카오 없음</span>`;
   const bh=badgeHtml(l);
   document.getElementById('sheet').innerHTML=`
-    <div class="sheet-grab"></div>
+    <button class="sheet-back" onclick="closeSheet()" aria-label="뒤로">&#8249;</button>
     <div class="sheet-hero">${hero}<div class="hero-grad"></div>
       <div class="hero-text"><h2>${l.title||''}</h2><div class="sub">${l.region||''} &middot; ${l.type||''}</div></div>
     </div>
