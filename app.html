@@ -135,7 +135,7 @@
     -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .gallery-track::-webkit-scrollbar{ display:none; }
   .gallery-slide{ flex:0 0 100%; height:100%; scroll-snap-align:center; }
-  .gallery-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery-slide img{ width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
   .gallery-dots{ position:absolute; bottom:12px; left:0; right:0; display:flex; justify-content:center;
     gap:6px; z-index:3; pointer-events:none; }
   .gdot{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.55); transition:.2s; }
@@ -157,6 +157,10 @@
   .infoval{ flex:1; color:#222; font-weight:700; }
   .desc-title{ font-size:15px; font-weight:700; color:#888; margin:20px 0 8px; }
   .sheet-desc{ font-size:16px; line-height:1.75; color:#333; white-space:pre-wrap; }
+  .edit-btn{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; height:52px;
+    border:2px solid var(--orange); color:var(--orange); background:#fff; border-radius:14px; font-size:16px;
+    font-weight:800; text-decoration:none; margin:4px 0 4px; }
+  .edit-btn:active{ background:var(--orange-soft); }
   .actions{
     position:sticky; bottom:0; background:#fff; padding:14px 18px calc(14px + env(safe-area-inset-bottom));
     display:flex; gap:10px; border-top:1px solid var(--line);
@@ -312,7 +316,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>등록
     </button>
     <button class="tab" onclick="openFav()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-8.5C.5 9 2 5 6 5c2 0 3.5 1.5 4 2.5C10.5 6.5 12 5 14 5c4 0 5.5 4 3.5 7.5C19 16.5 12 21 12 21z"/></svg>관심
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>관심
     </button>
     <button class="tab" onclick="openInfo()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>내정보
@@ -450,8 +454,19 @@ function render(){
   list.innerHTML=arr.map((l,i)=>cardHtml(l,i)).join('');
 }
 
+let EXTRA={};
+function findListing(id){ return LISTINGS.find(x=>String(x.id)===String(id)) || EXTRA[String(id)]; }
+const ADMIN_EMAILS=['love2455v@bunyangtok.com','love2455v@gmail.com'];
+async function checkOwner(l){
+  let u=null; try{ const r=await sb().auth.getUser(); u=r.data&&r.data.user; }catch(e){}
+  if(!u) return;
+  if(u.id===l.user_id || ADMIN_EMAILS.includes(u.email)){
+    const w=document.getElementById('ownerEditWrap');
+    if(w) w.innerHTML=`<a class="edit-btn" href="https://bunyangtok.com/edit.html?id=${l.id}" target="_blank" rel="noopener">이 현장 수정하기</a>`;
+  }
+}
 function openSheet(id){
-  const l=LISTINGS.find(x=>String(x.id)===String(id)); if(!l)return;
+  const l=findListing(id); if(!l)return;
   const imgs=(l.images&&l.images.length)?l.images:(l.img?[l.img]:[]);
   let hero;
   if(imgs.length){
@@ -461,8 +476,9 @@ function openSheet(id){
   } else {
     hero=`<div class="ph">${HOUSE}</div>`;
   }
+  const phoneVal=(l.phone&&l.phone.trim())?`<a href="tel:${l.phone.trim()}" style="color:var(--orange);font-weight:800;text-decoration:none">${l.phone.trim()}</a>`:'-';
   const rows=[['수수료',(l.fee&&l.fee.trim())||'문의'],['모집직종',(l.role&&l.role.length)?l.role.join(' / '):'-'],
-    ['경력',l.career||'무관'],['급여',l.pay||'-'],['복리후생',(l.welfare&&l.welfare.length)?l.welfare.join(', '):'-']]
+    ['경력',l.career||'무관'],['급여',l.pay||'-'],['복리후생',(l.welfare&&l.welfare.length)?l.welfare.join(', '):'-'],['연락처',phoneVal]]
     .map(([k,v])=>`<div class="inforow"><span class="infokey">${k}</span><span class="infoval">${v}</span></div>`).join('');
   const phone=(l.phone||'').trim(), kakao=(l.kakao_url||'').trim();
   const callBtn=phone?`<a class="btn btn-call" href="tel:${phone}">${PHONE_ICON}전화하기</a>`:`<span class="btn off">${PHONE_ICON}전화번호 없음</span>`;
@@ -476,6 +492,7 @@ function openSheet(id){
     <div class="sheet-body">
       ${bh?`<div class="badge-row">${bh}</div>`:''}
       <div class="infobox">${rows}</div>
+      <div id="ownerEditWrap"></div>
       <div class="desc-title">현장 소개</div>
       <div class="sheet-desc">${l.description||'등록된 상세 설명이 없습니다.'}</div>
     </div>
@@ -483,6 +500,7 @@ function openSheet(id){
   document.getElementById('overlay').classList.add('show');
   const s=document.getElementById('sheet'); s.classList.add('show'); s.scrollTop=0;
   pushModal(_hideSheet);
+  checkOwner(l);
 }
 function _hideSheet(){ document.getElementById('overlay').classList.remove('show'); document.getElementById('sheet').classList.remove('show'); }
 function closeSheet(){ history.back(); }
@@ -644,6 +662,7 @@ let _sb=null;
 function sb(){ if(!_sb && window.supabase) _sb=window.supabase.createClient(SB_URL,SB_KEY); return _sb; }
 function openInfo(){ const sc=document.getElementById('infoScreen'); if(!sc.classList.contains('show')){ sc.classList.add('show'); pushModal(_hideInfo); } renderInfo('profile'); }
 function openFav(){ const sc=document.getElementById('infoScreen'); if(!sc.classList.contains('show')){ sc.classList.add('show'); pushModal(_hideInfo); } renderInfo('fav'); }
+function openMine(){ const sc=document.getElementById('infoScreen'); if(!sc.classList.contains('show')){ sc.classList.add('show'); pushModal(_hideInfo); } renderInfo('mine'); }
 function _hideInfo(){ document.getElementById('infoScreen').classList.remove('show'); }
 function closeInfo(){ history.back(); }
 
@@ -664,6 +683,15 @@ async function renderInfo(view){
       : '<div class="empty">아직 저장한 관심현장이 없습니다.<br>현장 상세에서 하트를 눌러 저장하세요.</div>';
     return;
   }
+  if(view==='mine'){
+    title.textContent='내 현장 관리';
+    let mine=[];
+    try{ const r=await sb().from('listings').select('*').eq('user_id',user.id).order('created_at',{ascending:false}); mine=r.data||[]; }catch(e){}
+    mine.forEach(l=>{ EXTRA[String(l.id)]=l; });
+    body.innerHTML = mine.length ? `<div style="background:#fff">${mine.map((l,i)=>cardHtml(l,i)).join('')}</div>`
+      : '<div class="empty">아직 등록한 현장이 없습니다.<br>하단 등록 탭에서 현장을 올려보세요.</div>';
+    return;
+  }
   title.textContent='내 정보';
   body.innerHTML=`
     <div class="profile-top">
@@ -673,7 +701,7 @@ async function renderInfo(view){
     </div>
     <div class="menu-list">
       <button class="menu-item" onclick="openFav()">관심현장<span class="menu-arrow">&rsaquo;</span></button>
-      <button class="menu-item" onclick="toast('내 현장 관리는 곧 연결됩니다')">내 현장 관리<span class="menu-arrow">&rsaquo;</span></button>
+      <button class="menu-item" onclick="openMine()">내 현장 관리<span class="menu-arrow">&rsaquo;</span></button>
       <button class="menu-item danger" onclick="doLogout()">로그아웃</button>
     </div>`;
 }
