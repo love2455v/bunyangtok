@@ -128,16 +128,24 @@
     padding-bottom:env(safe-area-inset-bottom);
   }
   .sheet.show{ transform:translateX(-50%) translateY(0); }
-  .sheet-hero{ position:relative; height:220px; background:linear-gradient(135deg,#ff8a5c,#FF6B2B);
+  .sheet-hero{ position:relative; height:230px; background:linear-gradient(135deg,#ff8a5c,#FF6B2B);
     display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .sheet-hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .sheet-hero .ph svg{ width:70px; height:70px; }
-  .hero-grad{ position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,0) 55%); }
-  .hero-text{ position:absolute; left:20px; right:20px; bottom:16px; color:#fff; }
+  .gallery-track{ position:absolute; inset:0; display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .gallery-track::-webkit-scrollbar{ display:none; }
+  .gallery-slide{ flex:0 0 100%; height:100%; scroll-snap-align:center; }
+  .gallery-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery-dots{ position:absolute; bottom:12px; left:0; right:0; display:flex; justify-content:center;
+    gap:6px; z-index:3; pointer-events:none; }
+  .gdot{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.55); transition:.2s; }
+  .gdot.on{ background:#fff; width:18px; border-radius:4px; }
+  .hero-grad{ position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,0) 55%); z-index:1; pointer-events:none; }
+  .hero-text{ position:absolute; left:20px; right:20px; bottom:16px; color:#fff; z-index:2; pointer-events:none; }
   .hero-text h2{ margin:0; font-size:22px; font-weight:800; line-height:1.35; text-shadow:0 1px 4px rgba(0,0,0,.4); }
   .hero-text .sub{ margin-top:6px; font-size:15px; opacity:.95; }
   .sheet-grab{ position:absolute; top:10px; left:50%; transform:translateX(-50%);
-    width:44px; height:5px; background:rgba(255,255,255,.7); border-radius:3px; z-index:2; }
+    width:44px; height:5px; background:rgba(255,255,255,.7); border-radius:3px; z-index:4; pointer-events:none; }
   .sheet-body{ padding:18px 20px 16px; }
   .badge-row{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
   .infobox{ background:var(--bg); border-radius:16px; padding:4px 16px; }
@@ -441,8 +449,15 @@ function render(){
 
 function openSheet(id){
   const l=LISTINGS.find(x=>String(x.id)===String(id)); if(!l)return;
-  const im=img1(l);
-  const hero=`<div class="ph">${HOUSE}</div>${im?`<img src="${im}" onerror="this.remove()">`:''}`;
+  const imgs=(l.images&&l.images.length)?l.images:(l.img?[l.img]:[]);
+  let hero;
+  if(imgs.length){
+    const slides=imgs.map(u=>`<div class="gallery-slide"><img src="${u}" onerror="this.parentElement.style.display='none'"></div>`).join('');
+    const dots=imgs.length>1?`<div class="gallery-dots">${imgs.map((_,i)=>`<span class="gdot${i===0?' on':''}"></span>`).join('')}</div>`:'';
+    hero=`<div class="gallery-track" onscroll="onGalleryScroll(this)">${slides}</div>${dots}`;
+  } else {
+    hero=`<div class="ph">${HOUSE}</div>`;
+  }
   const rows=[['수수료',(l.fee&&l.fee.trim())||'문의'],['모집직종',(l.role&&l.role.length)?l.role.join(' / '):'-'],
     ['경력',l.career||'무관'],['급여',l.pay||'-'],['복리후생',(l.welfare&&l.welfare.length)?l.welfare.join(', '):'-']]
     .map(([k,v])=>`<div class="inforow"><span class="infokey">${k}</span><span class="infoval">${v}</span></div>`).join('');
@@ -464,13 +479,10 @@ function openSheet(id){
     <div class="actions">${callBtn}${kakaoBtn}</div>`;
   document.getElementById('overlay').classList.add('show');
   const s=document.getElementById('sheet'); s.classList.add('show'); s.scrollTop=0;
-  document.body.style.overflow='hidden';
+  pushModal(_hideSheet);
 }
-function closeSheet(){
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('sheet').classList.remove('show');
-  document.body.style.overflow='';
-}
+function _hideSheet(){ document.getElementById('overlay').classList.remove('show'); document.getElementById('sheet').classList.remove('show'); }
+function closeSheet(){ history.back(); }
 
 let toastT;
 function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.style.opacity='1';
@@ -490,9 +502,11 @@ function openRegister(){
   R={role:[],welfare:[],career:'경력무관'}; regStep=1;
   document.getElementById('regFooter').innerHTML='<button id="regPrev" class="reg-btn-prev" onclick="regPrev()" style="display:none">이전</button><button id="regNext" class="reg-btn-next" onclick="regNext()">다음</button>';
   renderReg();
-  document.getElementById('regScreen').classList.add('show'); document.body.style.overflow='hidden';
+  document.getElementById('regScreen').classList.add('show');
+  pushModal(_hideRegister);
 }
-function closeRegister(){ document.getElementById('regScreen').classList.remove('show'); document.body.style.overflow=''; }
+function _hideRegister(){ document.getElementById('regScreen').classList.remove('show'); }
+function closeRegister(){ history.back(); }
 
 function selHtml(id,opts,val,ph){
   return `<select class="reg-select" onchange="R.${id}=this.value;regValidate()"><option value="">${ph}</option>`+
@@ -572,7 +586,9 @@ const REGION_COORDS={ '서울':[37.5665,126.978],'경기남부':[37.26,127.03],'
 function jitter(idx,c){ const s=idx+1; return [c[0]+(((s*73)%100)/100-0.5)*0.22, c[1]+(((s*149)%100)/100-0.5)*0.22]; }
 let mapMode=null;
 function openMap(){
-  document.getElementById('mapScreen').classList.add('show'); document.body.style.overflow='hidden';
+  const _sh=document.getElementById('mapScreen').classList.contains('show');
+  document.getElementById('mapScreen').classList.add('show');
+  if(!_sh) pushModal(_hideMap);
   if(mapMode===null){
     if(window.kakao && window.kakao.maps){ mapMode='kakao'; kakao.maps.load(initKakao); }
     else { mapMode='leaflet'; initLeaflet(); }
@@ -581,7 +597,8 @@ function openMap(){
   if(mapMode==='kakao'){ setTimeout(()=>{ if(_kmap){ _kmap.relayout(); drawKakao(); } },320); }
   else { drawLeaflet(); setTimeout(()=>_lmap.invalidateSize(),320); }
 }
-function closeMap(){ document.getElementById('mapScreen').classList.remove('show'); document.body.style.overflow=''; }
+function _hideMap(){ document.getElementById('mapScreen').classList.remove('show'); }
+function closeMap(){ history.back(); }
 
 // --- 카카오맵 (웹과 동일한 키 재사용) ---
 let _kmap,_kmarkers=[];
@@ -622,9 +639,10 @@ function drawLeaflet(){
 // ===== 로그인 / 내정보 / 관심현장 (실제 Supabase 인증) =====
 let _sb=null;
 function sb(){ if(!_sb && window.supabase) _sb=window.supabase.createClient(SB_URL,SB_KEY); return _sb; }
-function openInfo(){ document.getElementById('infoScreen').classList.add('show'); document.body.style.overflow='hidden'; renderInfo('profile'); }
-function openFav(){ document.getElementById('infoScreen').classList.add('show'); document.body.style.overflow='hidden'; renderInfo('fav'); }
-function closeInfo(){ document.getElementById('infoScreen').classList.remove('show'); document.body.style.overflow=''; }
+function openInfo(){ const sc=document.getElementById('infoScreen'); if(!sc.classList.contains('show')){ sc.classList.add('show'); pushModal(_hideInfo); } renderInfo('profile'); }
+function openFav(){ const sc=document.getElementById('infoScreen'); if(!sc.classList.contains('show')){ sc.classList.add('show'); pushModal(_hideInfo); } renderInfo('fav'); }
+function _hideInfo(){ document.getElementById('infoScreen').classList.remove('show'); }
+function closeInfo(){ history.back(); }
 
 async function renderInfo(view){
   const body=document.getElementById('infoBody'), title=document.getElementById('infoTitle');
@@ -693,6 +711,19 @@ function applyFont(){
 }
 function cycleFont(){ fsIdx=(fsIdx+1)%FS_LEVELS.length; applyFont(); }
 applyFont();
+
+// ===== 뒤로가기로 열린 화면 닫기 (히스토리 연동) =====
+let modalStack=[];
+function pushModal(hideFn){ modalStack.push(hideFn); document.body.style.overflow='hidden'; history.pushState({m:modalStack.length},''); }
+window.addEventListener('popstate', function(){
+  if(modalStack.length){ const fn=modalStack.pop(); fn(); document.body.style.overflow=modalStack.length?'hidden':''; }
+});
+// ===== 상세 사진 갤러리 인디케이터 =====
+function onGalleryScroll(el){
+  const i=Math.round(el.scrollLeft/el.clientWidth);
+  const dots=el.parentElement.querySelectorAll('.gdot');
+  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+}
 
 load();
 </script>
