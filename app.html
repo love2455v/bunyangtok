@@ -409,8 +409,9 @@ function badgeHtml(l){
   return out;
 }
 
+function shortLabel(r){ if(!r) return '기타'; if(r.indexOf('경기')===0) return '경기'; return r.replace(/도$/,'').slice(0,2); }
 function buildTabs(){
-  const c={}; LISTINGS.forEach(l=>{const r=l.region||'기타'; c[r]=(c[r]||0)+1;});
+  const c={}; LISTINGS.forEach(l=>{const r=shortLabel(l.region); c[r]=(c[r]||0)+1;});
   const regions=Object.keys(c).sort((a,b)=>c[b]-c[a]);
   document.getElementById('regiontabs').innerHTML=['전체',...regions].map(r=>
     `<button class="rtab${r===activeRegion?' active':''}" onclick="pickRegion('${r}')">${r}</button>`).join('');
@@ -439,7 +440,7 @@ function cardHtml(l,i){
 function render(){
   const kw=document.getElementById('search').value.trim();
   let arr=LISTINGS.filter(l=>{
-    if(activeRegion!=='전체'&&(l.region||'기타')!==activeRegion)return false;
+    if(activeRegion!=='전체'&&shortLabel(l.region)!==activeRegion)return false;
     if(kw){const t=(l.title||'')+(l.region||'')+(l.type||''); if(!t.includes(kw))return false;}
     return true;
   });
