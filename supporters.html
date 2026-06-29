@@ -71,7 +71,7 @@
 <div style="padding:40px 0;">
   <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-      <div style="font-size:14px; color:#64748B;">총 <strong style="color:#1E293B" id="supporterCount">8</strong>개 업체</div>
+      <div style="font-size:14px; color:#64748B;">총 <strong style="color:#1E293B" id="supporterCount">0</strong>개 업체</div>
       <a href="supporters-register.html" class="btn-primary" style="font-size:13px; padding:10px 20px;">+ 업체 무료 등록</a>
     </div>
     <div class="supporters-grid" id="supportersGrid"></div>
@@ -122,16 +122,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
-const SUPPORTERS = [
-  { cat: "대출·금융", name: "헬퍼론", desc: "분양인, 분양고객, 개발사 모든 대출을 최고의 상품으로 선별 안내. 집단대출·PF대출·담보대출 전문", region: "전국", tel: "02-1234-5678" },
-  { cat: "대출·금융", name: "하이홈론", desc: "주택담보대출 고민 해결. 부동산 담보대출, 최고한도 최저금리 보장", region: "전국", tel: "1800-0000" },
-  { cat: "광고·홍보", name: "프리미엄 애드", desc: "분양현장 현수막, 현장 사인물, 모델하우스 배너, 옥외광고 전문. 빠른 납기 보장", region: "수도권", tel: "031-000-0000" },
-  { cat: "인쇄·제작", name: "퀵프린팅", desc: "명함·전단지·현수막 빠른 당일 제작. 분양현장 특화 인쇄 솔루션", region: "전국", tel: "02-0000-0000" },
-  { cat: "렌탈·비품", name: "사무렌탈플러스", desc: "프린터·정수기·사무용품·노트북 렌탈. 분양사무소 오픈 패키지 전문", region: "전국", tel: "1588-0000" },
-  { cat: "시행·대행", name: "메가디앤씨", desc: "아파트·오피스텔 분양 대행 전문. 10년 경력의 신뢰할 수 있는 파트너", region: "전국", tel: "02-0000-0000" },
-  { cat: "IT·소프트웨어", name: "분양CRM", desc: "분양현장 고객 DB 관리·문자발송·콜센터 솔루션. 계약률을 높이는 스마트 CRM", region: "전국", tel: "02-0000-0000" },
-  { cat: "광고·홍보", name: "SNS마케팅Pro", desc: "유튜브·인스타그램·카카오 분양 광고 대행. 타깃 마케팅으로 실계약 고객 유입", region: "전국", tel: "010-0000-0000" },
-];
+// 예시(샘플) 업체 데이터 삭제됨 — 실제 등록된 업체(Supabase)만 표시합니다.
+const SUPPORTERS = [];
 
 let currentCat = '전체';
 let ALL_DATA = SUPPORTERS.slice(); // DB에서 불러온 등록 업체가 앞쪽에 추가됨
