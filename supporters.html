@@ -119,6 +119,7 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 <script>
 const SUPPORTERS = [
@@ -133,32 +134,70 @@ const SUPPORTERS = [
 ];
 
 let currentCat = '전체';
+let ALL_DATA = SUPPORTERS.slice(); // DB에서 불러온 등록 업체가 앞쪽에 추가됨
+
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 function renderSupporters(data) {
   const grid = document.getElementById('supportersGrid');
   document.getElementById('supporterCount').textContent = data.length;
-  grid.innerHTML = data.map(s => `
+  grid.innerHTML = data.map(s => {
+    const photo = (s.images && s.images.length) ? s.images[0] : '';
+    const photoHtml = photo
+      ? `<div style="margin:-4px -4px 12px; border-radius:8px; overflow:hidden; aspect-ratio:16/9; background:#F1F5F9;">
+           <img src="${esc(photo)}" alt="${esc(s.name)}" style="width:100%; height:100%; object-fit:cover;" />
+         </div>`
+      : '';
+    return `
     <div class="supporter-card">
-      <span class="supporter-cat">${s.cat}</span>
-      <div class="supporter-name">${s.name}</div>
-      <div class="supporter-desc">${s.desc}</div>
+      ${photoHtml}
+      <span class="supporter-cat">${esc(s.cat)}</span>
+      <div class="supporter-name">${esc(s.name)}</div>
+      <div class="supporter-desc">${esc(s.desc)}</div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-        <div class="supporter-region">📍 ${s.region}</div>
-        <a href="tel:${s.tel}" style="font-size:13px; font-weight:600; color:#2563EB;">📞 ${s.tel}</a>
+        <div class="supporter-region">📍 ${esc(s.region)}</div>
+        <a href="tel:${esc(s.tel)}" style="font-size:13px; font-weight:600; color:#2563EB;">📞 ${esc(s.tel)}</a>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+function applyFilter() {
+  const data = currentCat === '전체' ? ALL_DATA : ALL_DATA.filter(s => s.cat === currentCat);
+  renderSupporters(data);
 }
 
 function filterCat(el, cat) {
   document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   currentCat = cat;
-  const data = cat === '전체' ? SUPPORTERS : SUPPORTERS.filter(s => s.cat === cat);
-  renderSupporters(data);
+  applyFilter();
 }
 
-document.addEventListener('DOMContentLoaded', () => renderSupporters(SUPPORTERS));
+// Supabase에서 등록된 업체 불러오기 (없거나 실패하면 샘플만 표시)
+async function loadSupporters() {
+  try {
+    const db = (typeof getSupabase === 'function') ? getSupabase() : null;
+    if (!db) return;
+    const res = await db.from('supporters').select('*').eq('is_active', true).order('created_at', { ascending: false });
+    if (res.error || !res.data) return;
+    const rows = res.data.map(r => ({
+      cat: r.cat || '기타',
+      name: r.name || '',
+      desc: r.description || '',
+      region: r.region || '전국',
+      tel: r.tel || '',
+      images: Array.isArray(r.images) ? r.images : []
+    }));
+    ALL_DATA = rows.concat(SUPPORTERS); // 신규 등록 업체를 앞에
+    applyFilter();
+  } catch (e) { /* 샘플 데이터 유지 */ }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderSupporters(ALL_DATA);
+  loadSupporters();
+});
 </script>
 </body>
 </html>

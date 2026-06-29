@@ -5,6 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>서포터즈 등록 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    .img-upload-area {
+      border: 2px dashed #CBD5E1;
+      border-radius: 10px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #F8FAFC;
+    }
+    .img-upload-area:hover, .img-upload-area.drag-over {
+      border-color: #FF6B2B;
+      background: #FFF7F3;
+    }
+    .upload-icon { font-size: 36px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; color: #475569; font-weight: 600; }
+    .upload-sub { font-size: 12px; color: #94A3B8; margin-top: 4px; }
+    .img-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .img-preview-item {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #E2E8F0;
+    }
+    .img-preview-item.main-img { border-color: #FF6B2B; }
+    .img-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+    .img-del {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: rgba(0,0,0,0.6); color: #fff;
+      border: none; border-radius: 50%;
+      width: 24px; height: 24px;
+      font-size: 13px; cursor: pointer; line-height: 24px; text-align: center;
+      padding: 0;
+    }
+    .img-main-badge {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(255,107,43,0.88);
+      color: #fff; font-size: 11px; text-align: center; padding: 3px 0; font-weight: 700;
+    }
+    .img-count-badge {
+      display: inline-block; background: #FF6B2B; color: #fff;
+      border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 700; margin-left: 8px;
+    }
+  </style>
 </head>
 <body>
 <div class="topbar">
@@ -48,24 +99,24 @@
 
 <section style="padding:60px 0;">
   <div class="container">
-    <div class="register-form">
+    <form id="supporterForm" class="register-form" onsubmit="submitSupporter(event)">
       <div class="form-title">서포터즈 업체 등록</div>
       <div class="form-sub">전국 30만 분양 종사자에게 내 업체를 알리세요. 현수막·명함·렌탈·대출기관·시행사·대행사 모두 등록 가능합니다.</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">업체명 <span class="required">*</span></label>
-          <input type="text" class="form-input" placeholder="업체명 입력" />
+          <input type="text" id="s_name" class="form-input" placeholder="업체명 입력" required />
         </div>
         <div class="form-group">
           <label class="form-label">업종 <span class="required">*</span></label>
-          <select class="form-select">
+          <select id="s_cat" class="form-select" required>
             <option value="">선택해주세요</option>
-            <option>현수막/인쇄</option>
-            <option>명함/홍보물</option>
-            <option>렌탈업체</option>
-            <option>대출기관</option>
-            <option>시행사</option>
-            <option>대행사</option>
+            <option>광고·홍보</option>
+            <option>대출·금융</option>
+            <option>렌탈·비품</option>
+            <option>시행·대행</option>
+            <option>인쇄·제작</option>
+            <option>IT·소프트웨어</option>
             <option>기타</option>
           </select>
         </div>
@@ -73,21 +124,21 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">담당자명 <span class="required">*</span></label>
-          <input type="text" class="form-input" placeholder="담당자 이름" />
+          <input type="text" id="s_manager" class="form-input" placeholder="담당자 이름" required />
         </div>
         <div class="form-group">
           <label class="form-label">연락처 <span class="required">*</span></label>
-          <input type="tel" class="form-input" placeholder="010-0000-0000" />
+          <input type="tel" id="s_tel" class="form-input" placeholder="010-0000-0000" required />
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">이메일</label>
-        <input type="email" class="form-input" placeholder="이메일 주소" />
+        <input type="email" id="s_email" class="form-input" placeholder="이메일 주소" />
       </div>
       <div class="form-group">
         <label class="form-label">서비스 지역</label>
-        <select class="form-select">
-          <option value="">전국</option>
+        <select id="s_region" class="form-select">
+          <option>전국</option>
           <option>서울/경기</option>
           <option>부산/경남</option>
           <option>대구/경북</option>
@@ -97,13 +148,32 @@
           <option>제주</option>
         </select>
       </div>
+
+      <!-- 업체 사진 -->
+      <div class="form-group">
+        <label class="form-label">업체 사진 <span style="font-size:12px;font-weight:500;color:#94A3B8;">(선택 · 최대 3장)</span>
+          <span class="img-count-badge" id="imgCountBadge">0/3</span>
+        </label>
+        <div style="font-size:12px;color:#64748B;margin-bottom:10px;">로고·시공사례·명함 등을 올리면 노출 효과가 높아집니다. JPG·PNG·WEBP, 파일당 최대 8MB</div>
+        <div class="img-upload-area" id="uploadArea"
+          onclick="document.getElementById('imgInput').click()"
+          ondrop="handleDrop(event)"
+          ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)">
+          <input type="file" id="imgInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)" />
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">클릭하거나 사진을 여기에 드래그하세요</div>
+          <div class="upload-sub">첫 번째 사진이 대표 이미지로 사용됩니다</div>
+        </div>
+        <div class="img-preview-grid" id="previewGrid"></div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">업체 소개</label>
-        <textarea class="form-textarea" placeholder="업체 소개, 주요 서비스, 특장점 등을 입력해주세요"></textarea>
+        <textarea id="s_desc" class="form-textarea" placeholder="업체 소개, 주요 서비스, 특장점 등을 입력해주세요"></textarea>
       </div>
-      <button class="form-submit" onclick="alert('서포터즈 등록 신청이 완료되었습니다!
-검토 후 24시간 이내 연락드리겠습니다.'); location.href='supporters.html';">서포터즈 등록 신청</button>
-    </div>
+      <button type="submit" id="submitBtn" class="form-submit">서포터즈 등록 신청</button>
+    </form>
   </div>
 </section>
 <footer class="footer">
@@ -116,5 +186,107 @@
     </div>
   </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script>
+// ===== 사진 선택 / 미리보기 (최대 3장, 클라이언트 리사이즈 후 base64 저장) =====
+var MAX_IMAGES = 3;
+var selectedImages = []; // { dataUrl }
+
+function handleDragOver(e){ e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+function handleDragLeave(e){ document.getElementById('uploadArea').classList.remove('drag-over'); }
+function handleDrop(e){ e.preventDefault(); document.getElementById('uploadArea').classList.remove('drag-over'); handleFiles(e.dataTransfer.files); }
+
+function handleFiles(files){
+  Array.from(files).forEach(function(f){
+    if (selectedImages.length >= MAX_IMAGES){ alert('사진은 최대 '+MAX_IMAGES+'장까지 등록 가능합니다.'); return; }
+    if (!f.type.startsWith('image/')){ alert(f.name + '\n이미지 파일만 업로드 가능합니다.'); return; }
+    if (f.size > 8 * 1024 * 1024){ alert(f.name + '\n파일 크기가 8MB를 초과합니다.'); return; }
+    resizeImage(f, function(dataUrl){
+      if (selectedImages.length >= MAX_IMAGES) return;
+      selectedImages.push({ dataUrl: dataUrl });
+      renderPreviews();
+    });
+  });
+  document.getElementById('imgInput').value = '';
+}
+
+// 긴 변 900px, JPEG 0.72로 축소 -> base64 크기 최소화
+function resizeImage(file, cb){
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var img = new Image();
+    img.onload = function(){
+      var max = 900;
+      var w = img.width, h = img.height;
+      if (w > max || h > max){
+        if (w >= h){ h = Math.round(h * max / w); w = max; }
+        else { w = Math.round(w * max / h); h = max; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPreviews(){
+  var grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  selectedImages.forEach(function(im, i){
+    var div = document.createElement('div');
+    div.className = 'img-preview-item' + (i === 0 ? ' main-img' : '');
+    div.innerHTML =
+      '<img src="' + im.dataUrl + '" alt="사진' + (i+1) + '">' +
+      '<button type="button" class="img-del" onclick="removeImg(' + i + ')">✕</button>' +
+      (i === 0 ? '<div class="img-main-badge">대표사진</div>' : '');
+    grid.appendChild(div);
+  });
+  document.getElementById('imgCountBadge').textContent = selectedImages.length + '/' + MAX_IMAGES;
+  document.getElementById('uploadArea').style.display = selectedImages.length >= MAX_IMAGES ? 'none' : '';
+}
+function removeImg(idx){ selectedImages.splice(idx, 1); renderPreviews(); }
+
+// ===== 폼 제출 (Supabase 저장) =====
+async function submitSupporter(e){
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  var db = getSupabase();
+  if (!db){ alert('잠시 후 다시 시도해주세요.'); return; }
+
+  var record = {
+    name: document.getElementById('s_name').value.trim(),
+    cat: document.getElementById('s_cat').value,
+    manager: document.getElementById('s_manager').value.trim(),
+    tel: document.getElementById('s_tel').value.trim(),
+    email: document.getElementById('s_email').value.trim(),
+    region: document.getElementById('s_region').value || '전국',
+    description: document.getElementById('s_desc').value.trim(),
+    images: selectedImages.map(function(im){ return im.dataUrl; }),
+    is_active: true
+  };
+
+  if (!record.name || !record.cat || !record.manager || !record.tel){
+    alert('필수 항목(업체명·업종·담당자명·연락처)을 모두 입력해주세요.');
+    return;
+  }
+
+  btn.textContent = '등록 중...'; btn.disabled = true;
+  try {
+    var result = await db.from('supporters').insert([record]);
+    if (result.error) throw result.error;
+    alert('✅ 서포터즈 등록 신청이 완료되었습니다!\n검토 후 24시간 이내 연락드리겠습니다.');
+    location.href = 'supporters.html';
+  } catch(err){
+    console.error(err);
+    alert('등록 오류: ' + (err.message || err) + '\n\n잠시 후 다시 시도해주세요.');
+    btn.textContent = '서포터즈 등록 신청'; btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>
