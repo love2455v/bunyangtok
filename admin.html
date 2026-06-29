@@ -173,6 +173,9 @@
       <div class="nav-item" data-sec="notices">
         <span class="nav-icon">&#9998;</span><span>공지사항</span>
       </div>
+      <div class="nav-item" data-sec="supporters">
+        <span class="nav-icon">&#128188;</span><span>서포터즈</span>
+      </div>
       <div class="nav-item" data-sec="stats">
         <span class="nav-icon">&#9641;</span><span>통계</span>
       </div>
@@ -246,7 +249,7 @@
           <span class="card-head-sub" id="users-count"></span>
         </div>
         <div class="table-scroll"><table>
-          <thead><tr><th>이메일</th><th>가입일</th><th>등록 현장</th><th>상태</th><th>관리</th></tr></thead>
+          <thead><tr><th>아이디</th><th>가입일</th><th>등록 현장</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="users-body"><tr class="loading-row"><td colspan="5">불러오는 중...</td></tr></tbody>
         </table>
       </div>
@@ -277,6 +280,81 @@
           <thead><tr><th>제목</th><th>작성일</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="notices-body"><tr class="loading-row"><td colspan="4">불러오는 중...</td></tr></tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- 서포터즈 -->
+    <section class="section" id="sec-supporters">
+      <div class="page-title">서포터즈 관리</div>
+      <div class="form-card">
+        <div class="form-card-title" id="sup-form-title">새 업체 등록</div>
+        <input type="hidden" id="edit-sup-id">
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
+          <div style="margin-bottom:14px;">
+            <label class="form-label">업체명 *</label>
+            <input class="form-input" type="text" id="sup-name" placeholder="업체명">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label class="form-label">업종 *</label>
+            <select class="form-input" id="sup-cat">
+              <option value="">선택</option>
+              <option>광고·홍보</option>
+              <option>대출·금융</option>
+              <option>렌탈·비품</option>
+              <option>시행·대행</option>
+              <option>인쇄·제작</option>
+              <option>IT·소프트웨어</option>
+              <option>기타</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
+          <div style="margin-bottom:14px;">
+            <label class="form-label">담당자명</label>
+            <input class="form-input" type="text" id="sup-manager" placeholder="담당자 이름">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label class="form-label">연락처 *</label>
+            <input class="form-input" type="text" id="sup-tel" placeholder="010-0000-0000">
+          </div>
+        </div>
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
+          <div style="margin-bottom:14px;">
+            <label class="form-label">이메일</label>
+            <input class="form-input" type="text" id="sup-email" placeholder="이메일">
+          </div>
+          <div style="margin-bottom:14px;">
+            <label class="form-label">서비스 지역</label>
+            <select class="form-input" id="sup-region">
+              <option>전국</option><option>서울/경기</option><option>부산/경남</option>
+              <option>대구/경북</option><option>광주/전라</option><option>대전/충청</option>
+              <option>강원</option><option>제주</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">업체 소개</label>
+          <textarea class="form-textarea" id="sup-desc" style="height:90px" placeholder="업체 소개"></textarea>
+        </div>
+        <div class="form-row">
+          <label class="form-label">업체 사진 (최대 3장)</label>
+          <div id="sup-photo-grid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+          <input type="file" id="sup-photo-input" accept="image/*" multiple onchange="supAddPhotos(this.files)" style="font-size:12px;">
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="resetSupForm()">취소</button>
+          <button class="btn btn-primary" id="sup-submit-btn" onclick="submitSupporterAdmin()">등록하기</button>
+        </div>
+      </div>
+      <div class="card-wrap">
+        <div class="card-head">
+          <span class="card-head-title">업체 목록</span>
+          <span class="card-head-sub" id="sup-count"></span>
+        </div>
+        <div class="table-scroll"><table>
+          <thead><tr><th>사진</th><th>업체명</th><th>업종</th><th>지역</th><th>연락처</th><th>등록일</th><th>상태</th><th>관리</th></tr></thead>
+          <tbody id="supporters-body"><tr class="loading-row"><td colspan="8">불러오는 중...</td></tr></tbody>
+        </table></div>
       </div>
     </section>
 
@@ -365,6 +443,7 @@ document.querySelectorAll('.nav-item[data-sec]').forEach(el => {
     if (sec === 'listings') loadAllListings();
     if (sec === 'users') loadUsers();
     if (sec === 'notices') loadNotices();
+    if (sec === 'supporters') loadSupportersAdmin();
     if (sec === 'stats') loadStatsSection();
   });
 });
@@ -386,7 +465,7 @@ async function loadDashboard() {
 
   try {
     const { data: _ud } = await db.rpc('get_all_users');
-    setVal('d-users', _ud ? _ud.length : 0, '명');
+    setVal('d-users', _ud ? _ud.filter(u => u.email).length : 0, '명');
   } catch(e) { setVal('d-users', '-', '명'); }
 
   // Recent listings
@@ -511,15 +590,17 @@ async function loadUsers() {
       tbody.innerHTML = '<tr class="empty-row"><td colspan="5">등록된 회원이 없습니다</td></tr>';
       return;
     }
+    // 아이디(이메일)가 없는 빈/익명 계정은 목록에서 숨김
+    const realUsers = users.filter(u => u.email);
     const cnt = document.getElementById('users-count');
-    if (cnt) cnt.textContent = users.length + '명';
-    tbody.innerHTML = users.map(u => {
+    if (cnt) cnt.textContent = realUsers.length + '명';
+    tbody.innerHTML = realUsers.map(u => {
       const p = pm[u.id] || {};
       const susp = p.is_suspended || false;
       const adm = p.is_admin || false;
-      const uname = p.username || (u.email ? (u.email || '').split('@')[0] : '(이메일 없음)');
+      const uname = p.username || (u.email || '').split('@')[0];
       return `<tr>
-        <td><div style="font-weight:600;font-size:13px;">${uname}</div><div style="font-size:11px;color:#aaa;">${u.email || '-'}</div></td>
+        <td><div style="font-weight:600;font-size:13px;">${uname}</div></td>
         <td>${fmtDate(u.created_at)}</td>
         <td>${lm[u.id]||0}개</td>
         <td>
@@ -702,6 +783,174 @@ function renderBarChart(elId, dataMap) {
     </div>
   `).join('') || '<div style="color:#bbb;font-size:13px;text-align:center;padding:20px;">데이터 없음</div>';
 }
+
+// ── Supporters ────────────────────────────────────────────────────────────────
+let _supCache = {};       // id -> 업체 객체
+let _supPhotos = [];      // 편집 중인 사진(base64) 배열
+
+async function loadSupportersAdmin() {
+  const tbody = document.getElementById('supporters-body');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="8">불러오는 중...</td></tr>';
+  try {
+    const { data, count, error } = await db.from('supporters')
+      .select('*', {count:'exact'}).order('created_at', {ascending:false});
+    if (error) throw error;
+    document.getElementById('sup-count').textContent = (count || 0) + '개';
+    _supCache = {};
+    (data||[]).forEach(s => { _supCache[s.id] = s; });
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="8">등록된 업체가 없습니다</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(s => {
+      const imgs = Array.isArray(s.images) ? s.images : [];
+      const thumb = imgs.length
+        ? `<img src="${imgs[0]}" style="width:42px;height:42px;object-fit:cover;border-radius:6px;border:1px solid #eee;">`
+        : '<span style="color:#ccc;font-size:11px;">없음</span>';
+      return `<tr>
+        <td>${thumb}</td>
+        <td style="font-weight:600;">${escAdm(s.name)}</td>
+        <td>${escAdm(s.cat)}</td>
+        <td>${escAdm(s.region||'-')}</td>
+        <td>${escAdm(s.tel||'-')}</td>
+        <td>${fmtDate(s.created_at)}</td>
+        <td><span class="badge ${s.is_active?'badge-green':'badge-gray'}">${s.is_active?'공개':'숨김'}</span></td>
+        <td style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn btn-xs btn-secondary" onclick="editSupporter('${s.id}')">수정</button>
+          <button class="btn btn-xs ${s.is_active?'btn-secondary':'btn-primary'}" onclick="toggleSupporter('${s.id}',${s.is_active})">${s.is_active?'숨기기':'공개'}</button>
+          <button class="btn btn-xs btn-danger" onclick="deleteSupporter('${s.id}')">삭제</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px 16px;">
+      <div style="color:#bbb;font-size:13px;margin-bottom:10px;">supporters 테이블 접근 오류입니다. (${escAdm(e.message||'')})<br>수정·삭제를 쓰려면 관리자 정책 SQL을 한 번 실행하세요.</div>
+      <code class="sql-block">create policy "supporters_admin_all" on public.supporters
+  for all to authenticated
+  using (auth.email() = 'love2455v@bunyangtok.com')
+  with check (auth.email() = 'love2455v@bunyangtok.com');</code>
+    </td></tr>`;
+  }
+}
+
+// 사진 추가(리사이즈 후 base64)
+function supAddPhotos(files) {
+  Array.from(files).forEach(f => {
+    if (_supPhotos.length >= 3) { alert('사진은 최대 3장까지 가능합니다.'); return; }
+    if (!f.type.startsWith('image/')) return;
+    if (f.size > 8*1024*1024) { alert(f.name + '\n8MB를 초과합니다.'); return; }
+    supResize(f, durl => {
+      if (_supPhotos.length >= 3) return;
+      _supPhotos.push(durl); renderSupPhotos();
+    });
+  });
+  document.getElementById('sup-photo-input').value = '';
+}
+function supResize(file, cb) {
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height, max = 900;
+      if (w > max || h > max) { if (w >= h) { h = Math.round(h*max/w); w = max; } else { w = Math.round(w*max/h); h = max; } }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h; c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg', 0.72));
+    };
+    img.src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function renderSupPhotos() {
+  const grid = document.getElementById('sup-photo-grid');
+  grid.innerHTML = _supPhotos.map((src,i) => `
+    <div style="position:relative;width:64px;height:64px;">
+      <img src="${src}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #e5e5e5;">
+      <button type="button" onclick="supRemovePhoto(${i})" style="position:absolute;top:-6px;right:-6px;background:#c62828;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:18px;padding:0;">×</button>
+    </div>`).join('');
+}
+function supRemovePhoto(i) { _supPhotos.splice(i,1); renderSupPhotos(); }
+
+let _supBusy = false;
+async function submitSupporterAdmin() {
+  if (_supBusy) return;
+  const id = document.getElementById('edit-sup-id').value;
+  const rec = {
+    name: document.getElementById('sup-name').value.trim(),
+    cat: document.getElementById('sup-cat').value,
+    manager: document.getElementById('sup-manager').value.trim(),
+    tel: document.getElementById('sup-tel').value.trim(),
+    email: document.getElementById('sup-email').value.trim(),
+    region: document.getElementById('sup-region').value,
+    description: document.getElementById('sup-desc').value.trim(),
+    images: _supPhotos.slice()
+  };
+  if (!rec.name || !rec.cat || !rec.tel) { alert('업체명·업종·연락처는 필수입니다.'); return; }
+
+  _supBusy = true;
+  const btn = document.getElementById('sup-submit-btn');
+  btn.disabled = true; btn.textContent = id ? '수정 중...' : '등록 중...';
+  try {
+    let error;
+    if (id) {
+      ({ error } = await db.from('supporters').update(rec).eq('id', id));
+    } else {
+      rec.is_active = true;
+      ({ error } = await db.from('supporters').insert([rec]));
+    }
+    if (error) { alert('저장 실패: ' + error.message); return; }
+    resetSupForm();
+    loadSupportersAdmin();
+    alert(id ? '수정되었습니다.' : '업체가 등록되었습니다.');
+  } finally {
+    _supBusy = false;
+    btn.disabled = false; btn.textContent = '등록하기';
+  }
+}
+
+function editSupporter(id) {
+  const s = _supCache[id];
+  if (!s) return;
+  document.getElementById('edit-sup-id').value = s.id;
+  document.getElementById('sup-name').value = s.name || '';
+  document.getElementById('sup-cat').value = s.cat || '';
+  document.getElementById('sup-manager').value = s.manager || '';
+  document.getElementById('sup-tel').value = s.tel || '';
+  document.getElementById('sup-email').value = s.email || '';
+  document.getElementById('sup-region').value = s.region || '전국';
+  document.getElementById('sup-desc').value = s.description || '';
+  _supPhotos = Array.isArray(s.images) ? s.images.slice() : [];
+  renderSupPhotos();
+  document.getElementById('sup-form-title').textContent = '업체 정보 수정';
+  document.getElementById('sup-submit-btn').textContent = '수정하기';
+  window.scrollTo(0,0);
+  document.getElementById('sup-name').focus();
+}
+
+function resetSupForm() {
+  document.getElementById('edit-sup-id').value = '';
+  ['sup-name','sup-manager','sup-tel','sup-email','sup-desc'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('sup-cat').value = '';
+  document.getElementById('sup-region').value = '전국';
+  _supPhotos = []; renderSupPhotos();
+  document.getElementById('sup-form-title').textContent = '새 업체 등록';
+  document.getElementById('sup-submit-btn').textContent = '등록하기';
+}
+
+async function toggleSupporter(id, current) {
+  const { error } = await db.from('supporters').update({is_active: !current}).eq('id', id);
+  if (error) { alert('처리 실패: ' + error.message); return; }
+  loadSupportersAdmin();
+}
+
+async function deleteSupporter(id) {
+  if (!confirm('이 업체를 삭제하시겠습니까?')) return;
+  const { error } = await db.from('supporters').delete().eq('id', id);
+  if (error) { alert('삭제 실패: ' + error.message); return; }
+  loadSupportersAdmin();
+}
+
+function escAdm(t){ return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function setVal(id, val, unit) {
