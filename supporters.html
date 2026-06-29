@@ -5,6 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>서포터즈 - 분양톡</title>
   <link rel="stylesheet" href="style.css?v=2" />
+  <style>
+    /* 서포터즈 카드 그리드 — 한 줄에 2개(한 화면에 2개 정도) */
+    .supporters-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:22px;
+    }
+    .supporter-card{
+      background:#fff;
+      border:1px solid #E2E8F0;
+      border-radius:14px;
+      padding:20px;
+      box-shadow:0 1px 8px rgba(0,0,0,.05);
+      transition:transform .18s, box-shadow .18s;
+      display:flex;
+      flex-direction:column;
+    }
+    .supporter-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 22px rgba(0,0,0,.10);
+    }
+    .supporter-cat{
+      align-self:flex-start;
+      background:#EFF6FF;
+      color:#2563EB;
+      font-size:12px;
+      font-weight:700;
+      padding:4px 12px;
+      border-radius:20px;
+      margin-bottom:10px;
+    }
+    .supporter-name{
+      font-size:19px;
+      font-weight:700;
+      color:#1E293B;
+      margin-bottom:8px;
+    }
+    .supporter-desc{
+      font-size:14px;
+      color:#64748B;
+      line-height:1.65;
+      flex:1;
+    }
+    .supporter-region{
+      font-size:13px;
+      color:#94A3B8;
+    }
+    /* 모바일에서는 1개씩 */
+    @media (max-width:700px){
+      .supporters-grid{ grid-template-columns:1fr; gap:16px; }
+    }
+  </style>
 </head>
 <body>
 
